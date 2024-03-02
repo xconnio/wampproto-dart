@@ -1,14 +1,14 @@
 import 'message.dart';
 
-class Hello extends Message {
-  static int id = 1;
+class Hello implements Message {
+  static const int id = 1;
 
   final String realm;
   final Map<String, Map<String, bool>> roles;
   final String authID;
   final List<String> authMethods;
 
-  Hello(this.realm, this.roles, this.authID, this.authMethods) : super(Hello.id);
+  Hello(this.realm, this.roles, this.authID, this.authMethods);
 
   static Hello parse(List<dynamic> message) {
     if (message.length < 2) {
@@ -21,7 +21,8 @@ class Hello extends Message {
     }
 
     if (type != Hello.id) {
-      throw ArgumentError("invalid message type: must be ${Hello.id}, was $type");
+      throw ArgumentError(
+          "invalid message type: must be ${Hello.id}, was $type");
     }
 
     final realm = message[1];
@@ -32,6 +33,7 @@ class Hello extends Message {
     return Hello(realm, {}, "", []);
   }
 
+  @override
   List<dynamic> marshal() {
     Map<String, dynamic> details = {};
     details["roles"] = roles;
@@ -39,5 +41,10 @@ class Hello extends Message {
     details["authmethods"] = authMethods;
 
     return [id, realm, details];
+  }
+
+  @override
+  int messageType() {
+    return id;
   }
 }

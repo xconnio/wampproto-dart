@@ -1,9 +1,5 @@
-class Message {
-  final int messageType;
+abstract class Message {
+  int messageType();
 
-  Message(this.messageType);
-
-  int type() {
-    return messageType;
-  }
+  List<dynamic> marshal();
 }

@@ -8,5 +8,5 @@ void main() {
 void testParse() {
   var hello = Hello.parse([1, "realm1"]);
   expect(hello.realm, "realm1");
-  expect(hello.messageType, 1);
+  expect(hello.messageType(), 1);
 }
