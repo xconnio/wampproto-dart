@@ -12,7 +12,9 @@ Message toMessage(List<dynamic> message) {
 
   switch (messageType) {
     case Hello.id:
-      {return Hello.parse(message);}
+      {
+        return Hello.parse(message);
+      }
     default:
       {
         throw "unknown message type";

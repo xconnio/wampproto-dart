@@ -1,7 +1,6 @@
 import "package:wampproto/src/messages/message.dart";
 
 class Hello implements Message {
-
   Hello(this.realm, this.roles, this.authID, this.authMethods);
   static const int id = 1;
 
@@ -22,7 +21,8 @@ class Hello implements Message {
 
     if (type != Hello.id) {
       throw ArgumentError(
-          "invalid message type: must be ${Hello.id}, was $type",);
+        "invalid message type: must be ${Hello.id}, was $type",
+      );
     }
 
     final realm = message[1];
