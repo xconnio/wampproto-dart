@@ -1,8 +1,8 @@
-import 'dart:typed_data';
+import "dart:typed_data";
 
-import 'package:wampproto/messages.dart';
+import "package:wampproto/messages.dart";
 
-import '../messages/message.dart';
+import "package:wampproto/src/messages/message.dart";
 
 Message toMessage(List<dynamic> message) {
   var messageType = message[0];
@@ -21,6 +21,6 @@ Message toMessage(List<dynamic> message) {
 }
 
 abstract class Serializer {
-  Message deserialize(Uint8List message);
-  Uint8List serialize(Message message);
+  Message deserialize(final Uint8List message);
+  Uint8List serialize(final Message message);
 }

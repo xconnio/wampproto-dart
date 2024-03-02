@@ -1,1 +1,1 @@
-export 'src/serializers/json.dart' show JsonSerializer;
+export "src/serializers/json.dart" show JsonSerializer;

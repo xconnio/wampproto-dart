@@ -1,6 +1,8 @@
-import 'message.dart';
+import "package:wampproto/src/messages/message.dart";
 
 class Hello implements Message {
+
+  Hello(this.realm, this.roles, this.authID, this.authMethods);
   static const int id = 1;
 
   final String realm;
@@ -8,9 +10,7 @@ class Hello implements Message {
   final String authID;
   final List<String> authMethods;
 
-  Hello(this.realm, this.roles, this.authID, this.authMethods);
-
-  static Hello parse(List<dynamic> message) {
+  static Hello parse(final List<dynamic> message) {
     if (message.length < 2) {
       throw ArgumentError("invalid hello message");
     }
@@ -22,7 +22,7 @@ class Hello implements Message {
 
     if (type != Hello.id) {
       throw ArgumentError(
-          "invalid message type: must be ${Hello.id}, was $type");
+          "invalid message type: must be ${Hello.id}, was $type",);
     }
 
     final realm = message[1];
@@ -44,7 +44,5 @@ class Hello implements Message {
   }
 
   @override
-  int messageType() {
-    return id;
-  }
+  int messageType() => id;
 }

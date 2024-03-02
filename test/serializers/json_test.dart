@@ -1,6 +1,6 @@
-import 'package:wampproto/messages.dart';
-import 'package:wampproto/serializers.dart';
-import 'package:test/test.dart';
+import "package:test/test.dart";
+import "package:wampproto/messages.dart";
+import "package:wampproto/serializers.dart";
 
 void main() {
   test("test serialize and deserialize", testJson);
