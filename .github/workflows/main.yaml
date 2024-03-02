@@ -14,7 +14,13 @@ jobs:
           sdk: 3.3.0
 
       - name: Install dependencies
-        run: dart pub get
+        run: make install
+
+      - name: Verify formatting
+        run: make format
+
+      - name: Check lint
+        run: make lint
 
       - name: Run tests
-        run: dart test
+        run: make test
