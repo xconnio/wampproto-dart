@@ -1,4 +1,3 @@
-
 class Message {
   final int messageType;
 

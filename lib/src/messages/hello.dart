@@ -8,8 +8,7 @@ class Hello extends Message {
   final String authID;
   final List<String> authMethods;
 
-  Hello(this.realm, this.roles, this.authID, this.authMethods)
-      : super(Hello.id);
+  Hello(this.realm, this.roles, this.authID, this.authMethods) : super(Hello.id);
 
   static Hello parse(List<dynamic> message) {
     if (message.length < 2) {
@@ -22,8 +21,7 @@ class Hello extends Message {
     }
 
     if (type != Hello.id) {
-      throw ArgumentError(
-          "invalid message type: must be ${Hello.id}, was $type");
+      throw ArgumentError("invalid message type: must be ${Hello.id}, was $type");
     }
 
     final realm = message[1];
