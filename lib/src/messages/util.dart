@@ -66,3 +66,18 @@ Map<String, Map<String, bool>> validateRolesOrRaise(Object? roles, String errorM
   }
   return roles;
 }
+
+int validateSessionIdOrRaise(Object? sessionId, String errorMsg, [String? field]) {
+  if (sessionId is! int) {
+    throw ArgumentError("session ID must be an integer for $errorMsg");
+  }
+
+  // session id values lie between 1 and 2^53
+  // https://wamp-proto.org/wamp_bp_latest_ietf.html#section-2.1.2-3
+  if (sessionId < 0 || sessionId > 9007199254740992) {
+    field ??= "Session ID";
+    throw ArgumentError("invalid $field value for $errorMsg");
+  }
+
+  return sessionId;
+}
