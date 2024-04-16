@@ -9,7 +9,7 @@ void main() {
 void testJson() {
   var hello = Hello.parse([1, "realm1"]);
 
-  var serializer = JsonSerializer();
+  var serializer = JSONSerializer();
   var data = serializer.serialize(hello);
 
   var obj = serializer.deserialize(data);

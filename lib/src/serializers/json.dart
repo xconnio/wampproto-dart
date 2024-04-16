@@ -4,7 +4,7 @@ import "dart:typed_data";
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/serializers/serializer.dart";
 
-class JsonSerializer implements Serializer {
+class JSONSerializer implements Serializer {
   @override
   Uint8List serialize(final Message message) {
     var jsonString = jsonEncode(message.marshal());
