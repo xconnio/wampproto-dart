@@ -1,36 +1,37 @@
 import "package:wampproto/src/messages/message.dart";
+import "package:wampproto/src/messages/util.dart";
 
 class Hello implements Message {
-  Hello(this.realm, this.roles, this.authID, this.authMethods);
+  Hello(this.realm, this.roles, this.authID, this.authRole, this.authMethods, this.authExtra);
+
   static const int id = 1;
+  static const String text = "HELLO";
 
   final String realm;
   final Map<String, Map<String, bool>> roles;
   final String authID;
+  final String authRole;
   final List<String> authMethods;
+  final Map<String, dynamic> authExtra;
 
   static Hello parse(final List<dynamic> message) {
-    if (message.length < 2) {
-      throw ArgumentError("invalid hello message");
-    }
+    sanityCheck(message, 3, 3, id, text);
 
-    final type = message[0];
-    if (type is! int) {
-      throw ArgumentError("message type must be an int");
-    }
+    String realm = validateStringOrRaise(message[1], text, "realm1");
 
-    if (type != Hello.id) {
-      throw ArgumentError(
-        "invalid message type: must be ${Hello.id}, was $type",
-      );
-    }
+    Map<String, dynamic> details = validateMapOrRaise(message[2], text, "details");
 
-    final realm = message[1];
-    if (realm is! String) {
-      throw ArgumentError("realm name must be a string");
-    }
+    Map<String, Map<String, bool>> roles = validateRolesOrRaise(details["roles"], text);
 
-    return Hello(realm, {}, "", []);
+    String authid = validateStringOrRaise(details["authid"], text, "authid");
+
+    String authRole = validateStringOrRaise(details["authrole"], text, "authrole");
+
+    List<String> authMethods = validateListOrRaise(details["authmethods"], text, "authmethods");
+
+    Map<String, dynamic> authExtra = validateMapOrRaise(details["authextra"], text, "authextra");
+
+    return Hello(realm, roles, authid, authRole, authMethods, authExtra);
   }
 
   @override
@@ -38,7 +39,9 @@ class Hello implements Message {
     Map<String, dynamic> details = {};
     details["roles"] = roles;
     details["authid"] = authID;
+    details["authrole"] = authRole;
     details["authmethods"] = authMethods;
+    details["authextra"] = authExtra;
 
     return [id, realm, details];
   }
