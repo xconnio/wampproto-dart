@@ -5,8 +5,7 @@ import "package:msgpack_dart/msgpack_dart.dart" as msgpack_dart;
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/serializers/serializer.dart";
 
-
-class MsgPackSerializer implements Serializer{
+class MsgPackSerializer implements Serializer {
   @override
   Uint8List serialize(Message message) {
     final encoded = msgpack_dart.serialize(message.marshal());
@@ -22,5 +21,4 @@ class MsgPackSerializer implements Serializer{
 
     return toMessage(decoded);
   }
-
 }
