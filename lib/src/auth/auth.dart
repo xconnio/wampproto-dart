@@ -2,7 +2,9 @@ import "package:wampproto/messages.dart";
 
 abstract class IClientAuthenticator {
   IClientAuthenticator(String method, String authID, [Map<String, dynamic>? authExtra])
-      : _method=method, _authID=authID, _authExtra = authExtra ?? <String, dynamic>{};
+      : _method = method,
+        _authID = authID,
+        _authExtra = authExtra ?? <String, dynamic>{};
 
   final String _method;
   final String _authID;
