@@ -15,33 +15,39 @@ final clientRoles = <String, Map<String, Map>>{
 };
 
 class Joiner {
-  Joiner(this.realm, Serializer? serializer, IClientAuthenticator? authenticator)
-      : serializer = serializer ?? JSONSerializer(),
-        authenticator = authenticator ?? AnonymousAuthenticator("");
+  Joiner(this._realm, Serializer? serializer, IClientAuthenticator? authenticator)
+      : _serializer = serializer ?? JSONSerializer(),
+        _authenticator = authenticator ?? AnonymousAuthenticator("");
 
   static const int stateNone = 0;
   static const int stateHelloSent = 1;
   static const int stateAuthenticateSent = 2;
   static const int stateJoined = 3;
 
-  final String realm;
-  final Serializer serializer;
-  final IClientAuthenticator authenticator;
-  int state = stateNone;
-  SessionDetails? sessionDetails;
+  final String _realm;
+  final Serializer _serializer;
+  final IClientAuthenticator _authenticator;
+  int _state = stateNone;
+  SessionDetails? _sessionDetails;
 
   Uint8List sendHello() {
-    final hello = Hello(realm, clientRoles, authenticator.authID, [authenticator.authMethod], authenticator.authExtra);
+    final hello = Hello(
+      _realm,
+      clientRoles,
+      _authenticator.authID,
+      [_authenticator.authMethod],
+      _authenticator.authExtra,
+    );
 
-    state = stateHelloSent;
-    return serializer.serialize(hello);
+    _state = stateHelloSent;
+    return _serializer.serialize(hello);
   }
 
   Uint8List? receive(Uint8List data) {
-    final receivedMessage = serializer.deserialize(data);
+    final receivedMessage = _serializer.deserialize(data);
     final toSend = receiveMessage(receivedMessage);
     if (toSend != null && toSend is Authenticate) {
-      return serializer.serialize(toSend);
+      return _serializer.serialize(toSend);
     }
 
     return null;
@@ -49,20 +55,20 @@ class Joiner {
 
   Message? receiveMessage(Message msg) {
     if (msg is Welcome) {
-      if (state != stateHelloSent && state != stateAuthenticateSent) {
+      if (_state != stateHelloSent && _state != stateAuthenticateSent) {
         throw Exception("received welcome when it was not expected");
       }
 
-      sessionDetails = SessionDetails(msg.sessionID, realm, msg.authID, msg.authRole);
-      state = stateJoined;
+      _sessionDetails = SessionDetails(msg.sessionID, _realm, msg.authID, msg.authRole);
+      _state = stateJoined;
       return null;
     } else if (msg is Challenge) {
-      if (state != stateHelloSent) {
+      if (_state != stateHelloSent) {
         throw Exception("received challenge when it was not expected");
       }
 
-      final authenticate = authenticator.authenticate(msg);
-      state = stateAuthenticateSent;
+      final authenticate = _authenticator.authenticate(msg);
+      _state = stateAuthenticateSent;
       return authenticate;
     } else if (msg is Abort) {
       throw Exception("received abort");
@@ -72,10 +78,10 @@ class Joiner {
   }
 
   SessionDetails getSessionDetails() {
-    if (sessionDetails == null) {
+    if (_sessionDetails == null) {
       throw Exception("session is not set up yet");
     }
 
-    return sessionDetails!;
+    return _sessionDetails!;
   }
 }
