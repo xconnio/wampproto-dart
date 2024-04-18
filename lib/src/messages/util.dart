@@ -50,12 +50,12 @@ List<String> validateListOrRaise(Object? list, String errorMsg, String field) {
   return list;
 }
 
-Map<String, Map<String, bool>> validateRolesOrRaise(Object? roles, String errorMsg) {
+Map<String, Map<String, Map>> validateRolesOrRaise(Object? roles, String errorMsg) {
   if (roles == null) {
     throw ArgumentError("roles cannot be null for $errorMsg");
   }
 
-  if (roles is! Map<String, Map<String, bool>>) {
+  if (roles is! Map<String, Map<String, Map>>) {
     throw ArgumentError("roles must be of type map for $errorMsg");
   }
 
