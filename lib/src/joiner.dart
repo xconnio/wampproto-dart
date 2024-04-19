@@ -2,8 +2,6 @@ import "dart:typed_data";
 import "package:wampproto/auth.dart";
 import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
-import "package:wampproto/src/auth/auth.dart";
-import "package:wampproto/src/serializers/serializer.dart";
 import "package:wampproto/src/types.dart";
 
 final clientRoles = <String, Map<String, Map>>{
@@ -35,7 +33,7 @@ class Joiner {
       clientRoles,
       _authenticator.authID,
       [_authenticator.authMethod],
-      _authenticator.authExtra,
+      authExtra: _authenticator.authExtra,
     );
 
     _state = stateHelloSent;

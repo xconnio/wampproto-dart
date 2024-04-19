@@ -2,7 +2,8 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 
 class Hello implements Message {
-  Hello(this.realm, this.roles, this.authID, this.authMethods, this.authExtra);
+  Hello(this.realm, this.roles, this.authID, this.authMethods, {Map<String, dynamic>? authExtra})
+      : authExtra = authExtra ?? {};
 
   static const int id = 1;
   static const String text = "HELLO";
@@ -28,7 +29,7 @@ class Hello implements Message {
 
     Map<String, dynamic> authExtra = validateMapOrRaise(details["authextra"], text, "authextra");
 
-    return Hello(realm, roles, authid, authMethods, authExtra);
+    return Hello(realm, roles, authid, authMethods, authExtra: authExtra);
   }
 
   @override

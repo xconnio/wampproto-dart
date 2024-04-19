@@ -2,7 +2,7 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 
 class Welcome implements Message {
-  Welcome(this.sessionID, this.roles, this.authID, this.authRole, this.authMethods, this.authExtra);
+  Welcome(this.sessionID, this.roles, this.authID, this.authRole, this.authMethod, this.authExtra);
 
   static const int id = 2;
   static const String text = "WELCOME";
@@ -11,7 +11,7 @@ class Welcome implements Message {
   final Map<String, dynamic> roles;
   final String authID;
   final String authRole;
-  final List<dynamic> authMethods;
+  final String authMethod;
   final Map<String, dynamic> authExtra;
 
   static Welcome parse(final List<dynamic> message) {
@@ -27,11 +27,11 @@ class Welcome implements Message {
 
     String authRole = validateStringOrRaise(details["authrole"], text, "authrole");
 
-    List<dynamic> authMethods = validateListOrRaise(details["authmethods"], text, "authmethods");
+    String authMethod = validateStringOrRaise(details["authmethod"], text, "authmethod");
 
     Map<String, dynamic> authExtra = validateMapOrRaise(details["authextra"], text, "authextra");
 
-    return Welcome(sessionID, roles, authid, authRole, authMethods, authExtra);
+    return Welcome(sessionID, roles, authid, authRole, authMethod, authExtra);
   }
 
   @override
@@ -40,7 +40,7 @@ class Welcome implements Message {
     details["roles"] = roles;
     details["authid"] = authID;
     details["authrole"] = authRole;
-    details["authmethods"] = authMethods;
+    details["authmethod"] = authMethod;
     details["authextra"] = authExtra;
 
     return [id, sessionID, details];
