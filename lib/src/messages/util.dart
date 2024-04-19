@@ -27,6 +27,18 @@ String validateStringOrRaise(Object? string, String errorMsg, String field) {
   return string;
 }
 
+int validateIntOrRaise(Object? value, String errorMsg, String field) {
+  if (value == null) {
+    throw ArgumentError("$field cannot be null for $errorMsg");
+  }
+
+  if (value is! int) {
+    throw ArgumentError("$field must be of type int for $errorMsg");
+  }
+
+  return value;
+}
+
 Map<String, dynamic> validateMapOrRaise(Object? map, String errorMsg, String field) {
   if (map == null) {
     throw ArgumentError("$field cannot be null for $errorMsg");
