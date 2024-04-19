@@ -7,8 +7,11 @@ lint:
 lint-fix:
 	dart fix --apply
 
+check-format:
+	dart format --output=none --set-exit-if-changed --line-length 120 .
+
 format:
-	dart format --output=none --set-exit-if-changed . --line-length 120
+	dart format --line-length 120 .
 
 test:
 	dart test
