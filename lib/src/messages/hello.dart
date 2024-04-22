@@ -10,7 +10,7 @@ class Hello implements Message {
   final String realm;
   final Map<String, dynamic> roles;
   final String authID;
-  final List<String> authMethods;
+  final List<dynamic> authMethods;
   final Map<String, dynamic>? authExtra;
 
   static Hello parse(final List<dynamic> message) {
@@ -24,7 +24,7 @@ class Hello implements Message {
 
     String authid = validateStringOrRaise(details["authid"], text, "authid");
 
-    List<String> authMethods = validateListOrRaise(details["authmethods"], text, "authmethods");
+    List<dynamic> authMethods = validateListOrRaise(details["authmethods"], text, "authmethods");
 
     Map<String, dynamic> authExtra = validateMapOrRaise(details["authextra"], text, "authextra");
 

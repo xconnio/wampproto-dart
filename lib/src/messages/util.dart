@@ -51,17 +51,17 @@ Map<String, dynamic> validateMapOrRaise(Object? map, String errorMsg, String fie
   return map;
 }
 
-List<String> validateListOrRaise(List<dynamic>? list, String errorMsg, String field) {
+List<dynamic> validateListOrRaise(List<dynamic>? list, String errorMsg, String field) {
   if (list == null) {
     throw ArgumentError("$field cannot be null for $errorMsg");
   }
 
-  try {
-    List<String> nList = list.map((e) => e.toString()).toList();
-    return nList;
-  } on Exception {
+  if (list is! List<String>) {
     throw ArgumentError("$field must be of type list for $errorMsg");
   }
+
+  return list;
+
 }
 
 Map<String, dynamic> validateRolesOrRaise(Object? roles, String errorMsg) {
