@@ -51,7 +51,7 @@ Map<String, dynamic> validateMapOrRaise(Object? map, String errorMsg, String fie
   return map;
 }
 
-List<dynamic> validateListOrRaise(List<dynamic>? list, String errorMsg, String field) {
+List<dynamic> validateListOrRaise(Object? list, String errorMsg, String field) {
   if (list == null) {
     throw ArgumentError("$field cannot be null for $errorMsg");
   }
