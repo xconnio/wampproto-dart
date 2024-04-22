@@ -13,13 +13,13 @@ final routerRoles = <String, Map<String, Map>>{
 };
 
 int getSessionID() {
-  return Random().nextInt(9007199254740992) + 1;
+  return Random().nextInt(1 << 32);
 }
 
 class Acceptor {
   Acceptor({Serializer? serializer, IServerAuthenticator? authenticator})
       : _serializer = serializer ?? JSONSerializer(),
-        _authenticator = authenticator;
+        _authenticator = authenticator ?? AnonymousServerAuthenticator();
 
   static const int stateNone = 0;
   static const int stateHelloReceived = 1;
@@ -33,7 +33,7 @@ class Acceptor {
   static const String cryptosign = "cryptosign";
 
   final Serializer _serializer;
-  final IServerAuthenticator? _authenticator;
+  final IServerAuthenticator _authenticator;
   int _state = stateNone;
   final int _sessionID = getSessionID();
 
@@ -63,25 +63,15 @@ class Acceptor {
         throw Exception("unknown state");
       }
 
-      if (_authenticator == null) {
-        _state = stateWelcomeSent;
-        Welcome welcome = Welcome(_sessionID, routerRoles, anonymous, anonymous, anonymous, {});
-        _sessionDetails = SessionDetails(_sessionID, msg.realm, welcome.authID, welcome.authRole);
-
-        return welcome;
-      }
-
       String method = msg.authMethods[0];
       _authMethod = method;
       _hello = msg;
 
       switch (method) {
         case anonymous:
-          Request request = Request(method, msg.realm, msg.authID, msg.authExtra);
-          Response response = _authenticator.authenticate(request);
           _state = stateWelcomeSent;
 
-          Welcome welcome = Welcome(_sessionID, routerRoles, response.authID, response.authRole, method, {});
+          Welcome welcome = Welcome(_sessionID, routerRoles, anonymous, anonymous, method, {});
           _sessionDetails = SessionDetails(_sessionID, msg.realm, welcome.authID, welcome.authRole);
 
           return welcome;
@@ -151,7 +141,7 @@ class Acceptor {
 
         case ticket:
           TicketRequest request = TicketRequest(_hello.realm, _hello.authID, _hello.authExtra, msg.signature);
-          Response response = _authenticator!.authenticate(request);
+          Response response = _authenticator.authenticate(request);
           _state = stateWelcomeSent;
 
           Welcome welcome = Welcome(_sessionID, routerRoles, response.authID, response.authRole, ticket, {});

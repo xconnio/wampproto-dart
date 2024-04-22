@@ -1,6 +1,7 @@
 export "src/auth/anonymous.dart" show AnonymousAuthenticator;
 export "src/auth/auth.dart"
     show
+        AnonymousServerAuthenticator,
         CryptoSignRequest,
         IClientAuthenticator,
         IServerAuthenticator,

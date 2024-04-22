@@ -22,6 +22,16 @@ abstract class IServerAuthenticator {
   Response authenticate(Request request);
 }
 
+class AnonymousServerAuthenticator implements IServerAuthenticator {
+  @override
+  Response authenticate(Request request) {
+    throw UnimplementedError();
+  }
+
+  @override
+  List<String> methods() => ["anonymous"];
+}
+
 class Response {
   Response(this._authID, this._authRole);
 
