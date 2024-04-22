@@ -61,7 +61,6 @@ List<dynamic> validateListOrRaise(Object? list, String errorMsg, String field) {
   }
 
   return list;
-
 }
 
 Map<String, dynamic> validateRolesOrRaise(Object? roles, String errorMsg) {
