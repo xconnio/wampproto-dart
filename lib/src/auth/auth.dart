@@ -23,13 +23,14 @@ abstract class IServerAuthenticator {
 }
 
 class AnonymousServerAuthenticator implements IServerAuthenticator {
+  static const String anonymous = "anonymous";
   @override
   Response authenticate(Request request) {
-    throw UnimplementedError();
+    return Response(request.authID, anonymous);
   }
 
   @override
-  List<String> methods() => ["anonymous"];
+  List<String> methods() => [anonymous];
 }
 
 class Response {

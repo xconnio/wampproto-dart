@@ -54,12 +54,12 @@ class Acceptor {
   }
 
   Message? receiveMessage(Message msg) {
-    if (_state != stateWelcomeSent) {
+    if (_state == stateWelcomeSent) {
       throw ArgumentError("session was established, not expecting any new messages");
     }
 
     if (msg is Hello) {
-      if (_state == stateNone) {
+      if (_state != stateNone) {
         throw Exception("unknown state");
       }
 
@@ -69,9 +69,11 @@ class Acceptor {
 
       switch (method) {
         case anonymous:
+          Request request = Request(method, msg.realm, msg.authID, msg.authExtra);
+          Response response = _authenticator.authenticate(request);
           _state = stateWelcomeSent;
 
-          Welcome welcome = Welcome(_sessionID, routerRoles, anonymous, anonymous, method, {});
+          Welcome welcome = Welcome(_sessionID, routerRoles, response.authID, response.authRole, method, {});
           _sessionDetails = SessionDetails(_sessionID, msg.realm, welcome.authID, welcome.authRole);
 
           return welcome;
