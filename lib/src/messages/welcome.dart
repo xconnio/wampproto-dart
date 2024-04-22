@@ -8,7 +8,7 @@ class Welcome implements Message {
   static const String text = "WELCOME";
 
   final int sessionID;
-  final Map<String, Map<String, Map>> roles;
+  final Map<String, dynamic> roles;
   final String authID;
   final String authRole;
   final List<String> authMethods;
@@ -21,7 +21,7 @@ class Welcome implements Message {
 
     Map<String, dynamic> details = validateMapOrRaise(message[2], text, "details");
 
-    Map<String, Map<String, Map>> roles = validateRolesOrRaise(details["roles"], text);
+    Map<String, dynamic> roles = validateRolesOrRaise(details["roles"], text);
 
     String authid = validateStringOrRaise(details["authid"], text, "authid");
 
