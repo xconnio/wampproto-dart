@@ -12,7 +12,7 @@ class Hello implements Message {
   final Map<String, dynamic> roles;
   final String authID;
   final List<dynamic> authMethods;
-  final Map<String, dynamic>? authExtra;
+  final Map<String, dynamic> authExtra;
 
   static Hello parse(final List<dynamic> message) {
     sanityCheck(message, 3, 3, id, text);

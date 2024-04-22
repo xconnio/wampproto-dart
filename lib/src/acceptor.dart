@@ -4,7 +4,6 @@ import "package:pinenacl/ed25519.dart";
 import "package:wampproto/auth.dart";
 import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
-import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/types.dart";
 
 final routerRoles = <String, Map<String, Map>>{

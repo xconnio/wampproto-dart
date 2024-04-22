@@ -56,7 +56,7 @@ List<dynamic> validateListOrRaise(Object? list, String errorMsg, String field) {
     throw ArgumentError("$field cannot be null for $errorMsg");
   }
 
-  if (list is! List<String>) {
+  if (list is! List<dynamic>) {
     throw ArgumentError("$field must be of type list for $errorMsg");
   }
 
