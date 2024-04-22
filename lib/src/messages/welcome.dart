@@ -11,7 +11,7 @@ class Welcome implements Message {
   final Map<String, dynamic> roles;
   final String authID;
   final String authRole;
-  final List<String> authMethods;
+  final List<dynamic> authMethods;
   final Map<String, dynamic> authExtra;
 
   static Welcome parse(final List<dynamic> message) {
@@ -27,7 +27,7 @@ class Welcome implements Message {
 
     String authRole = validateStringOrRaise(details["authrole"], text, "authrole");
 
-    List<String> authMethods = validateListOrRaise(details["authmethods"], text, "authmethods");
+    List<dynamic> authMethods = validateListOrRaise(details["authmethods"], text, "authmethods");
 
     Map<String, dynamic> authExtra = validateMapOrRaise(details["authextra"], text, "authextra");
 
