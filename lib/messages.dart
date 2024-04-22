@@ -6,6 +6,7 @@ export "src/messages/event.dart" show Event;
 export "src/messages/goodbye.dart" show Goodbye;
 export "src/messages/hello.dart" show Hello;
 export "src/messages/invocation.dart" show Invocation;
+export "src/messages/message.dart" show Message;
 export "src/messages/publish.dart" show Publish;
 export "src/messages/published.dart" show Published;
 export "src/messages/register.dart" show Register;
