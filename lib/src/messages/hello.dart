@@ -8,9 +8,9 @@ class Hello implements Message {
   static const String text = "HELLO";
 
   final String realm;
-  final Map<String, Map<String, Map>> roles;
+  final Map<String, dynamic> roles;
   final String authID;
-  final List<String> authMethods;
+  final List<dynamic> authMethods;
   final Map<String, dynamic>? authExtra;
 
   static Hello parse(final List<dynamic> message) {
@@ -20,11 +20,11 @@ class Hello implements Message {
 
     Map<String, dynamic> details = validateMapOrRaise(message[2], text, "details");
 
-    Map<String, Map<String, Map>> roles = validateRolesOrRaise(details["roles"], text);
+    Map<String, dynamic> roles = validateRolesOrRaise(details["roles"], text);
 
     String authid = validateStringOrRaise(details["authid"], text, "authid");
 
-    List<String> authMethods = validateListOrRaise(details["authmethods"], text, "authmethods");
+    List<dynamic> authMethods = validateListOrRaise(details["authmethods"], text, "authmethods");
 
     Map<String, dynamic> authExtra = validateMapOrRaise(details["authextra"], text, "authextra");
 

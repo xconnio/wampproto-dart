@@ -1,4 +1,4 @@
-final Set<String> allowedRoles = <String>{"callee", "caller", "publisher", "subscriber"};
+final Set<String> allowedRoles = <String>{"callee", "caller", "publisher", "subscriber", "dealer", "broker"};
 
 void sanityCheck(List<dynamic> wampMessage, int minLength, int maxLength, int expectedId, String name) {
   if (wampMessage.length < minLength) {
@@ -51,7 +51,7 @@ Map<String, dynamic> validateMapOrRaise(Object? map, String errorMsg, String fie
   return map;
 }
 
-List<String> validateListOrRaise(Object? list, String errorMsg, String field) {
+List<dynamic> validateListOrRaise(Object? list, String errorMsg, String field) {
   if (list == null) {
     throw ArgumentError("$field cannot be null for $errorMsg");
   }
@@ -59,15 +59,16 @@ List<String> validateListOrRaise(Object? list, String errorMsg, String field) {
   if (list is! List<String>) {
     throw ArgumentError("$field must be of type list for $errorMsg");
   }
+
   return list;
 }
 
-Map<String, Map<String, Map>> validateRolesOrRaise(Object? roles, String errorMsg) {
+Map<String, dynamic> validateRolesOrRaise(Object? roles, String errorMsg) {
   if (roles == null) {
     throw ArgumentError("roles cannot be null for $errorMsg");
   }
 
-  if (roles is! Map<String, Map<String, Map>>) {
+  if (roles is! Map<String, dynamic>) {
     throw ArgumentError("roles must be of type map for $errorMsg");
   }
 

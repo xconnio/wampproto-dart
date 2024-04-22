@@ -8,10 +8,10 @@ class Welcome implements Message {
   static const String text = "WELCOME";
 
   final int sessionID;
-  final Map<String, Map<String, Map>> roles;
+  final Map<String, dynamic> roles;
   final String authID;
   final String authRole;
-  final List<String> authMethods;
+  final List<dynamic> authMethods;
   final Map<String, dynamic> authExtra;
 
   static Welcome parse(final List<dynamic> message) {
@@ -21,13 +21,13 @@ class Welcome implements Message {
 
     Map<String, dynamic> details = validateMapOrRaise(message[2], text, "details");
 
-    Map<String, Map<String, Map>> roles = validateRolesOrRaise(details["roles"], text);
+    Map<String, dynamic> roles = validateRolesOrRaise(details["roles"], text);
 
     String authid = validateStringOrRaise(details["authid"], text, "authid");
 
     String authRole = validateStringOrRaise(details["authrole"], text, "authrole");
 
-    List<String> authMethods = validateListOrRaise(details["authmethods"], text, "authmethods");
+    List<dynamic> authMethods = validateListOrRaise(details["authmethods"], text, "authmethods");
 
     Map<String, dynamic> authExtra = validateMapOrRaise(details["authextra"], text, "authextra");
 
