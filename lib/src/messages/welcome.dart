@@ -2,7 +2,8 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 
 class Welcome implements Message {
-  Welcome(this.sessionID, this.roles, this.authID, this.authRole, this.authMethod, this.authExtra);
+  Welcome(this.sessionID, this.roles, this.authID, this.authRole, this.authMethod, {Map<String, dynamic>? authExtra})
+      : authExtra = authExtra ?? {};
 
   static const int id = 2;
   static const String text = "WELCOME";
@@ -29,9 +30,12 @@ class Welcome implements Message {
 
     String authMethod = validateStringOrRaise(details["authmethod"], text, "authmethod");
 
-    Map<String, dynamic> authExtra = validateMapOrRaise(details["authextra"], text, "authextra");
+    Map<String, dynamic>? authExtra;
+    if (details["authextra"] != null) {
+      authExtra = validateMapOrRaise(details["authextra"], text, "authextra");
+    }
 
-    return Welcome(sessionID, roles, authid, authRole, authMethod, authExtra);
+    return Welcome(sessionID, roles, authid, authRole, authMethod, authExtra: authExtra);
   }
 
   @override
