@@ -27,7 +27,10 @@ class Hello implements Message {
 
     List<dynamic> authMethods = validateListOrRaise(details["authmethods"], text, "authmethods");
 
-    Map<String, dynamic> authExtra = validateMapOrRaise(details["authextra"], text, "authextra");
+    Map<String, dynamic>? authExtra;
+    if (details["authextra"] != null) {
+      authExtra = validateMapOrRaise(details["authextra"], text, "authextra");
+    }
 
     return Hello(realm, roles, authid, authMethods, authExtra: authExtra);
   }

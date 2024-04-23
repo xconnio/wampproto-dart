@@ -72,7 +72,7 @@ class Acceptor {
           Response response = _authenticator.authenticate(request);
           _state = stateWelcomeSent;
 
-          Welcome welcome = Welcome(_sessionID, routerRoles, response.authID, response.authRole, method, {});
+          Welcome welcome = Welcome(_sessionID, routerRoles, response.authID, response.authRole, method, authExtra: {});
           _sessionDetails = SessionDetails(_sessionID, msg.realm, welcome.authID, welcome.authRole);
 
           return welcome;
@@ -126,7 +126,8 @@ class Acceptor {
           verifyCryptoSignSignature(msg.signature, Base16Encoder.instance.decode(_publicKey));
           _state = stateWelcomeSent;
 
-          Welcome welcome = Welcome(_sessionID, routerRoles, _response.authID, _response.authRole, cryptosign, {});
+          Welcome welcome =
+              Welcome(_sessionID, routerRoles, _response.authID, _response.authRole, cryptosign, authExtra: {});
           _sessionDetails = SessionDetails(welcome.sessionID, _hello.realm, welcome.authID, welcome.authRole);
 
           return welcome;
@@ -135,7 +136,8 @@ class Acceptor {
           verifyWampCRASignature(msg.signature, _challenge, Base16Encoder.instance.decode(_secret));
           _state = stateWelcomeSent;
 
-          Welcome welcome = Welcome(_sessionID, routerRoles, _response.authID, _response.authRole, wampcra, {});
+          Welcome welcome =
+              Welcome(_sessionID, routerRoles, _response.authID, _response.authRole, wampcra, authExtra: {});
           _sessionDetails = SessionDetails(welcome.sessionID, _hello.realm, welcome.authID, welcome.authRole);
 
           return welcome;
@@ -145,7 +147,7 @@ class Acceptor {
           Response response = _authenticator.authenticate(request);
           _state = stateWelcomeSent;
 
-          Welcome welcome = Welcome(_sessionID, routerRoles, response.authID, response.authRole, ticket, {});
+          Welcome welcome = Welcome(_sessionID, routerRoles, response.authID, response.authRole, ticket, authExtra: {});
           _sessionDetails = SessionDetails(welcome.sessionID, _hello.realm, welcome.authID, welcome.authRole);
 
           return welcome;
