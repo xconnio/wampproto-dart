@@ -2,7 +2,6 @@ import "dart:typed_data";
 
 import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
-import "package:wampproto/src/serializers/serializer.dart";
 
 class WAMPSession {
   WAMPSession({Serializer? serializer}) : _serializer = serializer ?? JSONSerializer();
