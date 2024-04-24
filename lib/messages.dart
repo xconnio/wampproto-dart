@@ -2,6 +2,7 @@ export "src/messages/abort.dart" show Abort;
 export "src/messages/authenticate.dart" show Authenticate;
 export "src/messages/call.dart" show Call;
 export "src/messages/challenge.dart" show Challenge;
+export "src/messages/error.dart" show Error;
 export "src/messages/event.dart" show Event;
 export "src/messages/goodbye.dart" show Goodbye;
 export "src/messages/hello.dart" show Hello;
