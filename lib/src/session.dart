@@ -55,6 +55,14 @@ class WAMPSession {
       _unsubscribeRequests[msg.requestID] = msg.subscriptionID;
 
       return _serializer.serialize(msg);
+    } else if (msg is Error) {
+      if (msg.messageType() != Invocation.id) {
+        throw ArgumentError("send only supported for invocation error");
+      }
+
+      var data = _serializer.serialize(msg);
+      _invocationRequests.remove(msg.requestID);
+      return data;
     }
     throw ArgumentError("unknown message ${msg.runtimeType}");
   }
@@ -132,6 +140,49 @@ class WAMPSession {
     } else if (msg is Event) {
       if (!_subscriptions.containsKey(msg.subscriptionID)) {
         throw ArgumentError("received EVENT for invalid subscription_id");
+      }
+
+      return msg;
+    } else if (msg is Error) {
+      switch (msg.messageType()) {
+        case Call.id:
+          if (!_callRequests.containsKey(msg.requestID)) {
+            throw ArgumentError("received ERROR for invalid call request");
+          }
+          _callRequests.remove(msg.requestID);
+
+        case Register.id:
+          if (!_registerRequests.containsKey(msg.requestID)) {
+            throw ArgumentError("received ERROR for invalid register request");
+          }
+          _registerRequests.remove(msg.requestID);
+
+        case UnRegister.id:
+          if (!_unregisterRequests.containsKey(msg.requestID)) {
+            throw ArgumentError("received ERROR for invalid unregister request");
+          }
+          _unregisterRequests.remove(msg.requestID);
+
+        case Subscribe.id:
+          if (!_subscribeRequests.containsKey(msg.requestID)) {
+            throw ArgumentError("received ERROR for invalid subscribe request");
+          }
+          _subscribeRequests.remove(msg.requestID);
+
+        case UnSubscribe.id:
+          if (!_unsubscribeRequests.containsKey(msg.requestID)) {
+            throw ArgumentError("received ERROR for invalid unsubscribe request");
+          }
+          _unsubscribeRequests.remove(msg.requestID);
+
+        case Publish.id:
+          if (!_publishRequests.containsKey(msg.requestID)) {
+            throw ArgumentError("received ERROR for invalid publish request");
+          }
+          _publishRequests.remove(msg.requestID);
+
+        default:
+          throw ArgumentError("unknown error message type ${msg.runtimeType}");
       }
 
       return msg;
