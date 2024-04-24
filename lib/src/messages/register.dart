@@ -9,7 +9,7 @@ class Register implements Message {
   static const String text = "REGISTER";
 
   final int requestID;
-  final int uri;
+  final String uri;
   final Map<String, dynamic> options;
 
   static Register parse(final List<dynamic> message) {
@@ -19,7 +19,7 @@ class Register implements Message {
 
     Map<String, dynamic> options = validateMapOrRaise(message[2], text, "options");
 
-    int uri = validateIntOrRaise(message[3], text, "uri");
+    String uri = validateStringOrRaise(message[3], text, "uri");
 
     return Register(requestID, uri, options: options);
   }
