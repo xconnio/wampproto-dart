@@ -105,7 +105,6 @@ class WAMPSession {
       if (!_registrations.containsKey(msg.registrationID)) {
         throw ArgumentError("received INVOCATION for invalid registration_id");
       }
-      _registrations.remove(msg.registrationID);
       _invocationRequests[msg.requestID] = msg.requestID;
 
       return msg;
