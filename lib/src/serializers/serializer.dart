@@ -93,6 +93,10 @@ Message toMessage(List<dynamic> message) {
       {
         return Event.parse(message);
       }
+    case Error.id:
+      {
+        return Error.parse(message);
+      }
 
     default:
       {

@@ -56,7 +56,7 @@ class WAMPSession {
 
       return _serializer.serialize(msg);
     } else if (msg is Error) {
-      if (msg.messageType() != Invocation.id) {
+      if (msg.msgType != Invocation.id) {
         throw ArgumentError("send only supported for invocation error");
       }
 
@@ -143,7 +143,7 @@ class WAMPSession {
 
       return msg;
     } else if (msg is Error) {
-      switch (msg.messageType()) {
+      switch (msg.msgType) {
         case Call.id:
           if (!_callRequests.containsKey(msg.requestID)) {
             throw ArgumentError("received ERROR for invalid call request");
