@@ -6,10 +6,10 @@ class Result implements Message {
     this.requestID, {
     List<dynamic>? args,
     Map<String, dynamic>? kwargs,
-    Map<String, dynamic>? options,
+    Map<String, dynamic>? details,
   })  : args = args ?? [],
         kwargs = kwargs ?? {},
-        options = options ?? {};
+        details = details ?? {};
 
   static const int id = 50;
 
@@ -18,14 +18,14 @@ class Result implements Message {
   final int requestID;
   final List<dynamic> args;
   final Map<String, dynamic> kwargs;
-  final Map<String, dynamic> options;
+  final Map<String, dynamic> details;
 
   static Result parse(final List<dynamic> message) {
     sanityCheck(message, 3, 5, id, text);
 
     int requestID = validateIntOrRaise(message[1], text, "request ID");
 
-    Map<String, dynamic> options = validateMapOrRaise(message[2], text, "options");
+    Map<String, dynamic> details = validateMapOrRaise(message[2], text, "details");
 
     List<dynamic>? args;
     if (message.length > 3) {
@@ -37,12 +37,12 @@ class Result implements Message {
       kwargs = validateMapOrRaise(message[4], text, "kwargs");
     }
 
-    return Result(requestID, args: args, kwargs: kwargs, options: options);
+    return Result(requestID, args: args, kwargs: kwargs, details: details);
   }
 
   @override
   List<dynamic> marshal() {
-    List<dynamic> message = [id, requestID, options];
+    List<dynamic> message = [id, requestID, details];
     if (args.isNotEmpty) {
       message.add(args);
     }
