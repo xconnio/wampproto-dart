@@ -1,6 +1,6 @@
 final Set<String> allowedRoles = <String>{"callee", "caller", "publisher", "subscriber", "dealer", "broker"};
 
-void sanityCheck(List<dynamic> wampMessage, int minLength, int maxLength, int expectedId, String name) {
+void sanityCheck(List<dynamic> wampMessage, int minLength, int maxLength, int expectedID, String name) {
   if (wampMessage.length < minLength) {
     throw ArgumentError("invalid message length ${wampMessage.length}, must be at least $minLength");
   }
@@ -9,9 +9,9 @@ void sanityCheck(List<dynamic> wampMessage, int minLength, int maxLength, int ex
     throw ArgumentError("invalid message length ${wampMessage.length}, must be at most $maxLength");
   }
 
-  final messageId = wampMessage[0];
-  if (messageId != expectedId) {
-    throw ArgumentError("invalid message id $messageId for $name, expected $expectedId");
+  final messageID = wampMessage[0];
+  if (messageID != expectedID) {
+    throw ArgumentError("invalid message id $messageID for $name, expected $expectedID");
   }
 }
 
@@ -80,17 +80,17 @@ Map<String, dynamic> validateRolesOrRaise(Object? roles, String errorMsg) {
   return roles;
 }
 
-int validateSessionIdOrRaise(Object? sessionId, String errorMsg, [String? field]) {
-  if (sessionId is! int) {
+int validateSessionIDOrRaise(Object? sessionID, String errorMsg, [String? field]) {
+  if (sessionID is! int) {
     throw ArgumentError("session ID must be an integer for $errorMsg");
   }
 
   // session id values lie between 1 and 2^53
   // https://wamp-proto.org/wamp_bp_latest_ietf.html#section-2.1.2-3
-  if (sessionId < 0 || sessionId > 9007199254740992) {
+  if (sessionID < 0 || sessionID > 9007199254740992) {
     field ??= "Session ID";
     throw ArgumentError("invalid $field value for $errorMsg");
   }
 
-  return sessionId;
+  return sessionID;
 }

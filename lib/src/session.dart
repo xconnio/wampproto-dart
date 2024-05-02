@@ -93,12 +93,12 @@ class WAMPSession {
       if (!_unregisterRequests.containsKey(msg.requestID)) {
         throw ArgumentError("received UNREGISTERED for invalid request_id");
       }
-      final registrationId = _unregisterRequests.remove(msg.requestID);
+      final registrationID = _unregisterRequests.remove(msg.requestID);
 
-      if (!_registrations.containsKey(registrationId)) {
+      if (!_registrations.containsKey(registrationID)) {
         throw ArgumentError("received UNREGISTERED for invalid registration_id");
       }
-      _registrations.remove(registrationId);
+      _registrations.remove(registrationID);
 
       return msg;
     } else if (msg is Invocation) {
@@ -128,12 +128,12 @@ class WAMPSession {
       if (!_unsubscribeRequests.containsKey(msg.requestID)) {
         throw ArgumentError("received UNSUBSCRIBED for invalid request_id");
       }
-      final subscriptionId = _unsubscribeRequests.remove(msg.requestID);
+      final subscriptionID = _unsubscribeRequests.remove(msg.requestID);
 
-      if (!_subscriptions.containsKey(subscriptionId)) {
+      if (!_subscriptions.containsKey(subscriptionID)) {
         throw ArgumentError("received UNSUBSCRIBED for invalid subscription_id");
       }
-      _subscriptions.remove(subscriptionId);
+      _subscriptions.remove(subscriptionID);
 
       return msg;
     } else if (msg is Event) {

@@ -18,7 +18,7 @@ class Welcome implements Message {
   static Welcome parse(final List<dynamic> message) {
     sanityCheck(message, 3, 3, id, text);
 
-    int sessionID = validateSessionIdOrRaise(message[1], text);
+    int sessionID = validateSessionIDOrRaise(message[1], text);
 
     Map<String, dynamic> details = validateMapOrRaise(message[2], text, "details");
 

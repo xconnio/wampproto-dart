@@ -30,16 +30,16 @@ String utcNow() {
   return "${dt.toIso8601String().substring(0, 23)}Z";
 }
 
-String generateWampCRAChallenge(int sessionId, String authId, String authRole, String provider) {
+String generateWampCRAChallenge(int sessionID, String authID, String authRole, String provider) {
   final nonce = generateNonce();
 
   final data = {
     "nonce": nonce,
     "authprovider": provider,
-    "authid": authId,
+    "authid": authID,
     "authrole": authRole,
     "authmethod": "wampcra",
-    "session": sessionId,
+    "session": sessionID,
     "timestamp": utcNow,
   };
 
