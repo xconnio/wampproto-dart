@@ -7,10 +7,10 @@ class Invocation implements Message {
     this.registrationID, {
     List<dynamic>? args,
     Map<String, dynamic>? kwargs,
-    Map<String, dynamic>? options,
+    Map<String, dynamic>? details,
   })  : args = args ?? [],
         kwargs = kwargs ?? {},
-        options = options ?? {};
+        details = details ?? {};
 
   static const int id = 68;
 
@@ -20,7 +20,7 @@ class Invocation implements Message {
   final int registrationID;
   final List<dynamic> args;
   final Map<String, dynamic> kwargs;
-  final Map<String, dynamic> options;
+  final Map<String, dynamic> details;
 
   static Invocation parse(final List<dynamic> message) {
     sanityCheck(message, 4, 6, id, text);
@@ -29,7 +29,7 @@ class Invocation implements Message {
 
     int registrationID = validateIntOrRaise(message[2], text, "registration ID");
 
-    Map<String, dynamic> options = validateMapOrRaise(message[3], text, "options");
+    Map<String, dynamic> details = validateMapOrRaise(message[3], text, "details");
 
     List<dynamic>? args;
     if (message.length > 4) {
@@ -41,12 +41,12 @@ class Invocation implements Message {
       kwargs = validateMapOrRaise(message[5], text, "kwargs");
     }
 
-    return Invocation(requestID, registrationID, args: args, kwargs: kwargs, options: options);
+    return Invocation(requestID, registrationID, args: args, kwargs: kwargs, details: details);
   }
 
   @override
   List<dynamic> marshal() {
-    List<dynamic> message = [id, requestID, registrationID, options];
+    List<dynamic> message = [id, requestID, registrationID, details];
     if (args.isNotEmpty) {
       message.add(args);
     }

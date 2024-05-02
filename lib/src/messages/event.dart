@@ -7,10 +7,10 @@ class Event implements Message {
     this.publicationID, {
     List<dynamic>? args,
     Map<String, dynamic>? kwargs,
-    Map<String, dynamic>? options,
+    Map<String, dynamic>? details,
   })  : args = args ?? [],
         kwargs = kwargs ?? {},
-        options = options ?? {};
+        details = details ?? {};
 
   static const int id = 36;
 
@@ -20,7 +20,7 @@ class Event implements Message {
   final int publicationID;
   final List<dynamic> args;
   final Map<String, dynamic> kwargs;
-  final Map<String, dynamic> options;
+  final Map<String, dynamic> details;
 
   static Event parse(final List<dynamic> message) {
     sanityCheck(message, 4, 6, id, text);
@@ -29,7 +29,7 @@ class Event implements Message {
 
     int publicationID = validateIntOrRaise(message[2], text, "publication ID");
 
-    Map<String, dynamic> options = validateMapOrRaise(message[3], text, "options");
+    Map<String, dynamic> details = validateMapOrRaise(message[3], text, "details");
 
     List<dynamic>? args;
     if (message.length > 4) {
@@ -41,12 +41,12 @@ class Event implements Message {
       kwargs = validateMapOrRaise(message[5], text, "kwargs");
     }
 
-    return Event(subscriptionID, publicationID, args: args, kwargs: kwargs, options: options);
+    return Event(subscriptionID, publicationID, args: args, kwargs: kwargs, details: details);
   }
 
   @override
   List<dynamic> marshal() {
-    List<dynamic> message = [id, subscriptionID, publicationID, options];
+    List<dynamic> message = [id, subscriptionID, publicationID, details];
     if (args.isNotEmpty) {
       message.add(args);
     }
