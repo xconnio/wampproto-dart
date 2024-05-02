@@ -1,7 +1,7 @@
 import "dart:typed_data";
 
-import "package:cbor/simple.dart";
 import "package:cbor/cbor.dart" as ncbor;
+import "package:cbor/simple.dart";
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/serializers/serializer.dart";
 
