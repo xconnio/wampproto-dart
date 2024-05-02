@@ -1,9 +1,9 @@
 import "package:wampproto/src/messages/message.dart";
 
 class SessionDetails {
-  SessionDetails(this.sessionId, this.realm, this.authid, this.authrole);
+  SessionDetails(this.sessionID, this.realm, this.authid, this.authrole);
 
-  final int sessionId;
+  final int sessionID;
   final String realm;
   final String authid;
   final String authrole;
