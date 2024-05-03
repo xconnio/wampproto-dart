@@ -23,9 +23,15 @@ class Hello implements Message {
 
     Map<String, dynamic> roles = validateRolesOrRaise(details["roles"], text);
 
-    String authid = validateStringOrRaise(details["authid"], text, "authid");
+    String authid = "";
+    if (details["authid"] != null) {
+      authid = validateStringOrRaise(details["authid"], text, "authid");
+    }
 
-    List<dynamic> authMethods = validateListOrRaise(details["authmethods"], text, "authmethods");
+    List<dynamic> authMethods = [];
+    if (details["authmethods"] != null) {
+      authMethods = validateListOrRaise(details["authmethods"], text, "authmethods");
+    }
 
     Map<String, dynamic>? authExtra;
     if (details["authextra"] != null) {
