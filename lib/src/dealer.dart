@@ -53,7 +53,7 @@ class Dealer {
 
       pendingCalls.putIfAbsent(callee, () => {})[message.requestID] = sessionID;
       Invocation invocation = Invocation(message.requestID, registration, args: message.args, kwargs: message.kwargs);
-      return MessageWithRecipient(invocation, sessionID);
+      return MessageWithRecipient(invocation, callee);
     } else if (message is Yield) {
       var calls = pendingCalls[sessionID];
       if (calls == null || calls.isEmpty) {
