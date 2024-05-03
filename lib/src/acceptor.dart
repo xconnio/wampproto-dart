@@ -62,7 +62,11 @@ class Acceptor {
         throw Exception("unknown state");
       }
 
-      String method = msg.authMethods[0];
+      String method = anonymous;
+      if (msg.authMethods.isNotEmpty) {
+        method = msg.authMethods[0];
+      }
+
       _authMethod = method;
       _hello = msg;
 
