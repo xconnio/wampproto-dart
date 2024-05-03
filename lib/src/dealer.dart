@@ -60,9 +60,14 @@ class Dealer {
         throw Exception("no pending calls for session $sessionID");
       }
 
+      int? caller = calls[message.requestID];
+      if (caller == null) {
+        throw Exception("no pending calls for caller $caller");
+      }
+
       pendingCalls[sessionID]?.remove(message.requestID);
       Result result = Result(message.requestID, args: message.args, kwargs: message.kwargs);
-      return MessageWithRecipient(result, sessionID);
+      return MessageWithRecipient(result, caller);
     } else if (message is Register) {
       if (!registrationsBySession.containsKey(sessionID)) {
         throw Exception("cannot register, session $sessionID doesn't exist");
