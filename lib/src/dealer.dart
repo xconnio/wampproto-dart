@@ -60,10 +60,7 @@ class Dealer {
         throw Exception("no pending calls for session $sessionID");
       }
 
-      int? caller = calls[message.requestID];
-      if (caller == null) {
-        throw Exception("no pending calls for caller $caller");
-      }
+      int caller = calls[message.requestID] ?? (throw Exception("no pending calls for session $sessionID"));
 
       pendingCalls[sessionID]?.remove(message.requestID);
       Result result = Result(message.requestID, args: message.args, kwargs: message.kwargs);
