@@ -1,4 +1,3 @@
-import "dart:typed_data";
 import "package:wampproto/auth.dart";
 import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
@@ -27,7 +26,7 @@ class Joiner {
   int _state = stateNone;
   SessionDetails? _sessionDetails;
 
-  Uint8List sendHello() {
+  Object sendHello() {
     final hello = Hello(
       _realm,
       clientRoles,
@@ -40,7 +39,7 @@ class Joiner {
     return _serializer.serialize(hello);
   }
 
-  Uint8List? receive(Uint8List data) {
+  Object? receive(Object data) {
     final receivedMessage = _serializer.deserialize(data);
     final toSend = receiveMessage(receivedMessage);
     if (toSend != null && toSend is Authenticate) {
