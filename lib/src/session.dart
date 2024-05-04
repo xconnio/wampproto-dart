@@ -1,5 +1,3 @@
-import "dart:typed_data";
-
 import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
 
@@ -21,7 +19,7 @@ class WAMPSession {
   final Map<int, int> _subscriptions = {};
   final Map<int, int> _unsubscribeRequests = {};
 
-  Uint8List sendMessage(Message msg) {
+  Object sendMessage(Message msg) {
     if (msg is Call) {
       _callRequests[msg.requestID] = msg.requestID;
 
@@ -67,7 +65,7 @@ class WAMPSession {
     throw ArgumentError("unknown message ${msg.runtimeType}");
   }
 
-  Message receive(Uint8List data) {
+  Message receive(Object data) {
     final msg = _serializer.deserialize(data);
     return receiveMessage(msg);
   }

@@ -45,7 +45,7 @@ class Acceptor {
   late String _challenge;
   late String _secret;
 
-  MapEntry<Uint8List, bool> receive(Uint8List data) {
+  MapEntry<Object, bool> receive(Uint8List data) {
     final receivedMessage = _serializer.deserialize(data);
     final toSend = receiveMessage(receivedMessage);
 

@@ -1,21 +1,20 @@
 import "dart:convert";
-import "dart:typed_data";
 
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/serializers/serializer.dart";
 
 class JSONSerializer implements Serializer {
   @override
-  Uint8List serialize(final Message message) {
+  String serialize(final Message message) {
     var jsonString = jsonEncode(message.marshal());
-    return Uint8List.fromList(jsonString.codeUnits);
+    return jsonString;
   }
 
   @override
-  Message deserialize(final Uint8List message) {
-    final String s = String.fromCharCodes(message);
+  Message deserialize(final Object message) {
+    String msg = message is String ? message : throw Exception("Message is not a String");
 
-    final List<dynamic> wampMessage = jsonDecode(s);
+    final List<dynamic> wampMessage = jsonDecode(msg);
     return toMessage(wampMessage);
   }
 }

@@ -13,8 +13,10 @@ class CBORSerializer implements Serializer {
   }
 
   @override
-  Message deserialize(Uint8List message) {
-    final decoded = const ncbor.CborDecoder().convert(message).toJson(substituteValue: message);
+  Message deserialize(Object message) {
+    Uint8List msgBytes = message is Uint8List ? message : throw Exception("Message is not a Uint8List");
+
+    final decoded = const ncbor.CborDecoder().convert(msgBytes).toJson(substituteValue: msgBytes);
     if (decoded is! List) {
       throw "bad type";
     }

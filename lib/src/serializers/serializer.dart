@@ -1,5 +1,3 @@
-import "dart:typed_data";
-
 import "package:wampproto/messages.dart";
 
 Message toMessage(List<dynamic> message) {
@@ -106,6 +104,6 @@ Message toMessage(List<dynamic> message) {
 }
 
 abstract class Serializer {
-  Message deserialize(final Uint8List message);
-  Uint8List serialize(final Message message);
+  Message deserialize(final Object message /*String|List<int>*/);
+  Object serialize(final Message message);
 }
