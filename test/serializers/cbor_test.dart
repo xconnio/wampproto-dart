@@ -7,7 +7,16 @@ void main() {
 }
 
 void testCBOR() {
-  var hello = Hello.parse([1, "realm1"]);
+  var hello = Hello.parse([
+    1,
+    "realm1",
+    {
+      "authid": "test",
+      "roles": {
+        "callee": {"allow_call": true},
+      },
+    },
+  ]);
 
   var serializer = CBORSerializer();
   var data = serializer.serialize(hello);
