@@ -18,7 +18,7 @@ class MsgPackSerializer implements Serializer {
 
     final decoded = msgpack_dart.deserialize(msgBytes, toJSON: true);
     if (decoded is! List) {
-      throw "bad type";
+      throw throw Exception("bad type");
     }
 
     return toMessage(decoded);

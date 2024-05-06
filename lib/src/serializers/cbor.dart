@@ -18,7 +18,7 @@ class CBORSerializer implements Serializer {
 
     final decoded = const ncbor.CborDecoder().convert(msgBytes).toJson(substituteValue: msgBytes);
     if (decoded is! List) {
-      throw "bad type";
+      throw Exception("bad type");
     }
 
     return toMessage(decoded);
