@@ -40,7 +40,7 @@ String generateWampCRAChallenge(int sessionID, String authID, String authRole, S
     "authrole": authRole,
     "authmethod": "wampcra",
     "session": sessionID,
-    "timestamp": utcNow,
+    "timestamp": utcNow(),
   };
 
   return json.encode(data);
