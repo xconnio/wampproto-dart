@@ -15,3 +15,12 @@ class MessageWithRecipient {
   Message message;
   int recipient;
 }
+
+class Registration {
+  Registration(this.id, this.procedure, this.registrants, {this.invocationPolicy});
+
+  final int id;
+  final String procedure;
+  final Map<int, int> registrants;
+  final String? invocationPolicy;
+}
