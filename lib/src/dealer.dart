@@ -2,10 +2,18 @@ import "package:wampproto/idgen.dart";
 import "package:wampproto/messages.dart";
 import "package:wampproto/src/types.dart";
 
+class PendingInvocation {
+  PendingInvocation(this.requestID, this.callerID, this.calleeID);
+
+  int requestID;
+  int callerID;
+  int calleeID;
+}
+
 class Dealer {
   Map<String, Map<int, int>> registrationsByProcedure = {};
   Map<int, Map<int, String>> registrationsBySession = {};
-  Map<int, Map<int, int>> pendingCalls = {};
+  Map<int, PendingInvocation> pendingCalls = {};
 
   SessionScopeIDGenerator idGen = SessionScopeIDGenerator();
 
@@ -42,29 +50,33 @@ class Dealer {
         throw Exception("procedure has no registrations");
       }
 
-      int callee = 0;
+      int calleeID = 0;
       int registration = 0;
 
       registrations.forEach((regID, session) {
         registration = regID;
-        callee = session;
+        calleeID = session;
         return;
       });
 
-      pendingCalls.putIfAbsent(callee, () => {})[message.requestID] = sessionID;
-      Invocation invocation = Invocation(message.requestID, registration, args: message.args, kwargs: message.kwargs);
-      return MessageWithRecipient(invocation, callee);
+      int requestID = idGen.next();
+      pendingCalls[requestID] = PendingInvocation(message.requestID, sessionID, calleeID);
+
+      Invocation invocation = Invocation(requestID, registration, args: message.args, kwargs: message.kwargs);
+      return MessageWithRecipient(invocation, calleeID);
     } else if (message is Yield) {
-      var calls = pendingCalls[sessionID];
-      if (calls == null || calls.isEmpty) {
+      PendingInvocation? invocation = pendingCalls.remove(message.requestID);
+
+      if (invocation == null) {
         throw Exception("no pending calls for session $sessionID");
       }
 
-      int caller = calls[message.requestID] ?? (throw Exception("no pending calls for session $sessionID"));
+      if (sessionID != invocation.calleeID) {
+        throw Exception("received unexpected yield from session=$sessionID");
+      }
 
-      pendingCalls[sessionID]?.remove(message.requestID);
-      Result result = Result(message.requestID, args: message.args, kwargs: message.kwargs);
-      return MessageWithRecipient(result, caller);
+      Result result = Result(invocation.requestID, args: message.args, kwargs: message.kwargs);
+      return MessageWithRecipient(result, invocation.callerID);
     } else if (message is Register) {
       if (!registrationsBySession.containsKey(sessionID)) {
         throw Exception("cannot register, session $sessionID doesn't exist");
