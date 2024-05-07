@@ -13,5 +13,5 @@ check-format:
 format:
 	dart format --line-length 120 .
 
-test:
+tests:
 	dart test
