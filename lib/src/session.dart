@@ -146,37 +146,49 @@ class WAMPSession {
           if (!_callRequests.containsKey(msg.requestID)) {
             throw ArgumentError("received ERROR for invalid call request");
           }
+
           _callRequests.remove(msg.requestID);
+          break;
 
         case Register.id:
           if (!_registerRequests.containsKey(msg.requestID)) {
             throw ArgumentError("received ERROR for invalid register request");
           }
+
           _registerRequests.remove(msg.requestID);
+          break;
 
         case UnRegister.id:
           if (!_unregisterRequests.containsKey(msg.requestID)) {
             throw ArgumentError("received ERROR for invalid unregister request");
           }
+
           _unregisterRequests.remove(msg.requestID);
+          break;
 
         case Subscribe.id:
           if (!_subscribeRequests.containsKey(msg.requestID)) {
             throw ArgumentError("received ERROR for invalid subscribe request");
           }
+
           _subscribeRequests.remove(msg.requestID);
+          break;
 
         case UnSubscribe.id:
           if (!_unsubscribeRequests.containsKey(msg.requestID)) {
             throw ArgumentError("received ERROR for invalid unsubscribe request");
           }
+
           _unsubscribeRequests.remove(msg.requestID);
+          break;
 
         case Publish.id:
           if (!_publishRequests.containsKey(msg.requestID)) {
             throw ArgumentError("received ERROR for invalid publish request");
           }
+
           _publishRequests.remove(msg.requestID);
+          break;
 
         default:
           throw ArgumentError("unknown error message type ${msg.runtimeType}");
