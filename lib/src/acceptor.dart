@@ -137,7 +137,7 @@ class Acceptor {
           return welcome;
 
         case wampcra:
-          verifyWampCRASignature(msg.signature, _challenge, Base16Encoder.instance.decode(_secret));
+          verifyWampCRASignature(msg.signature, _challenge, Uint8List.fromList(_secret.codeUnits));
           _state = stateWelcomeSent;
 
           Welcome welcome =
