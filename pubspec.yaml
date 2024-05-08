@@ -1,7 +1,7 @@
 name: wampproto
 description: Sans-IO WAMP protocol implementation
 version: 0.1.0
-repository: https://github.com/xconnio/wampproto.dart
+repository: https://github.com/xconnio/wampproto-dart
 publish_to: none
 
 environment:
