@@ -3,56 +3,56 @@ import "package:wampproto/messages.dart";
 import "package:wampproto/src/types.dart";
 
 class Broker {
-  Map<String, Map<int, int>> subscriptionsByTopic = {};
-  Map<int, Map<int, String>> subscriptionsBySession = {};
-  SessionScopeIDGenerator idGen = SessionScopeIDGenerator();
+  final Map<String, Map<int, int>> _subscriptionsByTopic = {};
+  final Map<int, Map<int, String>> _subscriptionsBySession = {};
+  final _idGen = SessionScopeIDGenerator();
 
   void addSession(int sid) {
-    if (subscriptionsBySession.containsKey(sid)) {
+    if (_subscriptionsBySession.containsKey(sid)) {
       throw Exception("cannot add session twice");
     }
 
-    subscriptionsBySession[sid] = {};
+    _subscriptionsBySession[sid] = {};
   }
 
   void removeSession(int sid) {
-    var subscriptions = subscriptionsBySession.remove(sid);
+    var subscriptions = _subscriptionsBySession.remove(sid);
     if (subscriptions == null) {
       throw Exception("cannot remove non-existing session");
     }
 
     subscriptions.forEach((key, value) {
-      if (subscriptionsByTopic.containsKey(value)) {
-        subscriptionsByTopic[value]?.remove(key);
-        if (subscriptionsByTopic[value]?.isEmpty ?? false) {
-          subscriptionsByTopic.remove(value);
+      if (_subscriptionsByTopic.containsKey(value)) {
+        _subscriptionsByTopic[value]?.remove(key);
+        if (_subscriptionsByTopic[value]?.isEmpty ?? false) {
+          _subscriptionsByTopic.remove(value);
         }
       }
     });
   }
 
   bool hasSubscriptions(String topic) {
-    return subscriptionsByTopic[topic]?.isNotEmpty ?? false;
+    return _subscriptionsByTopic[topic]?.isNotEmpty ?? false;
   }
 
   List<MessageWithRecipient>? receiveMessage(int sessionID, Message message) {
     if (message is Subscribe) {
-      if (!subscriptionsBySession.containsKey(sessionID)) {
+      if (!_subscriptionsBySession.containsKey(sessionID)) {
         throw Exception("cannot subscribe, session $sessionID doesn't exist");
       }
 
-      int subscriptionID = idGen.next();
-      subscriptionsBySession.putIfAbsent(sessionID, () => {})[subscriptionID] = message.topic;
-      subscriptionsByTopic.putIfAbsent(message.topic, () => {})[subscriptionID] = sessionID;
+      int subscriptionID = _idGen.next();
+      _subscriptionsBySession.putIfAbsent(sessionID, () => {})[subscriptionID] = message.topic;
+      _subscriptionsByTopic.putIfAbsent(message.topic, () => {})[subscriptionID] = sessionID;
 
       Subscribed subscribed = Subscribed(message.requestID, subscriptionID);
       return [MessageWithRecipient(subscribed, sessionID)];
     } else if (message is UnSubscribe) {
-      if (!subscriptionsBySession.containsKey(sessionID)) {
+      if (!_subscriptionsBySession.containsKey(sessionID)) {
         throw Exception("cannot unsubscribe, session $sessionID doesn't exist");
       }
 
-      var subscriptions = subscriptionsBySession[sessionID];
+      var subscriptions = _subscriptionsBySession[sessionID];
       if (subscriptions == null) {
         throw Exception("cannot unsubscribe, no subscription found");
       }
@@ -62,22 +62,22 @@ class Broker {
         throw Exception("cannot unsubscribe, subscription $message.subscriptionID doesn't exist");
       }
 
-      subscriptionsBySession[sessionID]?.remove(message.subscriptionID);
-      subscriptionsByTopic[topic]?.remove(message.subscriptionID);
+      _subscriptionsBySession[sessionID]?.remove(message.subscriptionID);
+      _subscriptionsByTopic[topic]?.remove(message.subscriptionID);
 
       UnSubscribed unSubscribed = UnSubscribed(message.requestID);
       return [MessageWithRecipient(unSubscribed, sessionID)];
     } else if (message is Publish) {
-      if (!subscriptionsBySession.containsKey(sessionID)) {
+      if (!_subscriptionsBySession.containsKey(sessionID)) {
         throw Exception("cannot publish, session $sessionID doesn't exist");
       }
 
-      var subscriptions = subscriptionsByTopic[message.uri];
+      var subscriptions = _subscriptionsByTopic[message.uri];
       if (subscriptions == null) {
         return null;
       }
 
-      int publicationID = idGen.next();
+      int publicationID = _idGen.next();
       List<MessageWithRecipient> result = [];
 
       subscriptions.forEach((subscriptionID, recipientID) {
