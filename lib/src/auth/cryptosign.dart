@@ -10,10 +10,10 @@ class CryptoSignAuthenticator extends IClientAuthenticator {
   CryptoSignAuthenticator(String authID, this._privateKeyHex, [Map<String, dynamic>? authExtra]) : super(type, authID) {
     authExtra ??= {};
     if (!authExtra.containsKey("pubkey")) {
-      final pubKey = getPrivateKey().verifyKey;
+      final pubKey = hex.encode(getPrivateKey().verifyKey);
       authExtra["pubkey"] = pubKey;
-      super.authExtra = authExtra;
     }
+    super.authExtra = authExtra;
   }
 
   static const String type = "cryptosign";
