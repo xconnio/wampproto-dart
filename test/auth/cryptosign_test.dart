@@ -17,7 +17,7 @@ void main() {
 
     test("constructor", () {
       expect(authenticator.authID, "authID");
-      expect(authenticator.authExtra!["pubkey"], hex.decode(publicKeyHex));
+      expect(authenticator.authExtra!["pubkey"], publicKeyHex);
     });
 
     test("authenticate", () {
