@@ -1,16 +1,17 @@
 import "dart:math";
 
-int idMax = 1 << 32;
+const _idMax = 1 << 32;
+const _maxScope = 1 << 53;
 
 int generateSessionID() {
-  return Random().nextInt(idMax);
+  return Random().nextInt(_idMax);
 }
 
 class SessionScopeIDGenerator {
   int id = 0;
 
   int next() {
-    if (id == idMax) {
+    if (id == _maxScope) {
       id = 0;
     }
 
