@@ -87,16 +87,16 @@ class Dealer {
 
       var registrations = _registrationsByProcedure[message.uri];
       if (registrations == null) {
-        var registration = Registration(_idGen.next(), message.uri, {sessionID: sessionID});
-        _registrationsByProcedure[message.uri] = registration;
-        _registrationsBySession.putIfAbsent(sessionID, () => {})[registration.id] = registration;
+        registrations = Registration(_idGen.next(), message.uri, {sessionID: sessionID});
+        _registrationsByProcedure[message.uri] = registrations;
+        _registrationsBySession.putIfAbsent(sessionID, () => {})[registrations.id] = registrations;
       } else {
         // TODO: implement shared registrations.
         var error = Error(Register.id, message.requestID, errProcedureAlreadyExists);
         return MessageWithRecipient(error, sessionID);
       }
 
-      var registered = Registered(message.requestID, registrations!.id);
+      var registered = Registered(message.requestID, registrations.id);
       return MessageWithRecipient(registered, sessionID);
     } else if (message is UnRegister) {
       var registrations = _registrationsBySession[sessionID];
