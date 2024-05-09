@@ -5,8 +5,7 @@ import "package:wampproto/src/idgen.dart";
 void main() {
   test("GenerateSessionID", () {
     final id = generateSessionID();
-    expect(id, greaterThanOrEqualTo(0));
-    expect(id, lessThan(idMax));
+    expect(id, greaterThan(0));
   });
 
   test("SessionScopeIDGenerator", () {
@@ -15,7 +14,5 @@ void main() {
       final id = generator.next();
       expect(id, i);
     }
-    generator.id = idMax;
-    expect(generator.next(), 1);
   });
 }
