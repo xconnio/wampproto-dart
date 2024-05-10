@@ -72,7 +72,16 @@ void main() {
       // publish message to a topic with no subscribers
       var publishNoSubscriber = Publish(2, "topic1", args: [1, 2, 3]);
       var messages = broker.receiveMessage(1, publishNoSubscriber);
-      expect(messages, isNull);
+      expect(messages, []);
+
+      // publish with acknowledge true
+      var publishAcknowledge = Publish(2, topicName, args: [1, 2, 3], options: {"acknowledge": true});
+      var msgWithRecipient = broker.receiveMessage(1, publishAcknowledge);
+      expect(msgWithRecipient!.length, 2);
+      expect(msgWithRecipient[0].recipient, 1);
+      expect(msgWithRecipient[0].message, isA<Event>());
+      expect(msgWithRecipient[1].recipient, 1);
+      expect(msgWithRecipient[1].message, isA<Published>());
 
       // publish message to invalid sessionID
       expect(() => broker.receiveMessage(3, publish), throwsException);

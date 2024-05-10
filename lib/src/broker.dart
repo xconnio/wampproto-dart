@@ -72,18 +72,21 @@ class Broker {
         throw Exception("cannot publish, session $sessionID doesn't exist");
       }
 
-      var subscriptions = _subscriptionsByTopic[message.uri];
-      if (subscriptions == null) {
-        return null;
-      }
+      var subscriptions = _subscriptionsByTopic[message.uri] ?? {};
 
       int publicationID = _idGen.next();
       List<MessageWithRecipient> result = [];
 
       subscriptions.forEach((subscriptionID, recipientID) {
-        Event event = Event(subscriptionID, publicationID, args: message.args, kwargs: message.kwargs);
+        var event = Event(subscriptionID, publicationID, args: message.args, kwargs: message.kwargs);
         result.add(MessageWithRecipient(event, recipientID));
       });
+
+      var acknowledge = message.options["acknowledge"] ?? false;
+      if (acknowledge) {
+        var published = Published(message.requestID, publicationID);
+        result.add(MessageWithRecipient(published, sessionID));
+      }
 
       return result;
     } else {
