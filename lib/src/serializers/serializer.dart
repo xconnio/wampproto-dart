@@ -95,6 +95,14 @@ Message toMessage(List<dynamic> message) {
       {
         return Error.parse(message);
       }
+    case Cancel.id:
+      {
+        return Cancel.parse(message);
+      }
+    case Interrupt.id:
+      {
+        return Interrupt.parse(message);
+      }
 
     default:
       {
