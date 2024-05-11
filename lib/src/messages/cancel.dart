@@ -8,11 +8,14 @@ class Cancel implements Message {
 
   static const String text = "CANCEL";
 
+  static const int minLength = 3;
+  static const int maxLength = 3;
+
   final int callRequestID;
   final Map<String, dynamic> options;
 
   static Cancel parse(final List<dynamic> message) {
-    sanityCheck(message, 3, 3, id, text);
+    sanityCheck(message, minLength, maxLength, id, text);
 
     int callRequestID = validateIntOrRaise(message[1], text, "call requestID");
 
