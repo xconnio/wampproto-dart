@@ -3,8 +3,8 @@ import "package:wampproto/messages.dart";
 import "package:wampproto/src/types.dart";
 
 class Broker {
-  final Map<String, Map<int, int>> _subscriptionsByTopic = {};
-  final Map<int, Map<int, String>> _subscriptionsBySession = {};
+  final Map<String, Subscription> _subscriptionsByTopic = {};
+  final Map<int, Map<int, Subscription>> _subscriptionsBySession = {};
   final _idGen = SessionScopeIDGenerator();
 
   void addSession(int sid) {
@@ -22,31 +22,41 @@ class Broker {
     }
 
     subscriptions.forEach((key, value) {
-      if (_subscriptionsByTopic.containsKey(value)) {
-        _subscriptionsByTopic[value]?.remove(key);
-        if (_subscriptionsByTopic[value]?.isEmpty ?? false) {
-          _subscriptionsByTopic.remove(value);
+      var subscription = _subscriptionsByTopic[value.topic];
+      if (subscription != null) {
+        if (subscription.subscribers.containsKey(sid)) {
+          subscription.subscribers.remove(sid);
+        }
+
+        if (subscription.subscribers.isEmpty) {
+          _subscriptionsByTopic.remove(subscription.topic);
         }
       }
     });
   }
 
   bool hasSubscriptions(String topic) {
-    return _subscriptionsByTopic[topic]?.isNotEmpty ?? false;
+    return _subscriptionsByTopic.containsKey(topic);
   }
 
-  List<MessageWithRecipient>? receiveMessage(int sessionID, Message message) {
+  MessageWithRecipient? receiveMessage(int sessionID, Message message) {
     if (message is Subscribe) {
       if (!_subscriptionsBySession.containsKey(sessionID)) {
         throw Exception("cannot subscribe, session $sessionID doesn't exist");
       }
 
-      int subscriptionID = _idGen.next();
-      _subscriptionsBySession.putIfAbsent(sessionID, () => {})[subscriptionID] = message.topic;
-      _subscriptionsByTopic.putIfAbsent(message.topic, () => {})[subscriptionID] = sessionID;
+      var subscription = _subscriptionsByTopic[message.topic];
+      if (subscription == null) {
+        subscription = Subscription(_idGen.next(), message.topic, {sessionID: sessionID});
+        _subscriptionsByTopic[message.topic] = subscription;
+      } else {
+        subscription.subscribers[sessionID] = sessionID;
+      }
 
-      Subscribed subscribed = Subscribed(message.requestID, subscriptionID);
-      return [MessageWithRecipient(subscribed, sessionID)];
+      _subscriptionsBySession.putIfAbsent(sessionID, () => {})[subscription.id] = subscription;
+
+      Subscribed subscribed = Subscribed(message.requestID, subscription.id);
+      return MessageWithRecipient(subscribed, sessionID);
     } else if (message is UnSubscribe) {
       if (!_subscriptionsBySession.containsKey(sessionID)) {
         throw Exception("cannot unsubscribe, session $sessionID doesn't exist");
@@ -57,40 +67,46 @@ class Broker {
         throw Exception("cannot unsubscribe, no subscription found");
       }
 
-      String? topic = subscriptions[message.subscriptionID];
-      if (topic == null) {
+      var subscription = subscriptions[message.subscriptionID];
+      if (subscription == null) {
         throw Exception("cannot unsubscribe, subscription $message.subscriptionID doesn't exist");
+      }
+      subscription.subscribers.remove(sessionID);
+      if (subscription.subscribers.isEmpty) {
+        _subscriptionsByTopic.remove(subscription.topic);
       }
 
       _subscriptionsBySession[sessionID]?.remove(message.subscriptionID);
-      _subscriptionsByTopic[topic]?.remove(message.subscriptionID);
 
       UnSubscribed unSubscribed = UnSubscribed(message.requestID);
-      return [MessageWithRecipient(unSubscribed, sessionID)];
-    } else if (message is Publish) {
-      if (!_subscriptionsBySession.containsKey(sessionID)) {
-        throw Exception("cannot publish, session $sessionID doesn't exist");
-      }
-
-      var subscriptions = _subscriptionsByTopic[message.uri] ?? {};
-
-      int publicationID = _idGen.next();
-      List<MessageWithRecipient> result = [];
-
-      subscriptions.forEach((subscriptionID, recipientID) {
-        var event = Event(subscriptionID, publicationID, args: message.args, kwargs: message.kwargs);
-        result.add(MessageWithRecipient(event, recipientID));
-      });
-
-      var acknowledge = message.options["acknowledge"] ?? false;
-      if (acknowledge) {
-        var published = Published(message.requestID, publicationID);
-        result.add(MessageWithRecipient(published, sessionID));
-      }
-
-      return result;
+      return MessageWithRecipient(unSubscribed, sessionID);
     } else {
       throw Exception("message type not supported");
     }
+  }
+
+  Publication receivePublish(int sessionId, Publish message) {
+    print(_subscriptionsBySession.containsKey(sessionId));
+    if (!_subscriptionsBySession.containsKey(sessionId)) {
+      throw Exception("Cannot publish, session $sessionId doesn't exist");
+    }
+
+    var result = Publication(recipients: []);
+    var publicationId = _idGen.next();
+
+    var subscription = _subscriptionsByTopic[message.uri];
+    if (subscription != null) {
+      var event = Event(subscription.id, publicationId, args: message.args, kwargs: message.kwargs);
+      result.event = event;
+      result.recipients!.addAll(subscription.subscribers.keys);
+    }
+
+    var ack = message.options["acknowledge"] ?? false;
+    if (ack) {
+      var published = Published(message.requestID, publicationId);
+      result.ack = MessageWithRecipient(published, sessionId);
+    }
+
+    return result;
   }
 }
