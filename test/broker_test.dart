@@ -30,7 +30,7 @@ void main() {
       expect(messagesWithRecipient.message, isA<Subscribed>());
 
       // check subscription by topic
-      var hasSubscription = broker.hasSubscriptions(topicName);
+      var hasSubscription = broker.hasSubscription(topicName);
       expect(hasSubscription, isTrue);
 
       // subscribe with invalid sessionID
@@ -44,7 +44,7 @@ void main() {
       expect(messagesWithRecipient.message, isA<UnSubscribed>());
 
       // check subscription by topic
-      var hasSubscription = broker.hasSubscriptions(topicName);
+      var hasSubscription = broker.hasSubscription(topicName);
       expect(hasSubscription, isFalse);
 
       // unsubscribe with invalid sessionID

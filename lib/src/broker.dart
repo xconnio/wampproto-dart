@@ -35,7 +35,7 @@ class Broker {
     });
   }
 
-  bool hasSubscriptions(String topic) {
+  bool hasSubscription(String topic) {
     return _subscriptionsByTopic.containsKey(topic);
   }
 
