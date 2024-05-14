@@ -1,7 +1,7 @@
 import "package:test/test.dart";
 
-import "package:wampproto/dealer.dart";
 import "package:wampproto/messages.dart";
+import "package:wampproto/src/dealer.dart";
 import "package:wampproto/src/uris.dart";
 
 void main() {
@@ -95,6 +95,45 @@ void main() {
     test("receive invalid message", () {
       final subscribe = Subscribe(1, procedureName);
       expect(() => dealer.receiveMessage(1, subscribe), throwsException);
+    });
+
+    test("test progressive call results", () {
+      var calleeId = 3;
+      var callerId = 4;
+      dealer
+        ..addSession(calleeId)
+        ..addSession(callerId);
+
+      var register = Register(1, "foo.bar");
+      dealer.receiveMessage(calleeId, register);
+
+      var call = Call(2, "foo.bar", options: {optionReceiveProgress: true});
+      var messageWithRecipient = dealer.receiveMessage(callerId, call);
+      expect(messageWithRecipient.recipient, calleeId);
+      var invMsg = messageWithRecipient.message as Invocation;
+      expect(invMsg.details[optionReceiveProgress], isTrue);
+
+      for (var i = 0; i < 10; i++) {
+        var yield = Yield(invMsg.requestID, options: {optionProgress: true});
+        var msgWithRecipient = dealer.receiveMessage(calleeId, yield);
+        expect(messageWithRecipient.recipient, calleeId);
+        var resultMsg = msgWithRecipient.message as Result;
+        expect(resultMsg.requestID, equals(call.requestID));
+        expect(resultMsg.details[optionProgress], isTrue);
+      }
+
+      var yield = Yield(invMsg.requestID);
+      var msg = dealer.receiveMessage(calleeId, yield);
+      expect(msg.recipient, callerId);
+      var resultMsg = msg.message as Result;
+      expect(resultMsg.requestID, equals(call.requestID));
+      expect(resultMsg.details[optionProgress] ?? false, isFalse);
+
+      var nonPendingYield = Yield(resultMsg.requestID);
+      expect(
+        () => dealer.receiveMessage(calleeId, nonPendingYield),
+        throwsA(predicate((e) => e is Exception && e.toString().contains("no pending calls for session"))),
+      );
     });
   });
 }

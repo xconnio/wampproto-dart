@@ -3,12 +3,16 @@ import "package:wampproto/messages.dart";
 import "package:wampproto/src/types.dart";
 import "package:wampproto/src/uris.dart";
 
+const optionReceiveProgress = "receive_progress";
+const optionProgress = "progress";
+
 class PendingInvocation {
-  PendingInvocation(this.requestID, this.callerID, this.calleeID);
+  PendingInvocation(this.requestID, this.callerID, this.calleeID, {required this.receiveProgress});
 
   final int requestID;
   final int callerID;
   final int calleeID;
+  final bool receiveProgress;
 }
 
 class Dealer {
@@ -62,13 +66,25 @@ class Dealer {
         break;
       }
 
+      var receiveProgress = message.options[optionReceiveProgress] ?? false;
       int requestID = _idGen.next();
-      _pendingCalls[requestID] = PendingInvocation(message.requestID, sessionID, calleeID);
+      _pendingCalls[requestID] = PendingInvocation(
+        message.requestID,
+        sessionID,
+        calleeID,
+        receiveProgress: receiveProgress,
+      );
 
-      var invocation = Invocation(requestID, registration.id, args: message.args, kwargs: message.kwargs);
+      var invocation = Invocation(
+        requestID,
+        registration.id,
+        args: message.args,
+        kwargs: message.kwargs,
+        details: receiveProgress ? {optionReceiveProgress: receiveProgress} : {},
+      );
       return MessageWithRecipient(invocation, calleeID);
     } else if (message is Yield) {
-      PendingInvocation? invocation = _pendingCalls.remove(message.requestID);
+      PendingInvocation? invocation = _pendingCalls[message.requestID];
 
       if (invocation == null) {
         throw Exception("no pending calls for session $sessionID");
@@ -78,7 +94,14 @@ class Dealer {
         throw Exception("received unexpected yield from session=$sessionID");
       }
 
-      var result = Result(invocation.requestID, args: message.args, kwargs: message.kwargs);
+      Map<String, dynamic> details = {};
+      var receiveProgress = message.options[optionProgress] ?? false;
+      if (receiveProgress && invocation.receiveProgress) {
+        details[optionProgress] = receiveProgress;
+      } else {
+        _pendingCalls.remove(message.requestID);
+      }
+      var result = Result(invocation.requestID, args: message.args, kwargs: message.kwargs, details: details);
       return MessageWithRecipient(result, invocation.callerID);
     } else if (message is Register) {
       if (!_registrationsBySession.containsKey(sessionID)) {
