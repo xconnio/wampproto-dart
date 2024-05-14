@@ -54,7 +54,10 @@ void main() {
 
       // call a non-existing procedure
       var invalidCallMessage = Call(1, "invalid");
-      expect(() => dealer.receiveMessage(1, invalidCallMessage), throwsException);
+      var errMsgWithRecipient = dealer.receiveMessage(1, invalidCallMessage);
+      expect(errMsgWithRecipient.message, isA<Error>());
+      var errMsg = errMsgWithRecipient.message as Error;
+      expect(errMsg.uri, errNoSuchProcedure);
 
       // process yield message correctly
       var invocation = messageWithRecipient.message as Invocation;

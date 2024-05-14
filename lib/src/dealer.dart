@@ -57,7 +57,8 @@ class Dealer {
     if (message is Call) {
       var registration = _registrationsByProcedure[message.uri];
       if (registration == null) {
-        throw Exception("procedure has no registration");
+        var error = Error(Register.id, message.requestID, errNoSuchProcedure);
+        return MessageWithRecipient(error, sessionID);
       }
 
       int calleeID = 0;
