@@ -8,11 +8,14 @@ class Authenticate implements Message {
 
   static const String text = "AUTHENTICATE";
 
+  static const int minLength = 3;
+  static const int maxLength = 3;
+
   final String signature;
   final Map<String, dynamic> extra;
 
   static Authenticate parse(final List<dynamic> message) {
-    sanityCheck(message, 3, 3, id, text);
+    sanityCheck(message, minLength, maxLength, id, text);
 
     String signature = validateStringOrRaise(message[1], text, "signature");
 

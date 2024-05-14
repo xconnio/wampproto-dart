@@ -8,11 +8,14 @@ class UnSubscribe implements Message {
 
   static const String text = "UNSUBSCRIBE";
 
+  static const int minLength = 3;
+  static const int maxLength = 3;
+
   final int requestID;
   final int subscriptionID;
 
   static UnSubscribe parse(final List<dynamic> message) {
-    sanityCheck(message, 3, 3, id, text);
+    sanityCheck(message, minLength, maxLength, id, text);
 
     int requestID = validateIntOrRaise(message[1], text, "request ID");
 

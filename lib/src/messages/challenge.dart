@@ -8,11 +8,14 @@ class Challenge implements Message {
 
   static const String text = "CHALLENGE";
 
+  static const int minLength = 3;
+  static const int maxLength = 3;
+
   final String authMethod;
   final Map<String, dynamic> extra;
 
   static Challenge parse(final List<dynamic> message) {
-    sanityCheck(message, 3, 3, id, text);
+    sanityCheck(message, minLength, maxLength, id, text);
 
     String authMethod = validateStringOrRaise(message[1], text, "authmethod");
 

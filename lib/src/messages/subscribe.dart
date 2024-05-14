@@ -8,12 +8,15 @@ class Subscribe implements Message {
 
   static const String text = "SUBSCRIBE";
 
+  static const int minLength = 4;
+  static const int maxLength = 4;
+
   final int requestID;
   final String topic;
   final Map<String, dynamic> options;
 
   static Subscribe parse(final List<dynamic> message) {
-    sanityCheck(message, 4, 4, id, text);
+    sanityCheck(message, minLength, maxLength, id, text);
 
     int requestID = validateIntOrRaise(message[1], text, "request ID");
 

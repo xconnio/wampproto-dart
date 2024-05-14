@@ -16,6 +16,9 @@ class Call implements Message {
 
   static const String text = "CALL";
 
+  static const int minLength = 4;
+  static const int maxLength = 6;
+
   final int requestID;
   final String uri;
   final List<dynamic> args;
@@ -23,7 +26,7 @@ class Call implements Message {
   final Map<String, dynamic> options;
 
   static Call parse(final List<dynamic> message) {
-    sanityCheck(message, 4, 6, id, text);
+    sanityCheck(message, minLength, maxLength, id, text);
 
     int requestID = validateIntOrRaise(message[1], text, "request ID");
 
@@ -32,12 +35,12 @@ class Call implements Message {
     String uri = validateStringOrRaise(message[3], text, "uri");
 
     List<dynamic>? args;
-    if (message.length > 4) {
+    if (message.length > minLength) {
       args = validateListOrRaise(message[4], text, "args");
     }
 
     Map<String, dynamic>? kwargs;
-    if (message.length > 5) {
+    if (message.length == maxLength) {
       kwargs = validateMapOrRaise(message[5], text, "kwargs");
     }
 

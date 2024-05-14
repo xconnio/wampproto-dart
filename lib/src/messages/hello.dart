@@ -8,6 +8,9 @@ class Hello implements Message {
   static const int id = 1;
   static const String text = "HELLO";
 
+  static const int minLength = 3;
+  static const int maxLength = 3;
+
   final String realm;
   final Map<String, dynamic> roles;
   final String authID;
@@ -15,7 +18,7 @@ class Hello implements Message {
   final Map<String, dynamic> authExtra;
 
   static Hello parse(final List<dynamic> message) {
-    sanityCheck(message, 3, 3, id, text);
+    sanityCheck(message, minLength, maxLength, id, text);
 
     String realm = validateStringOrRaise(message[1], text, "realm1");
 

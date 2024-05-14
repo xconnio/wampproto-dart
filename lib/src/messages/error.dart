@@ -17,6 +17,9 @@ class Error implements Message {
 
   static const String text = "ERROR";
 
+  static const int minLength = 5;
+  static const int maxLength = 7;
+
   final int msgType;
   final int requestID;
   final String uri;
@@ -25,7 +28,7 @@ class Error implements Message {
   final Map<String, dynamic> details;
 
   static Error parse(final List<dynamic> message) {
-    sanityCheck(message, 5, 7, id, text);
+    sanityCheck(message, minLength, maxLength, id, text);
 
     int msgType = validateIntOrRaise(message[1], text, "message type");
 
@@ -36,12 +39,12 @@ class Error implements Message {
     String uri = validateStringOrRaise(message[4], text, "uri");
 
     List<dynamic>? args;
-    if (message.length > 5) {
+    if (message.length > minLength) {
       args = validateListOrRaise(message[5], text, "args");
     }
 
     Map<String, dynamic>? kwargs;
-    if (message.length > 6) {
+    if (message.length == maxLength) {
       kwargs = validateMapOrRaise(message[6], text, "kwargs");
     }
 
