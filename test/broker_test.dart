@@ -2,6 +2,7 @@ import "package:test/test.dart";
 
 import "package:wampproto/broker.dart";
 import "package:wampproto/messages.dart";
+import "package:wampproto/src/types.dart";
 
 void main() {
   group("Broker", () {
@@ -25,12 +26,11 @@ void main() {
 
       var subscribe = Subscribe(1, topicName);
       var messagesWithRecipient = broker.receiveMessage(1, subscribe);
-      expect(messagesWithRecipient!.length, 1);
-      expect(messagesWithRecipient[0].recipient, 1);
-      expect(messagesWithRecipient[0].message, isA<Subscribed>());
+      expect(messagesWithRecipient!.recipient, 1);
+      expect(messagesWithRecipient.message, isA<Subscribed>());
 
       // check subscription by topic
-      var hasSubscription = broker.hasSubscriptions(topicName);
+      var hasSubscription = broker.hasSubscription(topicName);
       expect(hasSubscription, isTrue);
 
       // subscribe with invalid sessionID
@@ -40,12 +40,11 @@ void main() {
     test("unsubscribing from a topic", () {
       var unSubscribe = UnSubscribe(1, 1);
       var messagesWithRecipient = broker.receiveMessage(1, unSubscribe);
-      expect(messagesWithRecipient!.length, 1);
-      expect(messagesWithRecipient[0].recipient, 1);
-      expect(messagesWithRecipient[0].message, isA<UnSubscribed>());
+      expect(messagesWithRecipient!.recipient, 1);
+      expect(messagesWithRecipient.message, isA<UnSubscribed>());
 
       // check subscription by topic
-      var hasSubscription = broker.hasSubscriptions(topicName);
+      var hasSubscription = broker.hasSubscription(topicName);
       expect(hasSubscription, isFalse);
 
       // unsubscribe with invalid sessionID
@@ -64,27 +63,27 @@ void main() {
       broker.receiveMessage(1, subscribe);
 
       var publish = Publish(1, topicName, args: [1, 2, 3]);
-      var messagesWithRecipient = broker.receiveMessage(1, publish);
-      expect(messagesWithRecipient!.length, 1);
-      expect(messagesWithRecipient[0].recipient, 1);
-      expect(messagesWithRecipient[0].message, isA<Event>());
+      var messagesWithRecipient = broker.receivePublish(1, publish);
+      expect(messagesWithRecipient.recipients!.length, 1);
+      expect(messagesWithRecipient.event, isA<Event>());
+      expect(messagesWithRecipient.ack, null);
 
       // publish message to a topic with no subscribers
       var publishNoSubscriber = Publish(2, "topic1", args: [1, 2, 3]);
-      var messages = broker.receiveMessage(1, publishNoSubscriber);
-      expect(messages, []);
+      var messages = broker.receivePublish(1, publishNoSubscriber);
+      expect(messages.recipients!.length, 0);
+      expect(messages.event, null);
+      expect(messages.ack, null);
 
       // publish with acknowledge true
       var publishAcknowledge = Publish(2, topicName, args: [1, 2, 3], options: {"acknowledge": true});
-      var msgWithRecipient = broker.receiveMessage(1, publishAcknowledge);
-      expect(msgWithRecipient!.length, 2);
-      expect(msgWithRecipient[0].recipient, 1);
-      expect(msgWithRecipient[0].message, isA<Event>());
-      expect(msgWithRecipient[1].recipient, 1);
-      expect(msgWithRecipient[1].message, isA<Published>());
+      var msgWithRecipient = broker.receivePublish(1, publishAcknowledge);
+      expect(msgWithRecipient.recipients!.length, 1);
+      expect(msgWithRecipient.event, isA<Event>());
+      expect(msgWithRecipient.ack, isA<MessageWithRecipient>());
 
       // publish message to invalid sessionID
-      expect(() => broker.receiveMessage(3, publish), throwsException);
+      expect(() => broker.receivePublish(5, publish), throwsException);
     });
 
     test("receive invalid message", () {

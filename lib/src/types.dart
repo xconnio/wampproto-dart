@@ -1,4 +1,4 @@
-import "package:wampproto/src/messages/message.dart";
+import "package:wampproto/messages.dart";
 
 class SessionDetails {
   SessionDetails(this.sessionID, this.realm, this.authid, this.authrole);
@@ -23,4 +23,20 @@ class Registration {
   final String procedure;
   final Map<int, int> registrants;
   final String? invocationPolicy;
+}
+
+class Subscription {
+  Subscription(this.id, this.topic, this.subscribers);
+
+  final int id;
+  final String topic;
+  final Map<int, int> subscribers;
+}
+
+class Publication {
+  Publication({this.event, this.recipients, this.ack});
+
+  Event? event;
+  List<int>? recipients;
+  MessageWithRecipient? ack;
 }
