@@ -8,10 +8,13 @@ class UnRegistered implements Message {
 
   static const String text = "UNREGISTERED";
 
+  static const int minLength = 2;
+  static const int maxLength = 2;
+
   final int requestID;
 
   static UnRegistered parse(final List<dynamic> message) {
-    sanityCheck(message, 2, 2, id, text);
+    sanityCheck(message, minLength, maxLength, id, text);
 
     int requestID = validateIntOrRaise(message[1], text, "request ID");
 

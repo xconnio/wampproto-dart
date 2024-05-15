@@ -15,25 +15,28 @@ class Yield implements Message {
 
   static const String text = "YIELD";
 
+  static const int minLength = 3;
+  static const int maxLength = 5;
+
   final int requestID;
   final List<dynamic> args;
   final Map<String, dynamic> kwargs;
   final Map<String, dynamic> options;
 
   static Yield parse(final List<dynamic> message) {
-    sanityCheck(message, 3, 5, id, text);
+    sanityCheck(message, minLength, maxLength, id, text);
 
     int requestID = validateIntOrRaise(message[1], text, "request ID");
 
     Map<String, dynamic> options = validateMapOrRaise(message[2], text, "options");
 
     List<dynamic>? args;
-    if (message.length > 3) {
+    if (message.length > minLength) {
       args = validateListOrRaise(message[3], text, "args");
     }
 
     Map<String, dynamic>? kwargs;
-    if (message.length > 4) {
+    if (message.length == maxLength) {
       kwargs = validateMapOrRaise(message[4], text, "kwargs");
     }
 

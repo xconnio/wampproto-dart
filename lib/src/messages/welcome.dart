@@ -8,6 +8,9 @@ class Welcome implements Message {
   static const int id = 2;
   static const String text = "WELCOME";
 
+  static const int minLength = 3;
+  static const int maxLength = 3;
+
   final int sessionID;
   final Map<String, dynamic> roles;
   final String authID;
@@ -16,7 +19,7 @@ class Welcome implements Message {
   final Map<String, dynamic> authExtra;
 
   static Welcome parse(final List<dynamic> message) {
-    sanityCheck(message, 3, 3, id, text);
+    sanityCheck(message, minLength, maxLength, id, text);
 
     int sessionID = validateSessionIDOrRaise(message[1], text);
 

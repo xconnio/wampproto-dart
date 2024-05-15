@@ -16,6 +16,9 @@ class Event implements Message {
 
   static const String text = "EVENT";
 
+  static const int minLength = 4;
+  static const int maxLength = 6;
+
   final int subscriptionID;
   final int publicationID;
   final List<dynamic> args;
@@ -23,7 +26,7 @@ class Event implements Message {
   final Map<String, dynamic> details;
 
   static Event parse(final List<dynamic> message) {
-    sanityCheck(message, 4, 6, id, text);
+    sanityCheck(message, minLength, maxLength, id, text);
 
     int subscriptionID = validateIntOrRaise(message[1], text, "subscription ID");
 
@@ -32,12 +35,12 @@ class Event implements Message {
     Map<String, dynamic> details = validateMapOrRaise(message[3], text, "details");
 
     List<dynamic>? args;
-    if (message.length > 4) {
+    if (message.length > minLength) {
       args = validateListOrRaise(message[4], text, "args");
     }
 
     Map<String, dynamic>? kwargs;
-    if (message.length > 5) {
+    if (message.length == maxLength) {
       kwargs = validateMapOrRaise(message[5], text, "kwargs");
     }
 

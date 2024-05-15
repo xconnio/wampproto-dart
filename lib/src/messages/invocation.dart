@@ -16,6 +16,9 @@ class Invocation implements Message {
 
   static const String text = "INVOCATION";
 
+  static const int minLength = 4;
+  static const int maxLength = 6;
+
   final int requestID;
   final int registrationID;
   final List<dynamic> args;
@@ -23,7 +26,7 @@ class Invocation implements Message {
   final Map<String, dynamic> details;
 
   static Invocation parse(final List<dynamic> message) {
-    sanityCheck(message, 4, 6, id, text);
+    sanityCheck(message, minLength, maxLength, id, text);
 
     int requestID = validateIntOrRaise(message[1], text, "request ID");
 
@@ -32,12 +35,12 @@ class Invocation implements Message {
     Map<String, dynamic> details = validateMapOrRaise(message[3], text, "details");
 
     List<dynamic>? args;
-    if (message.length > 4) {
+    if (message.length > minLength) {
       args = validateListOrRaise(message[4], text, "args");
     }
 
     Map<String, dynamic>? kwargs;
-    if (message.length > 5) {
+    if (message.length == maxLength) {
       kwargs = validateMapOrRaise(message[5], text, "kwargs");
     }
 

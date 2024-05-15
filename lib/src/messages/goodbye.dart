@@ -8,11 +8,14 @@ class Goodbye implements Message {
 
   static const String text = "GOODBYE";
 
+  static const int minLength = 3;
+  static const int maxLength = 3;
+
   final Map<String, dynamic> details;
   final String reason;
 
   static Goodbye parse(final List<dynamic> message) {
-    sanityCheck(message, 3, 3, id, text);
+    sanityCheck(message, minLength, maxLength, id, text);
 
     Map<String, dynamic> details = validateMapOrRaise(message[1], text, "details");
 
