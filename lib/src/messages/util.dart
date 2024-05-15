@@ -44,11 +44,11 @@ Map<String, dynamic> validateMapOrRaise(Object? map, String errorMsg, String fie
     throw ArgumentError("$field cannot be null for $errorMsg");
   }
 
-  if (map is! Map<String, dynamic>) {
+  if (map is! Map) {
     throw ArgumentError("$field must be of type map for $errorMsg");
   }
 
-  return map;
+  return map.cast();
 }
 
 List<dynamic> validateListOrRaise(Object? list, String errorMsg, String field) {
@@ -68,8 +68,8 @@ Map<String, dynamic> validateRolesOrRaise(Object? roles, String errorMsg) {
     throw ArgumentError("roles cannot be null for $errorMsg");
   }
 
-  if (roles is! Map<String, dynamic>) {
-    throw ArgumentError("roles must be of type map for $errorMsg");
+  if (roles is! Map) {
+    throw ArgumentError("roles must be of type map for $errorMsg but was ${roles.runtimeType}");
   }
 
   for (final role in roles.keys) {
@@ -77,7 +77,8 @@ Map<String, dynamic> validateRolesOrRaise(Object? roles, String errorMsg) {
       throw ArgumentError("invalid role '$role' in 'roles' details for $errorMsg");
     }
   }
-  return roles;
+
+  return roles.cast();
 }
 
 int validateSessionIDOrRaise(Object? sessionID, String errorMsg, [String? field]) {
