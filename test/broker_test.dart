@@ -10,10 +10,11 @@ void main() {
     const topicName = "io.xconn.test";
 
     test("add and remove session", () {
-      broker.addSession(1);
+      var details = SessionDetails(1, "realm1", "authid", "authrole");
+      broker.addSession(details);
 
       // adding duplicate session should throw an exception
-      expect(() => broker.addSession(1), throwsException);
+      expect(() => broker.addSession(details), throwsException);
 
       broker.removeSession(1);
 
@@ -22,7 +23,8 @@ void main() {
     });
 
     test("subscribing to a topic", () {
-      broker.addSession(1);
+      var details = SessionDetails(1, "realm1", "authid", "authrole");
+      broker.addSession(details);
 
       var subscribe = Subscribe(1, topicName);
       var messagesWithRecipient = broker.receiveMessage(1, subscribe);

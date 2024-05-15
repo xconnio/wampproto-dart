@@ -5,14 +5,16 @@ import "package:wampproto/src/types.dart";
 class Broker {
   final Map<String, Subscription> _subscriptionsByTopic = {};
   final Map<int, Map<int, Subscription>> _subscriptionsBySession = {};
+  final Map<int, SessionDetails> _sessions = {};
   final _idGen = SessionScopeIDGenerator();
 
-  void addSession(int sid) {
-    if (_subscriptionsBySession.containsKey(sid)) {
+  void addSession(SessionDetails details) {
+    if (_subscriptionsBySession.containsKey(details.sessionID)) {
       throw Exception("cannot add session twice");
     }
 
-    _subscriptionsBySession[sid] = {};
+    _subscriptionsBySession[details.sessionID] = {};
+    _sessions[details.sessionID] = details;
   }
 
   void removeSession(int sid) {
@@ -33,6 +35,8 @@ class Broker {
         }
       }
     });
+
+    _sessions.remove(sid);
   }
 
   bool hasSubscription(String topic) {
