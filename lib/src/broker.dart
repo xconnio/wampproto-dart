@@ -90,7 +90,6 @@ class Broker {
   }
 
   Publication receivePublish(int sessionId, Publish message) {
-    print(_subscriptionsBySession.containsKey(sessionId));
     if (!_subscriptionsBySession.containsKey(sessionId)) {
       throw Exception("Cannot publish, session $sessionId doesn't exist");
     }
