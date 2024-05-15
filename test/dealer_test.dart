@@ -2,6 +2,7 @@ import "package:test/test.dart";
 
 import "package:wampproto/messages.dart";
 import "package:wampproto/src/dealer.dart";
+import "package:wampproto/src/types.dart";
 import "package:wampproto/src/uris.dart";
 
 void main() {
@@ -10,10 +11,11 @@ void main() {
     const procedureName = "io.xconn.test";
 
     test("add and remove session", () {
-      dealer.addSession(1);
+      var details = SessionDetails(1, "realm1", "authid", "authrole");
+      dealer.addSession(details);
 
       // adding duplicate session should throw an exception
-      expect(() => dealer.addSession(1), throwsException);
+      expect(() => dealer.addSession(details), throwsException);
 
       dealer.removeSession(1);
 
@@ -22,7 +24,8 @@ void main() {
     });
 
     test("register a procedure", () {
-      dealer.addSession(1);
+      var details = SessionDetails(1, "realm1", "authid", "authrole");
+      dealer.addSession(details);
 
       final registerMessage = Register(1, procedureName);
       final messageWithRecipient = dealer.receiveMessage(1, registerMessage);
@@ -104,8 +107,8 @@ void main() {
       var calleeId = 3;
       var callerId = 4;
       dealer
-        ..addSession(calleeId)
-        ..addSession(callerId);
+        ..addSession(SessionDetails(3, "realm1", "authid", "authrole"))
+        ..addSession(SessionDetails(4, "realm1", "authid", "authrole"));
 
       var register = Register(1, "foo.bar");
       dealer.receiveMessage(calleeId, register);
