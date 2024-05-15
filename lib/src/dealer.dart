@@ -19,15 +19,17 @@ class Dealer {
   final Map<String, Registration> _registrationsByProcedure = {};
   final Map<int, Map<int, Registration>> _registrationsBySession = {};
   final Map<int, PendingInvocation> _pendingCalls = {};
+  final Map<int, SessionDetails> _sessions = {};
 
   final _idGen = SessionScopeIDGenerator();
 
-  void addSession(int sid) {
-    if (_registrationsBySession.containsKey(sid)) {
+  void addSession(SessionDetails details) {
+    if (_registrationsBySession.containsKey(details.sessionID)) {
       throw Exception("cannot add session twice");
     }
 
-    _registrationsBySession[sid] = {};
+    _registrationsBySession[details.sessionID] = {};
+    _sessions[details.sessionID] = details;
   }
 
   void removeSession(int sid) {
@@ -47,6 +49,8 @@ class Dealer {
         }
       }
     });
+
+    _sessions.remove(sid);
   }
 
   bool hasRegistration(String procedure) {
