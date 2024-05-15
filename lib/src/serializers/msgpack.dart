@@ -16,7 +16,7 @@ class MsgPackSerializer implements Serializer {
   Message deserialize(Object message) {
     Uint8List msgBytes = message is Uint8List ? message : throw Exception("Message is not a Uint8List");
 
-    final decoded = msgpack_dart.deserialize(msgBytes, toJSON: true);
+    final decoded = msgpack_dart.deserialize(msgBytes);
     if (decoded is! List) {
       throw throw Exception("bad type");
     }
