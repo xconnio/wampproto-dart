@@ -1,9 +1,10 @@
 import "package:wampproto/messages.dart";
+import "package:wampproto/src/exception.dart";
 
 Message toMessage(List<dynamic> message) {
   var messageType = message[0];
   if (messageType is! int) {
-    throw "invalid message";
+    throw ProtocolError("invalid message");
   }
 
   switch (messageType) {
@@ -106,12 +107,13 @@ Message toMessage(List<dynamic> message) {
 
     default:
       {
-        throw "unknown message type";
+        throw ProtocolError("unknown message type");
       }
   }
 }
 
 abstract class Serializer {
   Message deserialize(final Object message /*String|List<int>*/);
+
   Object serialize(final Message message);
 }

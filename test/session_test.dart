@@ -160,30 +160,30 @@ void main() {
 
     // send invalid message
     final invalidMessage = Registered(11, 12);
-    expect(() => session.sendMessage(invalidMessage), throwsArgumentError);
+    expect(() => session.sendMessage(invalidMessage), throwsException);
 
     // receive invalid message
-    expect(() => session.receiveMessage(Register(100, "io.xconn.test")), throwsArgumentError);
+    expect(() => session.receiveMessage(Register(100, "io.xconn.test")), throwsException);
 
     // receive error for invalid message
-    expect(() => session.receiveMessage(Error(Registered.id, 100, errInvalidArgument)), throwsArgumentError);
+    expect(() => session.receiveMessage(Error(Registered.id, 100, errInvalidArgument)), throwsException);
 
     // receive error invalid Call id
-    expect(() => session.receiveMessage(Error(Call.id, 100, errInvalidArgument)), throwsArgumentError);
+    expect(() => session.receiveMessage(Error(Call.id, 100, errInvalidArgument)), throwsException);
 
     // receive error Register id
-    expect(() => session.receiveMessage(Error(Register.id, 100, errInvalidArgument)), throwsArgumentError);
+    expect(() => session.receiveMessage(Error(Register.id, 100, errInvalidArgument)), throwsException);
 
     // receive error invalid UnRegister id
-    expect(() => session.receiveMessage(Error(UnRegister.id, 100, errInvalidArgument)), throwsArgumentError);
+    expect(() => session.receiveMessage(Error(UnRegister.id, 100, errInvalidArgument)), throwsException);
 
     // receive error invalid Subscribe id
-    expect(() => session.receiveMessage(Error(Subscribe.id, 100, errInvalidArgument)), throwsArgumentError);
+    expect(() => session.receiveMessage(Error(Subscribe.id, 100, errInvalidArgument)), throwsException);
 
     // receive error invalid UnSubscribe id
-    expect(() => session.receiveMessage(Error(UnSubscribe.id, 100, errInvalidArgument)), throwsArgumentError);
+    expect(() => session.receiveMessage(Error(UnSubscribe.id, 100, errInvalidArgument)), throwsException);
 
     // receive error invalid Publish id
-    expect(() => session.receiveMessage(Error(Publish.id, 100, errInvalidArgument)), throwsArgumentError);
+    expect(() => session.receiveMessage(Error(Publish.id, 100, errInvalidArgument)), throwsException);
   });
 }

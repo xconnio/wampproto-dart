@@ -4,6 +4,7 @@ import "package:pinenacl/ed25519.dart";
 import "package:wampproto/auth.dart";
 import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
+import "package:wampproto/src/exception.dart";
 import "package:wampproto/src/types.dart";
 
 final routerRoles = <String, Map<String, Map>>{
@@ -54,7 +55,7 @@ class Acceptor {
 
   Message? receiveMessage(Message msg) {
     if (_state == stateWelcomeSent) {
-      throw ArgumentError("session was established, not expecting any new messages");
+      throw ProtocolError("session was established, not expecting any new messages");
     }
 
     if (msg is Hello) {
@@ -83,7 +84,7 @@ class Acceptor {
 
         case cryptosign:
           if (!msg.authExtra.containsKey("pubkey")) {
-            throw Exception("authextra must contain pubkey for $cryptosign");
+            throw ProtocolError("authextra must contain pubkey for $cryptosign");
           }
 
           String publicKey = msg.authExtra["pubkey"];
@@ -118,7 +119,7 @@ class Acceptor {
           return Challenge(method, {});
 
         default:
-          throw Exception("unknown method");
+          throw ProtocolError("unknown auth method '$method'");
       }
     } else if (msg is Authenticate) {
       if (_state != stateChallengeSent) {
@@ -161,7 +162,7 @@ class Acceptor {
 
       return null;
     } else {
-      throw Exception("unknown message");
+      throw ProtocolError("received ${msg.runtimeType} message and session is not established yet");
     }
 
     return null;
@@ -169,7 +170,7 @@ class Acceptor {
 
   SessionDetails getSessionDetails() {
     if (_sessionDetails == null) {
-      throw Exception("session is not setup yet");
+      throw SessionNotReady("session is not setup yet");
     }
 
     return _sessionDetails!;
