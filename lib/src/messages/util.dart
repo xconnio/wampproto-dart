@@ -1,4 +1,59 @@
+import "package:wampproto/src/messages/validation_spec.dart";
+
 final Set<String> allowedRoles = <String>{"callee", "caller", "publisher", "subscriber", "dealer", "broker"};
+
+const minID = 1;
+const maxID = 1 << 53;
+
+class Fields {
+  int? requestId;
+  String? uri;
+  List<dynamic>? args;
+  Map<String, dynamic>? kwargs;
+
+  int? sessionId;
+
+  String? realm;
+  String? authid;
+  String? authrole;
+  String? authmethod;
+  List<String>? authmethods;
+  Map<String, dynamic>? authextra;
+  Map<String, dynamic>? roles;
+
+  int? messageType;
+  String? signature;
+  String? reason;
+  String? topic;
+
+  Map<String, dynamic>? extra;
+  Map<String, dynamic>? options;
+  Map<String, dynamic>? details;
+
+  int? subscriptionId;
+  int? publicationId;
+
+  int? registrationId;
+}
+
+String invalidDataTypeError({
+  required String message,
+  required int index,
+  required Type expectedType,
+  required String actualType,
+}) {
+  return "$message: value at index $index must be of type '$expectedType' but was '$actualType'";
+}
+
+String invalidRangeError({
+  required String message,
+  required int index,
+  required String start,
+  required String end,
+  required String actual,
+}) {
+  return "$message: value at index $index must be between '$start' and '$end' but was '$actual'";
+}
 
 void sanityCheck(List<dynamic> wampMessage, int minLength, int maxLength, int expectedID, String name) {
   if (wampMessage.length < minLength) {
@@ -94,4 +149,148 @@ int validateSessionIDOrRaise(Object? sessionID, String errorMsg, [String? field]
   }
 
   return sessionID;
+}
+
+String? validateInt(Object value, int index, String message) {
+  if (value is! int) {
+    return invalidDataTypeError(
+      message: message,
+      index: index,
+      expectedType: int,
+      actualType: value.runtimeType.toString(),
+    );
+  }
+  return null;
+}
+
+String? validateID(Object value, int index, String message) {
+  var error = validateInt(value, index, message);
+  if (error != null) {
+    return error;
+  }
+  var intValue = value as int;
+  if (intValue < minID || intValue > maxID) {
+    return invalidRangeError(
+      message: message,
+      index: index,
+      start: minID.toString(),
+      end: maxID.toString(),
+      actual: intValue.toString(),
+    );
+  }
+  return null;
+}
+
+String? validateRequestID(List<dynamic> msg, int index, Fields fields, String message) {
+  var error = validateID(msg[index], index, message);
+  if (error != null) {
+    return error;
+  }
+  fields.requestId = msg[index];
+  return null;
+}
+
+String? validateMap(Object value, int index, String message) {
+  if (value is! Map) {
+    return invalidDataTypeError(
+      message: message,
+      index: index,
+      expectedType: Map,
+      actualType: value.runtimeType.toString(),
+    );
+  }
+  return null;
+}
+
+String? validateString(Object value, int index, String message) {
+  if (value is! String) {
+    return invalidDataTypeError(
+      message: message,
+      index: index,
+      expectedType: String,
+      actualType: value.runtimeType.toString(),
+    );
+  }
+  return null;
+}
+
+String? validateOptions(List<dynamic> msg, int index, Fields fields, String message) {
+  var error = validateMap(msg[index], index, message);
+  if (error != null) {
+    return error;
+  }
+  fields.options = msg[index];
+  return null;
+}
+
+String? validateURI(List<dynamic> msg, int index, Fields fields, String message) {
+  var error = validateString(msg[index], index, message);
+  if (error != null) {
+    return error;
+  }
+  fields.uri = msg[index];
+  return null;
+}
+
+String? validateList(Object value, int index, String message) {
+  if (value is! List) {
+    return invalidDataTypeError(
+      message: message,
+      index: index,
+      expectedType: List,
+      actualType: value.runtimeType.toString(),
+    );
+  }
+  return null;
+}
+
+String? validateArgs(List<dynamic> msg, int index, Fields fields, String message) {
+  if (msg.length > index) {
+    var error = validateList(msg[index], index, message);
+    if (error != null) {
+      return error;
+    }
+    fields.args = msg[index];
+  }
+  return null;
+}
+
+String? validateKwargs(List<dynamic> msg, int index, Fields fields, String message) {
+  if (msg.length > index) {
+    var error = validateMap(msg[index], index, message);
+    if (error != null) {
+      return error;
+    }
+    fields.kwargs = msg[index];
+  }
+  return null;
+}
+
+String? validateSignature(List<dynamic> msg, int index, Fields fields, String message) {
+  var error = validateString(msg[index], index, message);
+  if (error != null) {
+    return error;
+  }
+
+  fields.signature = msg[index];
+  return null;
+}
+
+Fields validateMessage(List<dynamic> msg, int type, String name, ValidationSpec valSpec) {
+  sanityCheck(msg, valSpec.minLength, valSpec.maxLength, type, name);
+
+  List<String> errors = [];
+  Fields f = Fields();
+  valSpec.spec.forEach((idx, func) {
+    var error = func(msg, idx, f, valSpec.message);
+    if (error != null) {
+      errors.add(error);
+    }
+  });
+
+  if (errors.isNotEmpty) {
+    throw ArgumentError(errors.join(", "));
+  }
+
+  return f;
 }
