@@ -1,5 +1,6 @@
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
+import "package:wampproto/src/messages/validation_spec.dart";
 
 class Result implements Message {
   Result(
@@ -15,8 +16,17 @@ class Result implements Message {
 
   static const String text = "RESULT";
 
-  static const int minLength = 3;
-  static const int maxLength = 5;
+  static final _validationSpec = ValidationSpec(
+    minLength: 3,
+    maxLength: 5,
+    message: text,
+    spec: {
+      1: validateRequestID,
+      2: validateDetails,
+      3: validateArgs,
+      4: validateKwargs,
+    },
+  );
 
   final int requestID;
   final List<dynamic> args;
@@ -24,23 +34,9 @@ class Result implements Message {
   final Map<String, dynamic> details;
 
   static Result parse(final List<dynamic> message) {
-    sanityCheck(message, minLength, maxLength, id, text);
+    var fields = validateMessage(message, id, text, _validationSpec);
 
-    int requestID = validateIntOrRaise(message[1], text, "request ID");
-
-    Map<String, dynamic> details = validateMapOrRaise(message[2], text, "details");
-
-    List<dynamic>? args;
-    if (message.length > minLength) {
-      args = validateListOrRaise(message[3], text, "args");
-    }
-
-    Map<String, dynamic>? kwargs;
-    if (message.length == maxLength) {
-      kwargs = validateMapOrRaise(message[4], text, "kwargs");
-    }
-
-    return Result(requestID, args: args, kwargs: kwargs, details: details);
+    return Result(fields.requestID!, args: fields.args, kwargs: fields.kwargs, details: fields.details);
   }
 
   @override

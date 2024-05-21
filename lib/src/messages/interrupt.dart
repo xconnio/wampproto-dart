@@ -1,5 +1,6 @@
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
+import "package:wampproto/src/messages/validation_spec.dart";
 
 class Interrupt implements Message {
   Interrupt(this.invRequestID, this.options);
@@ -8,20 +9,23 @@ class Interrupt implements Message {
 
   static const String text = "INTERRUPT";
 
-  static const int minLength = 3;
-  static const int maxLength = 3;
+  static final _validationSpec = ValidationSpec(
+    minLength: 3,
+    maxLength: 3,
+    message: text,
+    spec: {
+      1: validateRequestID,
+      2: validateOptions,
+    },
+  );
 
   final int invRequestID;
   final Map<String, dynamic> options;
 
   static Interrupt parse(final List<dynamic> message) {
-    sanityCheck(message, minLength, maxLength, id, text);
+    var fields = validateMessage(message, id, text, _validationSpec);
 
-    int invRequestID = validateIntOrRaise(message[1], text, "invocation requestID");
-
-    Map<String, dynamic> options = validateMapOrRaise(message[2], text, "options");
-
-    return Interrupt(invRequestID, options);
+    return Interrupt(fields.requestID!, fields.options!);
   }
 
   @override

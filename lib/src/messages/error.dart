@@ -1,5 +1,6 @@
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
+import "package:wampproto/src/messages/validation_spec.dart";
 
 class Error implements Message {
   Error(
@@ -17,8 +18,19 @@ class Error implements Message {
 
   static const String text = "ERROR";
 
-  static const int minLength = 5;
-  static const int maxLength = 7;
+  static final _validationSpec = ValidationSpec(
+    minLength: 5,
+    maxLength: 7,
+    message: text,
+    spec: {
+      1: validateMessageType,
+      2: validateRequestID,
+      3: validateDetails,
+      4: validateURI,
+      5: validateArgs,
+      6: validateKwargs,
+    },
+  );
 
   final int msgType;
   final int requestID;
@@ -28,27 +40,16 @@ class Error implements Message {
   final Map<String, dynamic> details;
 
   static Error parse(final List<dynamic> message) {
-    sanityCheck(message, minLength, maxLength, id, text);
+    var fields = validateMessage(message, id, text, _validationSpec);
 
-    int msgType = validateIntOrRaise(message[1], text, "message type");
-
-    int requestID = validateIntOrRaise(message[2], text, "request ID");
-
-    Map<String, dynamic> details = validateMapOrRaise(message[3], text, "details");
-
-    String uri = validateStringOrRaise(message[4], text, "uri");
-
-    List<dynamic>? args;
-    if (message.length > minLength) {
-      args = validateListOrRaise(message[5], text, "args");
-    }
-
-    Map<String, dynamic>? kwargs;
-    if (message.length == maxLength) {
-      kwargs = validateMapOrRaise(message[6], text, "kwargs");
-    }
-
-    return Error(msgType, requestID, uri, args: args, kwargs: kwargs, details: details);
+    return Error(
+      fields.messageType!,
+      fields.requestID!,
+      fields.uri!,
+      args: fields.args,
+      kwargs: fields.kwargs,
+      details: fields.details,
+    );
   }
 
   @override

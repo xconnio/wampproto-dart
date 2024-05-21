@@ -1,5 +1,6 @@
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
+import "package:wampproto/src/messages/validation_spec.dart";
 
 class Challenge implements Message {
   Challenge(this.authMethod, this.extra);
@@ -8,20 +9,23 @@ class Challenge implements Message {
 
   static const String text = "CHALLENGE";
 
-  static const int minLength = 3;
-  static const int maxLength = 3;
+  static final _validationSpec = ValidationSpec(
+    minLength: 3,
+    maxLength: 3,
+    message: text,
+    spec: {
+      1: validateAuthMethod,
+      2: validateExtra,
+    },
+  );
 
   final String authMethod;
   final Map<String, dynamic> extra;
 
   static Challenge parse(final List<dynamic> message) {
-    sanityCheck(message, minLength, maxLength, id, text);
+    var fields = validateMessage(message, id, text, _validationSpec);
 
-    String authMethod = validateStringOrRaise(message[1], text, "authmethod");
-
-    Map<String, dynamic> extra = validateMapOrRaise(message[2], text, "extra");
-
-    return Challenge(authMethod, extra);
+    return Challenge(fields.authmethod!, fields.extra!);
   }
 
   @override

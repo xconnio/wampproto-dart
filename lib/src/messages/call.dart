@@ -39,7 +39,7 @@ class Call implements Message {
   static Call parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Call(fields.requestId!, fields.uri!, args: fields.args, kwargs: fields.kwargs, options: fields.options);
+    return Call(fields.requestID!, fields.uri!, args: fields.args, kwargs: fields.kwargs, options: fields.options);
   }
 
   @override

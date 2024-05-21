@@ -1,5 +1,6 @@
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
+import "package:wampproto/src/messages/validation_spec.dart";
 
 class Subscribed implements Message {
   Subscribed(this.requestID, this.subscriptionID);
@@ -8,20 +9,23 @@ class Subscribed implements Message {
 
   static const String text = "SUBSCRIBED";
 
-  static const int minLength = 3;
-  static const int maxLength = 3;
+  static final _validationSpec = ValidationSpec(
+    minLength: 3,
+    maxLength: 3,
+    message: text,
+    spec: {
+      1: validateRequestID,
+      2: validateSubscriptionID,
+    },
+  );
 
   final int requestID;
   final int subscriptionID;
 
   static Subscribed parse(final List<dynamic> message) {
-    sanityCheck(message, minLength, maxLength, id, text);
+    var fields = validateMessage(message, id, text, _validationSpec);
 
-    int requestID = validateIntOrRaise(message[1], text, "request ID");
-
-    int subscriptionID = validateIntOrRaise(message[2], text, "subscription ID");
-
-    return Subscribed(requestID, subscriptionID);
+    return Subscribed(fields.requestID!, fields.subscriptionID!);
   }
 
   @override

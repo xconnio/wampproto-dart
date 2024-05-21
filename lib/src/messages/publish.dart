@@ -1,5 +1,6 @@
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
+import "package:wampproto/src/messages/validation_spec.dart";
 
 class Publish implements Message {
   Publish(
@@ -16,8 +17,18 @@ class Publish implements Message {
 
   static const String text = "PUBLISH";
 
-  static const int minLength = 4;
-  static const int maxLength = 6;
+  static final _validationSpec = ValidationSpec(
+    minLength: 4,
+    maxLength: 6,
+    message: text,
+    spec: {
+      1: validateRequestID,
+      2: validateURI,
+      3: validateOptions,
+      4: validateArgs,
+      5: validateKwargs,
+    },
+  );
 
   final int requestID;
   final String uri;
@@ -26,25 +37,9 @@ class Publish implements Message {
   final Map<String, dynamic> options;
 
   static Publish parse(final List<dynamic> message) {
-    sanityCheck(message, minLength, maxLength, id, text);
+    var fields = validateMessage(message, id, text, _validationSpec);
 
-    int requestID = validateIntOrRaise(message[1], text, "request ID");
-
-    Map<String, dynamic> options = validateMapOrRaise(message[2], text, "options");
-
-    String uri = validateStringOrRaise(message[3], text, "uri");
-
-    List<dynamic>? args;
-    if (message.length > minLength) {
-      args = validateListOrRaise(message[4], text, "args");
-    }
-
-    Map<String, dynamic>? kwargs;
-    if (message.length == maxLength) {
-      kwargs = validateMapOrRaise(message[5], text, "kwargs");
-    }
-
-    return Publish(requestID, uri, args: args, kwargs: kwargs, options: options);
+    return Publish(fields.requestID!, fields.uri!, args: fields.args, kwargs: fields.kwargs, options: fields.options);
   }
 
   @override

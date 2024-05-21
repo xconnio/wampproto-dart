@@ -1,5 +1,6 @@
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
+import "package:wampproto/src/messages/validation_spec.dart";
 
 class UnRegistered implements Message {
   UnRegistered(this.requestID);
@@ -8,17 +9,20 @@ class UnRegistered implements Message {
 
   static const String text = "UNREGISTERED";
 
-  static const int minLength = 2;
-  static const int maxLength = 2;
-
+  static final _validationSpec = ValidationSpec(
+    minLength: 2,
+    maxLength: 2,
+    message: text,
+    spec: {
+      1: validateRequestID,
+    },
+  );
   final int requestID;
 
   static UnRegistered parse(final List<dynamic> message) {
-    sanityCheck(message, minLength, maxLength, id, text);
+    var fields = validateMessage(message, id, text, _validationSpec);
 
-    int requestID = validateIntOrRaise(message[1], text, "request ID");
-
-    return UnRegistered(requestID);
+    return UnRegistered(fields.requestID!);
   }
 
   @override

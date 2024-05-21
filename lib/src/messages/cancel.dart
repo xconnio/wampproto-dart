@@ -1,5 +1,6 @@
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
+import "package:wampproto/src/messages/validation_spec.dart";
 
 class Cancel implements Message {
   Cancel(this.callRequestID, this.options);
@@ -8,20 +9,23 @@ class Cancel implements Message {
 
   static const String text = "CANCEL";
 
-  static const int minLength = 3;
-  static const int maxLength = 3;
+  static final _validationSpec = ValidationSpec(
+    minLength: 3,
+    maxLength: 3,
+    message: text,
+    spec: {
+      1: validateRequestID,
+      2: validateOptions,
+    },
+  );
 
   final int callRequestID;
   final Map<String, dynamic> options;
 
   static Cancel parse(final List<dynamic> message) {
-    sanityCheck(message, minLength, maxLength, id, text);
+    var fields = validateMessage(message, id, text, _validationSpec);
 
-    int callRequestID = validateIntOrRaise(message[1], text, "call requestID");
-
-    Map<String, dynamic> options = validateMapOrRaise(message[2], text, "options");
-
-    return Cancel(callRequestID, options);
+    return Cancel(fields.requestID!, fields.options!);
   }
 
   @override
