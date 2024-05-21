@@ -83,18 +83,6 @@ String validateStringOrRaise(Object? string, String errorMsg, String field) {
   return string;
 }
 
-int validateIntOrRaise(Object? value, String errorMsg, String field) {
-  if (value == null) {
-    throw ProtocolError("$field cannot be null for $errorMsg");
-  }
-
-  if (value is! int) {
-    throw ProtocolError("$field must be of type int for $errorMsg");
-  }
-
-  return value;
-}
-
 Map<String, dynamic> validateMapOrRaise(Object? map, String errorMsg, String field) {
   if (map == null) {
     throw ProtocolError("$field cannot be null for $errorMsg");
@@ -135,21 +123,6 @@ Map<String, dynamic> validateRolesOrRaise(Object? roles, String errorMsg) {
   }
 
   return roles.cast();
-}
-
-int validateSessionIDOrRaise(Object? sessionID, String errorMsg, [String? field]) {
-  if (sessionID is! int) {
-    throw ProtocolError("session ID must be an integer for $errorMsg");
-  }
-
-  // session id values lie between 1 and 2^53
-  // https://wamp-proto.org/wamp_bp_latest_ietf.html#section-2.1.2-3
-  if (sessionID < 0 || sessionID > 9007199254740992) {
-    field ??= "Session ID";
-    throw ProtocolError("invalid $field value for $errorMsg");
-  }
-
-  return sessionID;
 }
 
 String? validateInt(Object value, int index, String message) {
