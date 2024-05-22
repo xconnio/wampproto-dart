@@ -361,7 +361,7 @@ Fields validateMessage(List<dynamic> msg, int type, String name, ValidationSpec 
   });
 
   if (errors.isNotEmpty) {
-    throw ArgumentError(errors.join(", "));
+    throw ProtocolError(errors.join(", "));
   }
 
   return f;
