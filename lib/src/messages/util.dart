@@ -7,12 +7,12 @@ const minID = 1;
 const maxID = 1 << 53;
 
 class Fields {
-  int? requestId;
+  int? requestID;
   String? uri;
   List<dynamic>? args;
   Map<String, dynamic>? kwargs;
 
-  int? sessionId;
+  int? sessionID;
 
   String? realm;
   String? authid;
@@ -31,10 +31,10 @@ class Fields {
   Map<String, dynamic>? options;
   Map<String, dynamic>? details;
 
-  int? subscriptionId;
-  int? publicationId;
+  int? subscriptionID;
+  int? publicationID;
 
-  int? registrationId;
+  int? registrationID;
 }
 
 String invalidDataTypeError({
@@ -83,18 +83,6 @@ String validateStringOrRaise(Object? string, String errorMsg, String field) {
   return string;
 }
 
-int validateIntOrRaise(Object? value, String errorMsg, String field) {
-  if (value == null) {
-    throw ProtocolError("$field cannot be null for $errorMsg");
-  }
-
-  if (value is! int) {
-    throw ProtocolError("$field must be of type int for $errorMsg");
-  }
-
-  return value;
-}
-
 Map<String, dynamic> validateMapOrRaise(Object? map, String errorMsg, String field) {
   if (map == null) {
     throw ProtocolError("$field cannot be null for $errorMsg");
@@ -137,21 +125,6 @@ Map<String, dynamic> validateRolesOrRaise(Object? roles, String errorMsg) {
   return roles.cast();
 }
 
-int validateSessionIDOrRaise(Object? sessionID, String errorMsg, [String? field]) {
-  if (sessionID is! int) {
-    throw ProtocolError("session ID must be an integer for $errorMsg");
-  }
-
-  // session id values lie between 1 and 2^53
-  // https://wamp-proto.org/wamp_bp_latest_ietf.html#section-2.1.2-3
-  if (sessionID < 0 || sessionID > 9007199254740992) {
-    field ??= "Session ID";
-    throw ProtocolError("invalid $field value for $errorMsg");
-  }
-
-  return sessionID;
-}
-
 String? validateInt(Object value, int index, String message) {
   if (value is! int) {
     return invalidDataTypeError(
@@ -187,7 +160,7 @@ String? validateRequestID(List<dynamic> msg, int index, Fields fields, String me
   if (error != null) {
     return error;
   }
-  fields.requestId = msg[index];
+  fields.requestID = msg[index];
   return null;
 }
 
@@ -220,7 +193,7 @@ String? validateOptions(List<dynamic> msg, int index, Fields fields, String mess
   if (error != null) {
     return error;
   }
-  fields.options = msg[index];
+  fields.options = (msg[index] as Map).cast();
   return null;
 }
 
@@ -262,7 +235,7 @@ String? validateKwargs(List<dynamic> msg, int index, Fields fields, String messa
     if (error != null) {
       return error;
     }
-    fields.kwargs = msg[index];
+    fields.kwargs = (msg[index] as Map).cast();
   }
   return null;
 }
@@ -272,8 +245,106 @@ String? validateSignature(List<dynamic> msg, int index, Fields fields, String me
   if (error != null) {
     return error;
   }
-
   fields.signature = msg[index];
+  return null;
+}
+
+String? validateExtra(List<dynamic> msg, int index, Fields fields, String message) {
+  var error = validateMap(msg[index], index, message);
+  if (error != null) {
+    return error;
+  }
+  fields.extra = (msg[index] as Map).cast();
+  return null;
+}
+
+String? validateDetails(List<dynamic> msg, int index, Fields fields, String message) {
+  var error = validateMap(msg[index], index, message);
+  if (error != null) {
+    return error;
+  }
+  fields.details = (msg[index] as Map).cast();
+  return null;
+}
+
+String? validateReason(List<dynamic> msg, int index, Fields fields, String message) {
+  var error = validateString(msg[index], index, message);
+  if (error != null) {
+    return error;
+  }
+  fields.reason = msg[index];
+  return null;
+}
+
+String? validateAuthMethod(List<dynamic> msg, int index, Fields fields, String message) {
+  var error = validateString(msg[index], index, message);
+  if (error != null) {
+    return error;
+  }
+  fields.authmethod = msg[index];
+  return null;
+}
+
+String? validateMessageType(List<dynamic> msg, int index, Fields fields, String message) {
+  var error = validateInt(msg[index], index, message);
+  if (error != null) {
+    return error;
+  }
+  fields.messageType = msg[index];
+  return null;
+}
+
+String? validateSubscriptionID(List<dynamic> msg, int index, Fields fields, String message) {
+  var error = validateID(msg[index], index, message);
+  if (error != null) {
+    return error;
+  }
+  fields.subscriptionID = msg[index];
+  return null;
+}
+
+String? validatePublicationID(List<dynamic> msg, int index, Fields fields, String message) {
+  var error = validateID(msg[index], index, message);
+  if (error != null) {
+    return error;
+  }
+  fields.publicationID = msg[index];
+  return null;
+}
+
+String? validateRegistrationID(List<dynamic> msg, int index, Fields fields, String message) {
+  var error = validateID(msg[index], index, message);
+  if (error != null) {
+    return error;
+  }
+  fields.registrationID = msg[index];
+  return null;
+}
+
+String? validateTopic(List<dynamic> msg, int index, Fields fields, String message) {
+  var error = validateString(msg[index], index, message);
+  if (error != null) {
+    return error;
+  }
+  fields.topic = msg[index];
+  return null;
+}
+
+String? validateSessionID(List<dynamic> msg, int index, Fields fields, String message) {
+  var error = validateID(msg[index], index, message);
+  if (error != null) {
+    return error;
+  }
+  fields.sessionID = msg[index];
+  return null;
+}
+
+String? validateRealm(List<dynamic> msg, int index, Fields fields, String message) {
+  var error = validateString(msg[index], index, message);
+  if (error != null) {
+    return error;
+  }
+  fields.realm = msg[index];
   return null;
 }
 
@@ -290,7 +361,7 @@ Fields validateMessage(List<dynamic> msg, int type, String name, ValidationSpec 
   });
 
   if (errors.isNotEmpty) {
-    throw ArgumentError(errors.join(", "));
+    throw ProtocolError(errors.join(", "));
   }
 
   return f;

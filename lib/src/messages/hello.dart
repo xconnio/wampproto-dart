@@ -1,5 +1,6 @@
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
+import "package:wampproto/src/messages/validation_spec.dart";
 
 class Hello implements Message {
   Hello(this.realm, this.roles, this.authID, this.authMethods, {Map<String, dynamic>? authExtra})
@@ -8,8 +9,15 @@ class Hello implements Message {
   static const int id = 1;
   static const String text = "HELLO";
 
-  static const int minLength = 3;
-  static const int maxLength = 3;
+  static final _validationSpec = ValidationSpec(
+    minLength: 3,
+    maxLength: 3,
+    message: text,
+    spec: {
+      1: validateRealm,
+      2: validateDetails,
+    },
+  );
 
   final String realm;
   final Map<String, dynamic> roles;
@@ -18,30 +26,26 @@ class Hello implements Message {
   final Map<String, dynamic> authExtra;
 
   static Hello parse(final List<dynamic> message) {
-    sanityCheck(message, minLength, maxLength, id, text);
+    var fields = validateMessage(message, id, text, _validationSpec);
 
-    String realm = validateStringOrRaise(message[1], text, "realm1");
-
-    Map<String, dynamic> details = validateMapOrRaise(message[2], text, "details");
-
-    Map<String, dynamic> roles = validateRolesOrRaise(details["roles"], text);
+    Map<String, dynamic> roles = validateRolesOrRaise(fields.details!["roles"], text);
 
     String authid = "";
-    if (details["authid"] != null) {
-      authid = validateStringOrRaise(details["authid"], text, "authid");
+    if (fields.details!["authid"] != null) {
+      authid = validateStringOrRaise(fields.details!["authid"], text, "authid");
     }
 
     List<dynamic> authMethods = [];
-    if (details["authmethods"] != null) {
-      authMethods = validateListOrRaise(details["authmethods"], text, "authmethods");
+    if (fields.details!["authmethods"] != null) {
+      authMethods = validateListOrRaise(fields.details!["authmethods"], text, "authmethods");
     }
 
     Map<String, dynamic>? authExtra;
-    if (details["authextra"] != null) {
-      authExtra = validateMapOrRaise(details["authextra"], text, "authextra");
+    if (fields.details!["authextra"] != null) {
+      authExtra = validateMapOrRaise(fields.details!["authextra"], text, "authextra");
     }
 
-    return Hello(realm, roles, authid, authMethods, authExtra: authExtra);
+    return Hello(fields.realm!, roles, authid, authMethods, authExtra: authExtra);
   }
 
   @override

@@ -1,5 +1,6 @@
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
+import "package:wampproto/src/messages/validation_spec.dart";
 
 class Invocation implements Message {
   Invocation(
@@ -16,8 +17,18 @@ class Invocation implements Message {
 
   static const String text = "INVOCATION";
 
-  static const int minLength = 4;
-  static const int maxLength = 6;
+  static final _validationSpec = ValidationSpec(
+    minLength: 4,
+    maxLength: 6,
+    message: text,
+    spec: {
+      1: validateRequestID,
+      2: validateRegistrationID,
+      3: validateDetails,
+      4: validateArgs,
+      5: validateKwargs,
+    },
+  );
 
   final int requestID;
   final int registrationID;
@@ -26,25 +37,15 @@ class Invocation implements Message {
   final Map<String, dynamic> details;
 
   static Invocation parse(final List<dynamic> message) {
-    sanityCheck(message, minLength, maxLength, id, text);
+    var fields = validateMessage(message, id, text, _validationSpec);
 
-    int requestID = validateIntOrRaise(message[1], text, "request ID");
-
-    int registrationID = validateIntOrRaise(message[2], text, "registration ID");
-
-    Map<String, dynamic> details = validateMapOrRaise(message[3], text, "details");
-
-    List<dynamic>? args;
-    if (message.length > minLength) {
-      args = validateListOrRaise(message[4], text, "args");
-    }
-
-    Map<String, dynamic>? kwargs;
-    if (message.length == maxLength) {
-      kwargs = validateMapOrRaise(message[5], text, "kwargs");
-    }
-
-    return Invocation(requestID, registrationID, args: args, kwargs: kwargs, details: details);
+    return Invocation(
+      fields.requestID!,
+      fields.registrationID!,
+      args: fields.args,
+      kwargs: fields.kwargs,
+      details: fields.details,
+    );
   }
 
   @override

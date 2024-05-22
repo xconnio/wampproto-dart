@@ -1,5 +1,6 @@
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
+import "package:wampproto/src/messages/validation_spec.dart";
 
 class UnSubscribe implements Message {
   UnSubscribe(this.requestID, this.subscriptionID);
@@ -8,20 +9,23 @@ class UnSubscribe implements Message {
 
   static const String text = "UNSUBSCRIBE";
 
-  static const int minLength = 3;
-  static const int maxLength = 3;
+  static final _validationSpec = ValidationSpec(
+    minLength: 3,
+    maxLength: 3,
+    message: text,
+    spec: {
+      1: validateRequestID,
+      2: validateSubscriptionID,
+    },
+  );
 
   final int requestID;
   final int subscriptionID;
 
   static UnSubscribe parse(final List<dynamic> message) {
-    sanityCheck(message, minLength, maxLength, id, text);
+    var fields = validateMessage(message, id, text, _validationSpec);
 
-    int requestID = validateIntOrRaise(message[1], text, "request ID");
-
-    int subscriptionID = validateIntOrRaise(message[2], text, "subscription ID");
-
-    return UnSubscribe(requestID, subscriptionID);
+    return UnSubscribe(fields.requestID!, fields.subscriptionID!);
   }
 
   @override

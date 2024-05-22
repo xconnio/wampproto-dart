@@ -1,5 +1,6 @@
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
+import "package:wampproto/src/messages/validation_spec.dart";
 
 class Welcome implements Message {
   Welcome(this.sessionID, this.roles, this.authID, this.authRole, this.authMethod, {Map<String, dynamic>? authExtra})
@@ -8,8 +9,15 @@ class Welcome implements Message {
   static const int id = 2;
   static const String text = "WELCOME";
 
-  static const int minLength = 3;
-  static const int maxLength = 3;
+  static final _validationSpec = ValidationSpec(
+    minLength: 3,
+    maxLength: 3,
+    message: text,
+    spec: {
+      1: validateSessionID,
+      2: validateDetails,
+    },
+  );
 
   final int sessionID;
   final Map<String, dynamic> roles;
@@ -19,26 +27,22 @@ class Welcome implements Message {
   final Map<String, dynamic> authExtra;
 
   static Welcome parse(final List<dynamic> message) {
-    sanityCheck(message, minLength, maxLength, id, text);
+    var fields = validateMessage(message, id, text, _validationSpec);
 
-    int sessionID = validateSessionIDOrRaise(message[1], text);
+    Map<String, dynamic> roles = validateRolesOrRaise(fields.details!["roles"], text);
 
-    Map<String, dynamic> details = validateMapOrRaise(message[2], text, "details");
+    String authid = validateStringOrRaise(fields.details!["authid"], text, "authid");
 
-    Map<String, dynamic> roles = validateRolesOrRaise(details["roles"], text);
+    String authRole = validateStringOrRaise(fields.details!["authrole"], text, "authrole");
 
-    String authid = validateStringOrRaise(details["authid"], text, "authid");
-
-    String authRole = validateStringOrRaise(details["authrole"], text, "authrole");
-
-    String authMethod = validateStringOrRaise(details["authmethod"], text, "authmethod");
+    String authMethod = validateStringOrRaise(fields.details!["authmethod"], text, "authmethod");
 
     Map<String, dynamic>? authExtra;
-    if (details["authextra"] != null) {
-      authExtra = validateMapOrRaise(details["authextra"], text, "authextra");
+    if (fields.details!["authextra"] != null) {
+      authExtra = validateMapOrRaise(fields.details!["authextra"], text, "authextra");
     }
 
-    return Welcome(sessionID, roles, authid, authRole, authMethod, authExtra: authExtra);
+    return Welcome(fields.sessionID!, roles, authid, authRole, authMethod, authExtra: authExtra);
   }
 
   @override

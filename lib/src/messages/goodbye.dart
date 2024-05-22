@@ -1,5 +1,6 @@
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
+import "package:wampproto/src/messages/validation_spec.dart";
 
 class Goodbye implements Message {
   Goodbye(this.details, this.reason);
@@ -8,20 +9,23 @@ class Goodbye implements Message {
 
   static const String text = "GOODBYE";
 
-  static const int minLength = 3;
-  static const int maxLength = 3;
+  static final _validationSpec = ValidationSpec(
+    minLength: 3,
+    maxLength: 3,
+    message: text,
+    spec: {
+      1: validateDetails,
+      2: validateReason,
+    },
+  );
 
   final Map<String, dynamic> details;
   final String reason;
 
   static Goodbye parse(final List<dynamic> message) {
-    sanityCheck(message, minLength, maxLength, id, text);
+    var fields = validateMessage(message, id, text, _validationSpec);
 
-    Map<String, dynamic> details = validateMapOrRaise(message[1], text, "details");
-
-    String reason = validateStringOrRaise(message[2], text, "reason");
-
-    return Goodbye(details, reason);
+    return Goodbye(fields.details!, fields.reason!);
   }
 
   @override

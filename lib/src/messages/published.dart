@@ -1,5 +1,6 @@
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
+import "package:wampproto/src/messages/validation_spec.dart";
 
 class Published implements Message {
   Published(this.requestID, this.publicationID);
@@ -8,20 +9,23 @@ class Published implements Message {
 
   static const String text = "PUBLISHED";
 
-  static const int minLength = 3;
-  static const int maxLength = 3;
+  static final _validationSpec = ValidationSpec(
+    minLength: 3,
+    maxLength: 3,
+    message: text,
+    spec: {
+      1: validateRequestID,
+      2: validatePublicationID,
+    },
+  );
 
   final int requestID;
   final int publicationID;
 
   static Published parse(final List<dynamic> message) {
-    sanityCheck(message, minLength, maxLength, id, text);
+    var fields = validateMessage(message, id, text, _validationSpec);
 
-    int requestID = validateIntOrRaise(message[1], text, "request ID");
-
-    int publicationID = validateIntOrRaise(message[2], text, "publication ID");
-
-    return Published(requestID, publicationID);
+    return Published(fields.requestID!, fields.publicationID!);
   }
 
   @override

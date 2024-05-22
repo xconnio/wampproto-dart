@@ -1,5 +1,6 @@
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
+import "package:wampproto/src/messages/validation_spec.dart";
 
 class Registered implements Message {
   Registered(this.requestID, this.registrationID);
@@ -8,20 +9,23 @@ class Registered implements Message {
 
   static const String text = "REGISTERED";
 
-  static const int minLength = 3;
-  static const int maxLength = 3;
+  static final _validationSpec = ValidationSpec(
+    minLength: 3,
+    maxLength: 3,
+    message: text,
+    spec: {
+      1: validateRequestID,
+      2: validateRegistrationID,
+    },
+  );
 
   final int requestID;
   final int registrationID;
 
   static Registered parse(final List<dynamic> message) {
-    sanityCheck(message, minLength, maxLength, id, text);
+    var fields = validateMessage(message, id, text, _validationSpec);
 
-    int requestID = validateIntOrRaise(message[1], text, "request ID");
-
-    int registrationID = validateIntOrRaise(message[2], text, "registration ID");
-
-    return Registered(requestID, registrationID);
+    return Registered(fields.requestID!, fields.registrationID!);
   }
 
   @override

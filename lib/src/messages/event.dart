@@ -1,5 +1,6 @@
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
+import "package:wampproto/src/messages/validation_spec.dart";
 
 class Event implements Message {
   Event(
@@ -16,8 +17,18 @@ class Event implements Message {
 
   static const String text = "EVENT";
 
-  static const int minLength = 4;
-  static const int maxLength = 6;
+  static final _validationSpec = ValidationSpec(
+    minLength: 4,
+    maxLength: 6,
+    message: text,
+    spec: {
+      1: validateSubscriptionID,
+      2: validatePublicationID,
+      3: validateDetails,
+      4: validateArgs,
+      5: validateKwargs,
+    },
+  );
 
   final int subscriptionID;
   final int publicationID;
@@ -26,25 +37,15 @@ class Event implements Message {
   final Map<String, dynamic> details;
 
   static Event parse(final List<dynamic> message) {
-    sanityCheck(message, minLength, maxLength, id, text);
+    var fields = validateMessage(message, id, text, _validationSpec);
 
-    int subscriptionID = validateIntOrRaise(message[1], text, "subscription ID");
-
-    int publicationID = validateIntOrRaise(message[2], text, "publication ID");
-
-    Map<String, dynamic> details = validateMapOrRaise(message[3], text, "details");
-
-    List<dynamic>? args;
-    if (message.length > minLength) {
-      args = validateListOrRaise(message[4], text, "args");
-    }
-
-    Map<String, dynamic>? kwargs;
-    if (message.length == maxLength) {
-      kwargs = validateMapOrRaise(message[5], text, "kwargs");
-    }
-
-    return Event(subscriptionID, publicationID, args: args, kwargs: kwargs, details: details);
+    return Event(
+      fields.subscriptionID!,
+      fields.publicationID!,
+      args: fields.args,
+      kwargs: fields.kwargs,
+      details: fields.details,
+    );
   }
 
   @override
