@@ -1,6 +1,7 @@
 import "package:wampproto/auth.dart";
 import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
+import "package:wampproto/src/exception.dart";
 import "package:wampproto/src/types.dart";
 
 final clientRoles = <String, Map<String, Map>>{
@@ -52,7 +53,7 @@ class Joiner {
   Message? receiveMessage(Message msg) {
     if (msg is Welcome) {
       if (_state != stateHelloSent && _state != stateAuthenticateSent) {
-        throw Exception("received welcome when it was not expected");
+        throw ProtocolError("received welcome when it was not expected");
       }
 
       _sessionDetails = SessionDetails(msg.sessionID, _realm, msg.authID, msg.authRole);
@@ -60,7 +61,7 @@ class Joiner {
       return null;
     } else if (msg is Challenge) {
       if (_state != stateHelloSent) {
-        throw Exception("received challenge when it was not expected");
+        throw ProtocolError("received challenge when it was not expected");
       }
 
       final authenticate = _authenticator.authenticate(msg);
@@ -69,13 +70,13 @@ class Joiner {
     } else if (msg is Abort) {
       throw Exception("received abort");
     } else {
-      throw Exception("received unknown message");
+      throw ProtocolError("received ${msg.runtimeType} message and session is not established yet");
     }
   }
 
   SessionDetails getSessionDetails() {
     if (_sessionDetails == null) {
-      throw Exception("session is not set up yet");
+      throw SessionNotReady("session is not set up yet");
     }
 
     return _sessionDetails!;

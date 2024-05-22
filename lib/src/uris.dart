@@ -3,6 +3,7 @@ const String errNoMatchingAuthMethod = "wamp.error.no_matching_auth_method";
 const String errNoSuchRealm = "wamp.error.no_such_realm";
 const String errNoSuchRole = "wamp.error.no_such_role";
 const String errNoSuchPrincipal = "wamp.error.no_such_principal";
+const String errNoSuchSession = "wamp.error.no_such_session";
 const String errAuthenticationDenied = "wamp.error.authentication_denied";
 const String errAuthenticationFailed = "wamp.error.authentication_failed";
 const String errAuthenticationRequired = "wamp.error.authentication_required";

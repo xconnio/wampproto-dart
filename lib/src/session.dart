@@ -1,5 +1,6 @@
 import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
+import "package:wampproto/src/exception.dart";
 
 class WAMPSession {
   WAMPSession({Serializer? serializer}) : _serializer = serializer ?? JSONSerializer();
@@ -62,7 +63,7 @@ class WAMPSession {
       _invocationRequests.remove(msg.requestID);
       return data;
     }
-    throw ArgumentError("unknown message ${msg.runtimeType}");
+    throw ProtocolError("unknown message ${msg.runtimeType}");
   }
 
   Message receive(Object data) {
@@ -73,14 +74,14 @@ class WAMPSession {
   Message receiveMessage(Message msg) {
     if (msg is Result) {
       if (!_callRequests.containsKey(msg.requestID)) {
-        throw ArgumentError("received RESULT for invalid request_id");
+        throw ProtocolError("received RESULT for invalid request ID ${msg.requestID}");
       }
       _callRequests.remove(msg.requestID);
 
       return msg;
     } else if (msg is Registered) {
       if (!_registerRequests.containsKey(msg.requestID)) {
-        throw ArgumentError("received REGISTERED for invalid request_id");
+        throw ProtocolError("received REGISTERED for invalid request ID ${msg.requestID}");
       }
       _registerRequests.remove(msg.requestID);
 
@@ -89,33 +90,33 @@ class WAMPSession {
       return msg;
     } else if (msg is UnRegistered) {
       if (!_unregisterRequests.containsKey(msg.requestID)) {
-        throw ArgumentError("received UNREGISTERED for invalid request_id");
+        throw ProtocolError("received UNREGISTERED for invalid request ID ${msg.requestID}");
       }
       final registrationID = _unregisterRequests.remove(msg.requestID);
 
       if (!_registrations.containsKey(registrationID)) {
-        throw ArgumentError("received UNREGISTERED for invalid registration_id");
+        throw ProtocolError("received UNREGISTERED for invalid registration ID $registrationID");
       }
       _registrations.remove(registrationID);
 
       return msg;
     } else if (msg is Invocation) {
       if (!_registrations.containsKey(msg.registrationID)) {
-        throw ArgumentError("received INVOCATION for invalid registration_id");
+        throw ProtocolError("received INVOCATION for invalid registration ID ${msg.registrationID}");
       }
       _invocationRequests[msg.requestID] = msg.requestID;
 
       return msg;
     } else if (msg is Published) {
       if (!_publishRequests.containsKey(msg.requestID)) {
-        throw ArgumentError("received PUBLISHED for invalid request_id");
+        throw ProtocolError("received PUBLISHED for invalid request ID ${msg.requestID}");
       }
       _publishRequests.remove(msg.requestID);
 
       return msg;
     } else if (msg is Subscribed) {
       if (!_subscribeRequests.containsKey(msg.requestID)) {
-        throw ArgumentError("received SUBSCRIBED for invalid request_id");
+        throw ProtocolError("received SUBSCRIBED for invalid request ID ${msg.requestID}");
       }
       _subscribeRequests.remove(msg.requestID);
 
@@ -124,19 +125,19 @@ class WAMPSession {
       return msg;
     } else if (msg is UnSubscribed) {
       if (!_unsubscribeRequests.containsKey(msg.requestID)) {
-        throw ArgumentError("received UNSUBSCRIBED for invalid request_id");
+        throw ProtocolError("received UNSUBSCRIBED for invalid request ID ${msg.requestID}");
       }
       final subscriptionID = _unsubscribeRequests.remove(msg.requestID);
 
       if (!_subscriptions.containsKey(subscriptionID)) {
-        throw ArgumentError("received UNSUBSCRIBED for invalid subscription_id");
+        throw ProtocolError("received UNSUBSCRIBED for invalid subscription ID $subscriptionID");
       }
       _subscriptions.remove(subscriptionID);
 
       return msg;
     } else if (msg is Event) {
       if (!_subscriptions.containsKey(msg.subscriptionID)) {
-        throw ArgumentError("received EVENT for invalid subscription_id");
+        throw ProtocolError("received EVENT for invalid subscription ID ${msg.subscriptionID}");
       }
 
       return msg;
@@ -144,7 +145,7 @@ class WAMPSession {
       switch (msg.msgType) {
         case Call.id:
           if (!_callRequests.containsKey(msg.requestID)) {
-            throw ArgumentError("received ERROR for invalid call request");
+            throw ProtocolError("received ERROR for invalid call request");
           }
 
           _callRequests.remove(msg.requestID);
@@ -152,7 +153,7 @@ class WAMPSession {
 
         case Register.id:
           if (!_registerRequests.containsKey(msg.requestID)) {
-            throw ArgumentError("received ERROR for invalid register request");
+            throw ProtocolError("received ERROR for invalid register request");
           }
 
           _registerRequests.remove(msg.requestID);
@@ -160,7 +161,7 @@ class WAMPSession {
 
         case UnRegister.id:
           if (!_unregisterRequests.containsKey(msg.requestID)) {
-            throw ArgumentError("received ERROR for invalid unregister request");
+            throw ProtocolError("received ERROR for invalid unregister request");
           }
 
           _unregisterRequests.remove(msg.requestID);
@@ -168,7 +169,7 @@ class WAMPSession {
 
         case Subscribe.id:
           if (!_subscribeRequests.containsKey(msg.requestID)) {
-            throw ArgumentError("received ERROR for invalid subscribe request");
+            throw ProtocolError("received ERROR for invalid subscribe request");
           }
 
           _subscribeRequests.remove(msg.requestID);
@@ -176,7 +177,7 @@ class WAMPSession {
 
         case UnSubscribe.id:
           if (!_unsubscribeRequests.containsKey(msg.requestID)) {
-            throw ArgumentError("received ERROR for invalid unsubscribe request");
+            throw ProtocolError("received ERROR for invalid unsubscribe request");
           }
 
           _unsubscribeRequests.remove(msg.requestID);
@@ -184,19 +185,19 @@ class WAMPSession {
 
         case Publish.id:
           if (!_publishRequests.containsKey(msg.requestID)) {
-            throw ArgumentError("received ERROR for invalid publish request");
+            throw ProtocolError("received ERROR for invalid publish request");
           }
 
           _publishRequests.remove(msg.requestID);
           break;
 
         default:
-          throw ArgumentError("unknown error message type ${msg.runtimeType}");
+          throw ProtocolError("unknown error message type ${msg.runtimeType}");
       }
 
       return msg;
     }
 
-    throw ArgumentError("unknown message ${msg.runtimeType}");
+    throw ProtocolError("unknown message ${msg.runtimeType}");
   }
 }
