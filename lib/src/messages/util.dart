@@ -1,3 +1,4 @@
+import "package:wampproto/messages.dart";
 import "package:wampproto/src/exception.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
@@ -71,58 +72,22 @@ void sanityCheck(List<dynamic> wampMessage, int minLength, int maxLength, int ex
   }
 }
 
-String validateStringOrRaise(Object? string, String errorMsg, String field) {
-  if (string == null) {
-    throw ProtocolError("$field cannot be null for $errorMsg");
-  }
-
-  if (string is! String) {
-    throw ProtocolError("$field must be of type string for $errorMsg");
-  }
-
-  return string;
-}
-
-Map<String, dynamic> validateMapOrRaise(Object? map, String errorMsg, String field) {
-  if (map == null) {
-    throw ProtocolError("$field cannot be null for $errorMsg");
-  }
-
-  if (map is! Map) {
-    throw ProtocolError("$field must be of type map for $errorMsg");
-  }
-
-  return map.cast();
-}
-
-List<dynamic> validateListOrRaise(Object? list, String errorMsg, String field) {
-  if (list == null) {
-    throw ProtocolError("$field cannot be null for $errorMsg");
-  }
-
-  if (list is! List<dynamic>) {
-    throw ProtocolError("$field must be of type list for $errorMsg");
-  }
-
-  return list;
-}
-
-Map<String, dynamic> validateRolesOrRaise(Object? roles, String errorMsg) {
+String? validateRoles(Object? roles, String message) {
   if (roles == null) {
-    throw ProtocolError("roles cannot be null for $errorMsg");
+    return "roles cannot be null for $message";
   }
 
   if (roles is! Map) {
-    throw ProtocolError("roles must be of type map for $errorMsg but was ${roles.runtimeType}");
+    return "roles must be of type map for $message but was ${roles.runtimeType} for $message";
   }
 
   for (final role in roles.keys) {
     if (!allowedRoles.contains(role)) {
-      throw ProtocolError("invalid role '$role' in 'roles' details for $errorMsg");
+      return "invalid role '$role' in 'roles' details for $message";
     }
   }
 
-  return roles.cast();
+  return null;
 }
 
 String? validateInt(Object value, int index, String message) {
@@ -264,6 +229,48 @@ String? validateDetails(List<dynamic> msg, int index, Fields fields, String mess
     return error;
   }
   fields.details = (msg[index] as Map).cast();
+
+  if (message == Hello.text || message == Welcome.text) {
+    if (message == Hello.text) {
+      fields.details!["authmethods"] ??= [];
+      var errAuthMethods = validateList(fields.details!["authmethods"], 1, "authmethods");
+      if (errAuthMethods != null) {
+        return "authmethods must be of type list in details for $message";
+      }
+
+      fields.details!["authid"] ??= "";
+    } else {
+      var errAuthRole = validateString(fields.details!["authrole"], 1, message);
+      if (errAuthRole != null) {
+        return "authrole must be of type string in details for $message";
+      }
+
+      var errAuthMethod = validateString(fields.details!["authmethod"], 1, message);
+      if (errAuthMethod != null) {
+        return "authmethod must be of type string in details for $message";
+      }
+    }
+
+    var err = validateRoles(fields.details!["roles"], message);
+    if (err != null) {
+      return err;
+    }
+    fields.details!["roles"] = (fields.details!["roles"] as Map).cast<String, dynamic>();
+
+    var errAuthID = validateString(fields.details!["authid"], 1, "authid");
+    if (errAuthID != null) {
+      return "authid must be of type string in details for $message";
+    }
+
+    if (fields.details!["authextra"] != null) {
+      var err = validateMap(fields.details!["authextra"], 1, "authextra");
+      if (err != null) {
+        return "authextra must be of type Map in details for $message";
+      }
+      fields.details!["authextra"] = (fields.details!["authextra"] as Map).cast<String, dynamic>();
+    }
+  }
+
   return null;
 }
 

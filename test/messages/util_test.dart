@@ -1,4 +1,5 @@
 import "package:test/test.dart";
+import "package:wampproto/messages.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
@@ -14,38 +15,6 @@ void main() {
 
       // invalid message ID
       expect(() => sanityCheck([2, 2, 3], 2, 4, 1, "TestMessage"), throwsException);
-    });
-
-    test("validateStringOrRaise", () {
-      // valid string
-      expect(validateStringOrRaise("test", "errorMsg", "field"), "test");
-
-      // invalid string
-      expect(() => validateStringOrRaise(123, "errorMsg", "field"), throwsException);
-    });
-
-    test("validateMapOrRaise", () {
-      // valid map
-      expect(validateMapOrRaise({"key": "value"}, "errorMsg", "field"), {"key": "value"});
-
-      // invalid map
-      expect(() => validateMapOrRaise(123, "errorMsg", "field"), throwsException);
-    });
-
-    test("validateListOrRaise", () {
-      // valid list
-      expect(validateListOrRaise([1, 2, 3], "errorMsg", "field"), [1, 2, 3]);
-
-      // invalid list
-      expect(() => validateListOrRaise(123, "errorMsg", "field"), throwsException);
-    });
-
-    test("validateRolesOrRaise", () {
-      // valid roles
-      expect(validateRolesOrRaise({"caller": {}, "callee": {}}, "errorMsg"), {"caller": {}, "callee": {}});
-
-      // invalid roles
-      expect(() => validateRolesOrRaise({"invalidRole": {}}, "errorMsg"), throwsException);
     });
 
     test("validateInt", () {
@@ -127,6 +96,28 @@ void main() {
 
       // invalid list
       expect(validateList("string", 0, "message"), isNotNull);
+    });
+
+    test("validateRoles", () {
+      // valid roles
+      var result = validateRoles({"callee": {}, "caller": {}}, "TestMessage");
+      expect(result, isNull);
+
+      // empty roles
+      result = validateRoles({}, "TestMessage");
+      expect(result, isNull);
+
+      // null roles
+      result = validateRoles(null, "TestMessage");
+      expect(result, "roles cannot be null for TestMessage");
+
+      // invalid roles type
+      result = validateRoles("not_a_map", "TestMessage");
+      expect(result, "roles must be of type map for TestMessage but was String for TestMessage");
+
+      // invalid roles
+      result = validateRoles({"invalid_role": {}}, "TestMessage");
+      expect(result, "invalid role 'invalid_role' in 'roles' details for TestMessage");
     });
 
     test("validateArgs", () {
@@ -220,6 +211,80 @@ void main() {
 
       // invalid details
       expect(validateDetails(["string"], 0, fields, "message"), isNotNull);
+
+      // valid Hello message
+      var validHelloDetails = [
+        {
+          "authid": "user123",
+          "authmethods": ["password"],
+          "roles": {},
+          "authextra": {},
+        },
+      ];
+      expect(validateDetails(validHelloDetails, 0, fields, Hello.text), isNull);
+
+      // valid Welcome details
+      var validWelcomeDetails = [
+        {"authid": "user123", "authrole": "admin", "authmethod": "password", "roles": {}, "authextra": {}},
+      ];
+      expect(validateDetails(validWelcomeDetails, 0, fields, Welcome.text), isNull);
+
+      // authmethods is not a list for Hello message
+      var invalidAuthMethods = [
+        {"authid": "user123", "authmethods": "not_a_list", "roles": {}, "authextra": {}},
+      ];
+      var invalidAuthMethodsResult = validateDetails(invalidAuthMethods, 0, fields, Hello.text);
+      expect(invalidAuthMethodsResult, "authmethods must be of type list in details for ${Hello.text}");
+
+      // authrole is not a string for Welcome message
+      var invalidAuthRole = [
+        {"authid": "user123", "authrole": 123, "authmethod": "password", "roles": {}, "authextra": {}},
+      ];
+      var invalidAuthRoleResult = validateDetails(invalidAuthRole, 0, fields, Welcome.text);
+      expect(invalidAuthRoleResult, "authrole must be of type string in details for ${Welcome.text}");
+
+      // authmethod is not a string for Welcome message
+      var invalidAuthMethod = [
+        {"authid": "user123", "authrole": "admin", "authmethod": 123, "roles": {}, "authextra": {}},
+      ];
+      var invalidAuthMethodResult = validateDetails(invalidAuthMethod, 0, fields, Welcome.text);
+      expect(invalidAuthMethodResult, "authmethod must be of type string in details for ${Welcome.text}");
+
+      // invalid roles
+      var invalidRoles = [
+        {
+          "authid": "user123",
+          "authmethods": ["password"],
+          "roles": "not_a_map",
+          "authextra": {},
+        },
+      ];
+      var invalidRolesResult = validateDetails(invalidRoles, 0, fields, Hello.text);
+      expect(invalidRolesResult, "roles must be of type map for HELLO but was String for ${Hello.text}");
+
+      // invalid authextra
+      var invalidAuthExtra = [
+        {
+          "authid": "user123",
+          "authmethods": ["password"],
+          "roles": {},
+          "authextra": "not_a_map",
+        },
+      ];
+      var invalidAuthExtraResult = validateDetails(invalidAuthExtra, 0, fields, Hello.text);
+      expect(invalidAuthExtraResult, "authextra must be of type Map in details for ${Hello.text}");
+
+      // invalid authid
+      var invalidAuthID = [
+        {
+          "authid": 123,
+          "authmethods": ["password"],
+          "roles": {},
+          "authextra": {},
+        },
+      ];
+      var resultInvalidAuthID = validateDetails(invalidAuthID, 0, fields, Hello.text);
+      expect(resultInvalidAuthID, "authid must be of type string in details for ${Hello.text}");
     });
 
     test("validateReason", () {

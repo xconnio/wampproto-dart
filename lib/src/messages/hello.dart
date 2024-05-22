@@ -28,24 +28,13 @@ class Hello implements Message {
   static Hello parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    Map<String, dynamic> roles = validateRolesOrRaise(fields.details!["roles"], text);
-
-    String authid = "";
-    if (fields.details!["authid"] != null) {
-      authid = validateStringOrRaise(fields.details!["authid"], text, "authid");
-    }
-
-    List<dynamic> authMethods = [];
-    if (fields.details!["authmethods"] != null) {
-      authMethods = validateListOrRaise(fields.details!["authmethods"], text, "authmethods");
-    }
-
-    Map<String, dynamic>? authExtra;
-    if (fields.details!["authextra"] != null) {
-      authExtra = validateMapOrRaise(fields.details!["authextra"], text, "authextra");
-    }
-
-    return Hello(fields.realm!, roles, authid, authMethods, authExtra: authExtra);
+    return Hello(
+      fields.realm!,
+      fields.details!["roles"],
+      fields.details!["authid"],
+      fields.details!["authmethods"],
+      authExtra: fields.details!["authextra"],
+    );
   }
 
   @override

@@ -29,20 +29,14 @@ class Welcome implements Message {
   static Welcome parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    Map<String, dynamic> roles = validateRolesOrRaise(fields.details!["roles"], text);
-
-    String authid = validateStringOrRaise(fields.details!["authid"], text, "authid");
-
-    String authRole = validateStringOrRaise(fields.details!["authrole"], text, "authrole");
-
-    String authMethod = validateStringOrRaise(fields.details!["authmethod"], text, "authmethod");
-
-    Map<String, dynamic>? authExtra;
-    if (fields.details!["authextra"] != null) {
-      authExtra = validateMapOrRaise(fields.details!["authextra"], text, "authextra");
-    }
-
-    return Welcome(fields.sessionID!, roles, authid, authRole, authMethod, authExtra: authExtra);
+    return Welcome(
+      fields.sessionID!,
+      fields.details!["roles"],
+      fields.details!["authid"],
+      fields.details!["authrole"],
+      fields.details!["authmethod"],
+      authExtra: fields.details!["authextra"],
+    );
   }
 
   @override
