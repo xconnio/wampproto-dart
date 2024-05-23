@@ -9,7 +9,7 @@ void main() {
   const craChallenge = '{"nonce":"cdcb3b12d56e12825be99f38f55ba43f","authprovider":"provider","authid":"foo",'
       '"authrole":"admin","authmethod":"wampcra","session":123,"timestamp":"2024-05-07T09:25:13.307Z"}';
   const key = "6d9b906ad60d1f4dd796dbadcc2e2252310565ccdc6fe10b289df5684faf2a46";
-  const validSignature = "0c854bddb2acfc48bdd5e4326339f352a12c893997ef4e413445ee89c3698bc0";
+  const validSignature = "DIVL3bKs/Ei91eQyYznzUqEsiTmX705BNEXuicNpi8A=";
 
   group("WAMPCRAAuthenticator", () {
     test("authenticate", () {
