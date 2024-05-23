@@ -7,7 +7,7 @@ import "package:wampproto/messages.dart";
 import "package:wampproto/src/auth/auth.dart";
 
 class WAMPCRAAuthenticator extends IClientAuthenticator {
-  WAMPCRAAuthenticator(this._secret, String authID, Map<String, dynamic> authExtra) : super(type, authID, authExtra);
+  WAMPCRAAuthenticator(this._secret, String authID, [Map<String, dynamic>? authExtra]) : super(type, authID, authExtra);
 
   static const String type = "wampcra";
   final String _secret;
@@ -47,7 +47,8 @@ String generateWampCRAChallenge(int sessionID, String authID, String authRole, S
 }
 
 String signWampCRAChallenge(String challenge, Uint8List key) {
-  return Hmac(sha256, key).convert(utf8.encode(challenge)).toString();
+  final signature = Hmac(sha256, key).convert(utf8.encode(challenge));
+  return base64.encode(signature.bytes);
 }
 
 bool verifyWampCRASignature(String signature, String challenge, Uint8List key) {
