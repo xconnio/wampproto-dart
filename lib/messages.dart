@@ -6,7 +6,7 @@ export "src/messages/challenge.dart" show Challenge;
 export "src/messages/error.dart" show Error;
 export "src/messages/event.dart" show Event;
 export "src/messages/goodbye.dart" show Goodbye;
-export "src/messages/hello.dart" show Hello;
+export "src/messages/hello.dart" show Hello, IHelloFields;
 export "src/messages/interrupt.dart" show Interrupt;
 export "src/messages/invocation.dart" show Invocation;
 export "src/messages/message.dart" show Message;

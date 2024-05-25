@@ -2,6 +2,7 @@ import "package:wampproto/auth.dart";
 import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
 import "package:wampproto/src/exception.dart";
+import "package:wampproto/src/messages/hello.dart";
 import "package:wampproto/src/types.dart";
 
 final clientRoles = <String, Map<String, Map>>{
@@ -29,11 +30,13 @@ class Joiner {
 
   Object sendHello() {
     final hello = Hello(
-      _realm,
-      clientRoles,
-      _authenticator.authID,
-      [_authenticator.authMethod],
-      authExtra: _authenticator.authExtra,
+      HelloFields(
+        _realm,
+        clientRoles,
+        _authenticator.authID,
+        [_authenticator.authMethod],
+        authExtra: _authenticator.authExtra,
+      ),
     );
 
     _state = stateHelloSent;
