@@ -2,16 +2,53 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
-class Event implements Message {
-  Event(
-    this.subscriptionID,
-    this.publicationID, {
+abstract class IEventFields {
+  int get subscriptionID;
+
+  int get publicationID;
+
+  List<dynamic> get args;
+
+  Map<String, dynamic> get kwargs;
+
+  Map<String, dynamic> get details;
+}
+
+class EventFields implements IEventFields {
+  EventFields(
+    this._subscriptionID,
+    this._publicationID, {
     List<dynamic>? args,
     Map<String, dynamic>? kwargs,
     Map<String, dynamic>? details,
-  })  : args = args ?? [],
-        kwargs = kwargs ?? {},
-        details = details ?? {};
+  })  : _args = args ?? [],
+        _kwargs = kwargs ?? {},
+        _details = details ?? {};
+
+  final int _subscriptionID;
+  final int _publicationID;
+  final List<dynamic> _args;
+  final Map<String, dynamic> _kwargs;
+  final Map<String, dynamic> _details;
+
+  @override
+  int get subscriptionID => _subscriptionID;
+
+  @override
+  int get publicationID => _publicationID;
+
+  @override
+  List get args => _args;
+
+  @override
+  Map<String, dynamic> get kwargs => _kwargs;
+
+  @override
+  Map<String, dynamic> get details => _details;
+}
+
+class Event implements Message {
+  Event(this._eventFields);
 
   static const int id = 36;
 
@@ -30,21 +67,29 @@ class Event implements Message {
     },
   );
 
-  final int subscriptionID;
-  final int publicationID;
-  final List<dynamic> args;
-  final Map<String, dynamic> kwargs;
-  final Map<String, dynamic> details;
+  final IEventFields _eventFields;
+
+  int get subscriptionID => _eventFields.subscriptionID;
+
+  int get publicationID => _eventFields.publicationID;
+
+  List<dynamic> get args => _eventFields.args;
+
+  Map<String, dynamic> get kwargs => _eventFields.kwargs;
+
+  Map<String, dynamic> get details => _eventFields.details;
 
   static Event parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
     return Event(
-      fields.subscriptionID!,
-      fields.publicationID!,
-      args: fields.args,
-      kwargs: fields.kwargs,
-      details: fields.details,
+      EventFields(
+        fields.subscriptionID!,
+        fields.publicationID!,
+        args: fields.args,
+        kwargs: fields.kwargs,
+        details: fields.details,
+      ),
     );
   }
 

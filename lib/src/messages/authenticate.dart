@@ -2,8 +2,28 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
+abstract class IAuthenticateFields {
+  String get signature;
+
+  Map<String, dynamic> get extra;
+}
+
+class AuthenticateFields implements IAuthenticateFields {
+  AuthenticateFields(this._signature, this._extra);
+
+  final String _signature;
+
+  final Map<String, dynamic> _extra;
+
+  @override
+  String get signature => _signature;
+
+  @override
+  Map<String, dynamic> get extra => _extra;
+}
+
 class Authenticate implements Message {
-  Authenticate(this.signature, this.extra);
+  Authenticate(this._authenticateFields);
 
   static const int id = 5;
 
@@ -19,13 +39,16 @@ class Authenticate implements Message {
     },
   );
 
-  final String signature;
-  final Map<String, dynamic> extra;
+  final IAuthenticateFields _authenticateFields;
+
+  String get signature => _authenticateFields.signature;
+
+  Map<String, dynamic> get extra => _authenticateFields.extra;
 
   static Authenticate parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Authenticate(fields.signature!, fields.extra!);
+    return Authenticate(AuthenticateFields(fields.signature!, fields.extra!));
   }
 
   @override

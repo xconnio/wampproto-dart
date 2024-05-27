@@ -1,7 +1,7 @@
 import "package:test/test.dart";
 
 import "package:wampproto/auth.dart";
-import "package:wampproto/messages.dart";
+import "package:wampproto/src/messages/challenge.dart";
 
 void main() {
   group("AnonymousAuthenticator", () {
@@ -18,7 +18,7 @@ void main() {
     });
 
     test("authenticate", () {
-      final challenge = Challenge(authenticator.authMethod, {"challenge": "test"});
+      final challenge = Challenge(ChallengeFields(authenticator.authMethod, {"challenge": "test"}));
       expect(() => authenticator.authenticate(challenge), throwsA(isA<UnimplementedError>()));
     });
   });

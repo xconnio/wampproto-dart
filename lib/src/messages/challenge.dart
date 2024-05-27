@@ -2,8 +2,28 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
+abstract class IChallengeFields {
+  String get authMethod;
+
+  Map<String, dynamic> get extra;
+}
+
+class ChallengeFields implements IChallengeFields {
+  ChallengeFields(this._authMethod, this._extra);
+
+  final String _authMethod;
+
+  final Map<String, dynamic> _extra;
+
+  @override
+  String get authMethod => _authMethod;
+
+  @override
+  Map<String, dynamic> get extra => _extra;
+}
+
 class Challenge implements Message {
-  Challenge(this.authMethod, this.extra);
+  Challenge(this._challengeFields);
 
   static const int id = 4;
 
@@ -19,13 +39,16 @@ class Challenge implements Message {
     },
   );
 
-  final String authMethod;
-  final Map<String, dynamic> extra;
+  final IChallengeFields _challengeFields;
+
+  String get authMethod => _challengeFields.authMethod;
+
+  Map<String, dynamic> get extra => _challengeFields.extra;
 
   static Challenge parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Challenge(fields.authmethod!, fields.extra!);
+    return Challenge(ChallengeFields(fields.authmethod!, fields.extra!));
   }
 
   @override

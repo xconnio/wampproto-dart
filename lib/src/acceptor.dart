@@ -5,6 +5,8 @@ import "package:wampproto/auth.dart";
 import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
 import "package:wampproto/src/exception.dart";
+import "package:wampproto/src/messages/challenge.dart";
+import "package:wampproto/src/messages/welcome.dart";
 import "package:wampproto/src/types.dart";
 
 final routerRoles = <String, Map<String, Map>>{
@@ -77,7 +79,9 @@ class Acceptor {
           Response response = _authenticator.authenticate(request);
           _state = stateWelcomeSent;
 
-          Welcome welcome = Welcome(_sessionID, routerRoles, response.authID, response.authRole, method, authExtra: {});
+          Welcome welcome = Welcome(
+            WelcomeFields(_sessionID, routerRoles, response.authID, response.authRole, method, authExtra: {}),
+          );
           _sessionDetails = SessionDetails(_sessionID, msg.realm, welcome.authID, welcome.authRole);
 
           return welcome;
@@ -95,7 +99,7 @@ class Acceptor {
           String challenge = generateCryptoSignChallenge();
           _state = stateChallengeSent;
 
-          return Challenge(method, {"challenge": challenge});
+          return Challenge(ChallengeFields(method, {"challenge": challenge}));
 
         case wampcra:
           Request request = Request(method, msg.realm, msg.authID, msg.authExtra);
@@ -111,12 +115,12 @@ class Acceptor {
           _state = stateChallengeSent;
           _challenge = challenge;
 
-          return Challenge(method, {"challenge": challenge});
+          return Challenge(ChallengeFields(method, {"challenge": challenge}));
 
         case ticket:
           _state = stateChallengeSent;
 
-          return Challenge(method, {});
+          return Challenge(ChallengeFields(method, {}));
 
         default:
           throw ProtocolError("unknown auth method '$method'");
@@ -131,8 +135,9 @@ class Acceptor {
           verifyCryptoSignSignature(msg.signature, Base16Encoder.instance.decode(_publicKey));
           _state = stateWelcomeSent;
 
-          Welcome welcome =
-              Welcome(_sessionID, routerRoles, _response.authID, _response.authRole, cryptosign, authExtra: {});
+          Welcome welcome = Welcome(
+            WelcomeFields(_sessionID, routerRoles, _response.authID, _response.authRole, cryptosign, authExtra: {}),
+          );
           _sessionDetails = SessionDetails(welcome.sessionID, _hello.realm, welcome.authID, welcome.authRole);
 
           return welcome;
@@ -141,8 +146,9 @@ class Acceptor {
           verifyWampCRASignature(msg.signature, _challenge, Uint8List.fromList(_secret.codeUnits));
           _state = stateWelcomeSent;
 
-          Welcome welcome =
-              Welcome(_sessionID, routerRoles, _response.authID, _response.authRole, wampcra, authExtra: {});
+          Welcome welcome = Welcome(
+            WelcomeFields(_sessionID, routerRoles, _response.authID, _response.authRole, wampcra, authExtra: {}),
+          );
           _sessionDetails = SessionDetails(welcome.sessionID, _hello.realm, welcome.authID, welcome.authRole);
 
           return welcome;
@@ -152,7 +158,9 @@ class Acceptor {
           Response response = _authenticator.authenticate(request);
           _state = stateWelcomeSent;
 
-          Welcome welcome = Welcome(_sessionID, routerRoles, response.authID, response.authRole, ticket, authExtra: {});
+          Welcome welcome = Welcome(
+            WelcomeFields(_sessionID, routerRoles, response.authID, response.authRole, ticket, authExtra: {}),
+          );
           _sessionDetails = SessionDetails(welcome.sessionID, _hello.realm, welcome.authID, welcome.authRole);
 
           return welcome;

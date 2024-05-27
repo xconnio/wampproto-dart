@@ -2,8 +2,27 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
+abstract class IPublishedFields {
+  int get requestID;
+
+  int get publicationID;
+}
+
+class PublishedFields implements IPublishedFields {
+  PublishedFields(this._requestID, this._publicationID);
+
+  final int _requestID;
+  final int _publicationID;
+
+  @override
+  int get requestID => _requestID;
+
+  @override
+  int get publicationID => _publicationID;
+}
+
 class Published implements Message {
-  Published(this.requestID, this.publicationID);
+  Published(this._publishedFields);
 
   static const int id = 17;
 
@@ -19,13 +38,16 @@ class Published implements Message {
     },
   );
 
-  final int requestID;
-  final int publicationID;
+  final PublishedFields _publishedFields;
+
+  int get requestID => _publishedFields.requestID;
+
+  int get publicationID => _publishedFields.publicationID;
 
   static Published parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Published(fields.requestID!, fields.publicationID!);
+    return Published(PublishedFields(fields.requestID!, fields.publicationID!));
   }
 
   @override

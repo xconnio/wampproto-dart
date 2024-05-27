@@ -1,5 +1,10 @@
 import "package:wampproto/idgen.dart";
 import "package:wampproto/messages.dart";
+import "package:wampproto/src/messages/error.dart";
+import "package:wampproto/src/messages/invocation.dart";
+import "package:wampproto/src/messages/registered.dart";
+import "package:wampproto/src/messages/result.dart";
+import "package:wampproto/src/messages/unregistered.dart";
 import "package:wampproto/src/types.dart";
 import "package:wampproto/src/uris.dart";
 
@@ -61,7 +66,7 @@ class Dealer {
     if (message is Call) {
       var registration = _registrationsByProcedure[message.uri];
       if (registration == null) {
-        var error = Error(Register.id, message.requestID, errNoSuchProcedure);
+        var error = Error(ErrorFields(Register.id, message.requestID, errNoSuchProcedure));
         return MessageWithRecipient(error, sessionID);
       }
 
@@ -81,11 +86,13 @@ class Dealer {
       );
 
       var invocation = Invocation(
-        requestID,
-        registration.id,
-        args: message.args,
-        kwargs: message.kwargs,
-        details: receiveProgress ? {optionReceiveProgress: receiveProgress} : {},
+        InvocationFields(
+          requestID,
+          registration.id,
+          args: message.args,
+          kwargs: message.kwargs,
+          details: receiveProgress ? {optionReceiveProgress: receiveProgress} : {},
+        ),
       );
       return MessageWithRecipient(invocation, calleeID);
     } else if (message is Yield) {
@@ -106,7 +113,8 @@ class Dealer {
       } else {
         _pendingCalls.remove(message.requestID);
       }
-      var result = Result(invocation.requestID, args: message.args, kwargs: message.kwargs, details: details);
+      var result =
+          Result(ResultFields(invocation.requestID, args: message.args, kwargs: message.kwargs, details: details));
       return MessageWithRecipient(result, invocation.callerID);
     } else if (message is Register) {
       if (!_registrationsBySession.containsKey(sessionID)) {
@@ -120,11 +128,11 @@ class Dealer {
         _registrationsBySession.putIfAbsent(sessionID, () => {})[registrations.id] = registrations;
       } else {
         // TODO: implement shared registrations.
-        var error = Error(Register.id, message.requestID, errProcedureAlreadyExists);
+        var error = Error(ErrorFields(Register.id, message.requestID, errProcedureAlreadyExists));
         return MessageWithRecipient(error, sessionID);
       }
 
-      var registered = Registered(message.requestID, registrations.id);
+      var registered = Registered(RegisteredFields(message.requestID, registrations.id));
       return MessageWithRecipient(registered, sessionID);
     } else if (message is UnRegister) {
       var registrations = _registrationsBySession[sessionID];
@@ -144,7 +152,7 @@ class Dealer {
       }
       _registrationsBySession[sessionID] = registrations;
 
-      var unRegistered = UnRegistered(message.requestID);
+      var unRegistered = UnRegistered(UnRegisteredFields(message.requestID));
       return MessageWithRecipient(unRegistered, sessionID);
     } else {
       throw Exception("message type not supported");

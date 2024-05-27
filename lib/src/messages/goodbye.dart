@@ -2,8 +2,27 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
+abstract class IGoodbyeFields {
+  Map<String, dynamic> get details;
+
+  String get reason;
+}
+
+class GoodbyeFields implements IGoodbyeFields {
+  GoodbyeFields(this._details, this._reason);
+
+  final Map<String, dynamic> _details;
+  final String _reason;
+
+  @override
+  Map<String, dynamic> get details => _details;
+
+  @override
+  String get reason => _reason;
+}
+
 class Goodbye implements Message {
-  Goodbye(this.details, this.reason);
+  Goodbye(this._goodbyeFields);
 
   static const int id = 6;
 
@@ -19,13 +38,16 @@ class Goodbye implements Message {
     },
   );
 
-  final Map<String, dynamic> details;
-  final String reason;
+  final IGoodbyeFields _goodbyeFields;
+
+  Map<String, dynamic> get details => _goodbyeFields.details;
+
+  String get reason => _goodbyeFields.reason;
 
   static Goodbye parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Goodbye(fields.details!, fields.reason!);
+    return Goodbye(GoodbyeFields(fields.details!, fields.reason!));
   }
 
   @override

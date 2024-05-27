@@ -2,16 +2,53 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
-class Publish implements Message {
-  Publish(
-    this.requestID,
-    this.uri, {
+abstract class IPublishFields {
+  int get requestID;
+
+  String get uri;
+
+  List<dynamic> get args;
+
+  Map<String, dynamic> get kwargs;
+
+  Map<String, dynamic> get options;
+}
+
+class PublishFields implements IPublishFields {
+  PublishFields(
+    this._requestID,
+    this._uri, {
     List<dynamic>? args,
     Map<String, dynamic>? kwargs,
     Map<String, dynamic>? options,
-  })  : args = args ?? [],
-        kwargs = kwargs ?? {},
-        options = options ?? {};
+  })  : _args = args ?? [],
+        _kwargs = kwargs ?? {},
+        _options = options ?? {};
+
+  final int _requestID;
+  final String _uri;
+  final List<dynamic> _args;
+  final Map<String, dynamic> _kwargs;
+  final Map<String, dynamic> _options;
+
+  @override
+  int get requestID => _requestID;
+
+  @override
+  String get uri => _uri;
+
+  @override
+  List get args => _args;
+
+  @override
+  Map<String, dynamic> get kwargs => _kwargs;
+
+  @override
+  Map<String, dynamic> get options => _options;
+}
+
+class Publish implements Message {
+  Publish(this._publishFields);
 
   static const int id = 16;
 
@@ -30,16 +67,24 @@ class Publish implements Message {
     },
   );
 
-  final int requestID;
-  final String uri;
-  final List<dynamic> args;
-  final Map<String, dynamic> kwargs;
-  final Map<String, dynamic> options;
+  final IPublishFields _publishFields;
+
+  int get requestID => _publishFields.requestID;
+
+  String get uri => _publishFields.uri;
+
+  List<dynamic> get args => _publishFields.args;
+
+  Map<String, dynamic> get kwargs => _publishFields.kwargs;
+
+  Map<String, dynamic> get options => _publishFields.options;
 
   static Publish parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Publish(fields.requestID!, fields.uri!, args: fields.args, kwargs: fields.kwargs, options: fields.options);
+    return Publish(
+      PublishFields(fields.requestID!, fields.uri!, args: fields.args, kwargs: fields.kwargs, options: fields.options),
+    );
   }
 
   @override

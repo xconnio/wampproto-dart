@@ -3,6 +3,7 @@ import "dart:math";
 import "package:pinenacl/ed25519.dart";
 import "package:wampproto/messages.dart";
 import "package:wampproto/src/auth/auth.dart";
+import "package:wampproto/src/messages/authenticate.dart";
 
 const hex = Base16Encoder.instance;
 
@@ -31,7 +32,7 @@ class CryptoSignAuthenticator extends IClientAuthenticator {
     var challengeHex = challenge.extra["challenge"];
     var signed = signCryptoSignChallenge(challengeHex, getPrivateKey());
 
-    return Authenticate(signed + challengeHex, {});
+    return Authenticate(AuthenticateFields(signed + challengeHex, {}));
   }
 }
 

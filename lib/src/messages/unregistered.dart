@@ -2,8 +2,21 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
+abstract class IUnRegisteredFields {
+  int get requestID;
+}
+
+class UnRegisteredFields implements IUnRegisteredFields {
+  UnRegisteredFields(this._requestID);
+
+  final int _requestID;
+
+  @override
+  int get requestID => _requestID;
+}
+
 class UnRegistered implements Message {
-  UnRegistered(this.requestID);
+  UnRegistered(this._unRegisteredFields);
 
   static const int id = 67;
 
@@ -17,12 +30,15 @@ class UnRegistered implements Message {
       1: validateRequestID,
     },
   );
-  final int requestID;
+
+  final UnRegisteredFields _unRegisteredFields;
+
+  int get requestID => _unRegisteredFields.requestID;
 
   static UnRegistered parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return UnRegistered(fields.requestID!);
+    return UnRegistered(UnRegisteredFields(fields.requestID!));
   }
 
   @override
