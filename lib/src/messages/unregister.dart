@@ -38,7 +38,7 @@ class UnRegister implements Message {
     },
   );
 
-  final UnRegisterFields _unRegisterFields;
+  final IUnRegisterFields _unRegisterFields;
 
   int get requestID => _unRegisterFields.requestID;
 

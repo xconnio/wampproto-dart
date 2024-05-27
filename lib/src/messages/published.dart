@@ -38,7 +38,7 @@ class Published implements Message {
     },
   );
 
-  final PublishedFields _publishedFields;
+  final IPublishedFields _publishedFields;
 
   int get requestID => _publishedFields.requestID;
 

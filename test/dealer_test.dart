@@ -2,11 +2,6 @@ import "package:test/test.dart";
 
 import "package:wampproto/messages.dart";
 import "package:wampproto/src/dealer.dart";
-import "package:wampproto/src/messages/call.dart";
-import "package:wampproto/src/messages/register.dart";
-import "package:wampproto/src/messages/subscribe.dart";
-import "package:wampproto/src/messages/unregister.dart";
-import "package:wampproto/src/messages/yield.dart";
 import "package:wampproto/src/types.dart";
 import "package:wampproto/src/uris.dart";
 

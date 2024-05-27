@@ -5,8 +5,6 @@ import "package:wampproto/auth.dart";
 import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
 import "package:wampproto/src/exception.dart";
-import "package:wampproto/src/messages/challenge.dart";
-import "package:wampproto/src/messages/welcome.dart";
 import "package:wampproto/src/types.dart";
 
 final routerRoles = <String, Map<String, Map>>{

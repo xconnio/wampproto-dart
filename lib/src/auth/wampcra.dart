@@ -5,7 +5,6 @@ import "dart:typed_data";
 import "package:crypto/crypto.dart";
 import "package:wampproto/messages.dart";
 import "package:wampproto/src/auth/auth.dart";
-import "package:wampproto/src/messages/authenticate.dart";
 
 class WAMPCRAAuthenticator extends IClientAuthenticator {
   WAMPCRAAuthenticator(this._secret, String authID, [Map<String, dynamic>? authExtra]) : super(type, authID, authExtra);

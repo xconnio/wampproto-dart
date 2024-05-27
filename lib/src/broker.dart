@@ -1,9 +1,5 @@
 import "package:wampproto/idgen.dart";
 import "package:wampproto/messages.dart";
-import "package:wampproto/src/messages/event.dart";
-import "package:wampproto/src/messages/published.dart";
-import "package:wampproto/src/messages/subscribed.dart";
-import "package:wampproto/src/messages/unsubscribed.dart";
 import "package:wampproto/src/types.dart";
 
 class Broker {

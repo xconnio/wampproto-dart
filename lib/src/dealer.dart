@@ -1,10 +1,5 @@
 import "package:wampproto/idgen.dart";
 import "package:wampproto/messages.dart";
-import "package:wampproto/src/messages/error.dart";
-import "package:wampproto/src/messages/invocation.dart";
-import "package:wampproto/src/messages/registered.dart";
-import "package:wampproto/src/messages/result.dart";
-import "package:wampproto/src/messages/unregistered.dart";
 import "package:wampproto/src/types.dart";
 import "package:wampproto/src/uris.dart";
 

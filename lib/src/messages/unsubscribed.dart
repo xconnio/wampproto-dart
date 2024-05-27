@@ -31,7 +31,7 @@ class UnSubscribed implements Message {
     },
   );
 
-  final UnSubscribedFields _unSubscribedFields;
+  final IUnSubscribedFields _unSubscribedFields;
 
   int get requestID => _unSubscribedFields.requestID;
 

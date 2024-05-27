@@ -2,10 +2,6 @@ import "package:test/test.dart";
 
 import "package:wampproto/broker.dart";
 import "package:wampproto/messages.dart";
-import "package:wampproto/src/messages/call.dart";
-import "package:wampproto/src/messages/publish.dart";
-import "package:wampproto/src/messages/subscribe.dart";
-import "package:wampproto/src/messages/unsubscribe.dart";
 import "package:wampproto/src/types.dart";
 
 void main() {

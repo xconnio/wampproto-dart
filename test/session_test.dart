@@ -5,22 +5,6 @@ import "package:test/test.dart";
 import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
 import "package:wampproto/session.dart";
-import "package:wampproto/src/messages/call.dart";
-import "package:wampproto/src/messages/error.dart";
-import "package:wampproto/src/messages/event.dart";
-import "package:wampproto/src/messages/invocation.dart";
-import "package:wampproto/src/messages/publish.dart";
-import "package:wampproto/src/messages/published.dart";
-import "package:wampproto/src/messages/register.dart";
-import "package:wampproto/src/messages/registered.dart";
-import "package:wampproto/src/messages/result.dart";
-import "package:wampproto/src/messages/subscribe.dart";
-import "package:wampproto/src/messages/subscribed.dart";
-import "package:wampproto/src/messages/unregister.dart";
-import "package:wampproto/src/messages/unregistered.dart";
-import "package:wampproto/src/messages/unsubscribe.dart";
-import "package:wampproto/src/messages/unsubscribed.dart";
-import "package:wampproto/src/messages/yield.dart";
 import "package:wampproto/src/uris.dart";
 
 void main() {

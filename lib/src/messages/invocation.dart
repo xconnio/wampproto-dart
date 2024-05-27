@@ -67,7 +67,7 @@ class Invocation implements Message {
     },
   );
 
-  final InvocationFields _invocationFields;
+  final IInvocationFields _invocationFields;
 
   int get requestID => _invocationFields.requestID;
 
