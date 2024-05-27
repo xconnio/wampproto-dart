@@ -2,8 +2,8 @@ import "dart:convert";
 
 import "package:test/test.dart";
 
-import "package:wampproto/messages.dart";
 import "package:wampproto/src/auth/wampcra.dart";
+import "package:wampproto/src/messages/challenge.dart";
 
 void main() {
   const craChallenge = '{"nonce":"cdcb3b12d56e12825be99f38f55ba43f","authprovider":"provider","authid":"foo",'
@@ -14,7 +14,7 @@ void main() {
   group("WAMPCRAAuthenticator", () {
     test("authenticate", () {
       final authenticator = WAMPCRAAuthenticator(key, "authID", {});
-      final challenge = Challenge("wampcra", {"challenge": craChallenge});
+      final challenge = Challenge(ChallengeFields("wampcra", {"challenge": craChallenge}));
 
       final authenticate = authenticator.authenticate(challenge);
       expect(authenticate.signature, validSignature);

@@ -2,8 +2,27 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
+abstract class IInterruptFields {
+  int get requestID;
+
+  Map<String, dynamic> get options;
+}
+
+class InterruptFields implements IInterruptFields {
+  InterruptFields(this._requestID, {Map<String, dynamic>? options}) : _options = options ?? {};
+
+  final int _requestID;
+  final Map<String, dynamic> _options;
+
+  @override
+  int get requestID => _requestID;
+
+  @override
+  Map<String, dynamic> get options => _options;
+}
+
 class Interrupt implements Message {
-  Interrupt(this.invRequestID, this.options);
+  Interrupt(this._interruptFields);
 
   static const int id = 69;
 
@@ -19,18 +38,21 @@ class Interrupt implements Message {
     },
   );
 
-  final int invRequestID;
-  final Map<String, dynamic> options;
+  final IInterruptFields _interruptFields;
+
+  int get requestID => _interruptFields.requestID;
+
+  Map<String, dynamic> get options => _interruptFields.options;
 
   static Interrupt parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Interrupt(fields.requestID!, fields.options!);
+    return Interrupt(InterruptFields(fields.requestID!, options: fields.options));
   }
 
   @override
   List<dynamic> marshal() {
-    return [id, invRequestID, options];
+    return [id, requestID, options];
   }
 
   @override

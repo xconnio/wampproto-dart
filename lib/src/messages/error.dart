@@ -2,17 +2,60 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
-class Error implements Message {
-  Error(
-    this.msgType,
-    this.requestID,
-    this.uri, {
+abstract class IErrorFields {
+  int get msgType;
+
+  int get requestID;
+
+  String get uri;
+
+  List<dynamic> get args;
+
+  Map<String, dynamic> get kwargs;
+
+  Map<String, dynamic> get details;
+}
+
+class ErrorFields implements IErrorFields {
+  ErrorFields(
+    this._msgType,
+    this._requestID,
+    this._uri, {
     List<dynamic>? args,
     Map<String, dynamic>? kwargs,
     Map<String, dynamic>? details,
-  })  : args = args ?? [],
-        kwargs = kwargs ?? {},
-        details = details ?? {};
+  })  : _args = args ?? [],
+        _kwargs = kwargs ?? {},
+        _details = details ?? {};
+
+  final int _msgType;
+  final int _requestID;
+  final String _uri;
+  final List<dynamic> _args;
+  final Map<String, dynamic> _kwargs;
+  final Map<String, dynamic> _details;
+
+  @override
+  int get msgType => _msgType;
+
+  @override
+  int get requestID => _requestID;
+
+  @override
+  String get uri => _uri;
+
+  @override
+  List get args => _args;
+
+  @override
+  Map<String, dynamic> get kwargs => _kwargs;
+
+  @override
+  Map<String, dynamic> get details => _details;
+}
+
+class Error implements Message {
+  Error(this._errorFields);
 
   static const int id = 8;
 
@@ -32,23 +75,32 @@ class Error implements Message {
     },
   );
 
-  final int msgType;
-  final int requestID;
-  final String uri;
-  final List<dynamic> args;
-  final Map<String, dynamic> kwargs;
-  final Map<String, dynamic> details;
+  final IErrorFields _errorFields;
+
+  int get msgType => _errorFields.msgType;
+
+  int get requestID => _errorFields.requestID;
+
+  String get uri => _errorFields.uri;
+
+  List<dynamic> get args => _errorFields.args;
+
+  Map<String, dynamic> get kwargs => _errorFields.kwargs;
+
+  Map<String, dynamic> get details => _errorFields.details;
 
   static Error parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
     return Error(
-      fields.messageType!,
-      fields.requestID!,
-      fields.uri!,
-      args: fields.args,
-      kwargs: fields.kwargs,
-      details: fields.details,
+      ErrorFields(
+        fields.messageType!,
+        fields.requestID!,
+        fields.uri!,
+        args: fields.args,
+        kwargs: fields.kwargs,
+        details: fields.details,
+      ),
     );
   }
 

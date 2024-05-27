@@ -61,7 +61,7 @@ class Dealer {
     if (message is Call) {
       var registration = _registrationsByProcedure[message.uri];
       if (registration == null) {
-        var error = Error(Register.id, message.requestID, errNoSuchProcedure);
+        var error = Error(ErrorFields(Register.id, message.requestID, errNoSuchProcedure));
         return MessageWithRecipient(error, sessionID);
       }
 
@@ -81,11 +81,13 @@ class Dealer {
       );
 
       var invocation = Invocation(
-        requestID,
-        registration.id,
-        args: message.args,
-        kwargs: message.kwargs,
-        details: receiveProgress ? {optionReceiveProgress: receiveProgress} : {},
+        InvocationFields(
+          requestID,
+          registration.id,
+          args: message.args,
+          kwargs: message.kwargs,
+          details: receiveProgress ? {optionReceiveProgress: receiveProgress} : {},
+        ),
       );
       return MessageWithRecipient(invocation, calleeID);
     } else if (message is Yield) {
@@ -106,7 +108,8 @@ class Dealer {
       } else {
         _pendingCalls.remove(message.requestID);
       }
-      var result = Result(invocation.requestID, args: message.args, kwargs: message.kwargs, details: details);
+      var result =
+          Result(ResultFields(invocation.requestID, args: message.args, kwargs: message.kwargs, details: details));
       return MessageWithRecipient(result, invocation.callerID);
     } else if (message is Register) {
       if (!_registrationsBySession.containsKey(sessionID)) {
@@ -120,11 +123,11 @@ class Dealer {
         _registrationsBySession.putIfAbsent(sessionID, () => {})[registrations.id] = registrations;
       } else {
         // TODO: implement shared registrations.
-        var error = Error(Register.id, message.requestID, errProcedureAlreadyExists);
+        var error = Error(ErrorFields(Register.id, message.requestID, errProcedureAlreadyExists));
         return MessageWithRecipient(error, sessionID);
       }
 
-      var registered = Registered(message.requestID, registrations.id);
+      var registered = Registered(RegisteredFields(message.requestID, registrations.id));
       return MessageWithRecipient(registered, sessionID);
     } else if (message is UnRegister) {
       var registrations = _registrationsBySession[sessionID];
@@ -144,7 +147,7 @@ class Dealer {
       }
       _registrationsBySession[sessionID] = registrations;
 
-      var unRegistered = UnRegistered(message.requestID);
+      var unRegistered = UnRegistered(UnRegisteredFields(message.requestID));
       return MessageWithRecipient(unRegistered, sessionID);
     } else {
       throw Exception("message type not supported");

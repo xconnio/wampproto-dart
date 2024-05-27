@@ -2,16 +2,53 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
-class Invocation implements Message {
-  Invocation(
-    this.requestID,
-    this.registrationID, {
+abstract class IInvocationFields {
+  int get requestID;
+
+  int get registrationID;
+
+  List<dynamic> get args;
+
+  Map<String, dynamic> get kwargs;
+
+  Map<String, dynamic> get details;
+}
+
+class InvocationFields implements IInvocationFields {
+  InvocationFields(
+    this._requestID,
+    this._registrationID, {
     List<dynamic>? args,
     Map<String, dynamic>? kwargs,
     Map<String, dynamic>? details,
-  })  : args = args ?? [],
-        kwargs = kwargs ?? {},
-        details = details ?? {};
+  })  : _args = args ?? [],
+        _kwargs = kwargs ?? {},
+        _details = details ?? {};
+
+  final int _requestID;
+  final int _registrationID;
+  final List<dynamic> _args;
+  final Map<String, dynamic> _kwargs;
+  final Map<String, dynamic> _details;
+
+  @override
+  int get requestID => _requestID;
+
+  @override
+  int get registrationID => _registrationID;
+
+  @override
+  List get args => _args;
+
+  @override
+  Map<String, dynamic> get kwargs => _kwargs;
+
+  @override
+  Map<String, dynamic> get details => _details;
+}
+
+class Invocation implements Message {
+  Invocation(this._invocationFields);
 
   static const int id = 68;
 
@@ -30,21 +67,29 @@ class Invocation implements Message {
     },
   );
 
-  final int requestID;
-  final int registrationID;
-  final List<dynamic> args;
-  final Map<String, dynamic> kwargs;
-  final Map<String, dynamic> details;
+  final IInvocationFields _invocationFields;
+
+  int get requestID => _invocationFields.requestID;
+
+  int get registrationID => _invocationFields.registrationID;
+
+  List<dynamic> get args => _invocationFields.args;
+
+  Map<String, dynamic> get kwargs => _invocationFields.kwargs;
+
+  Map<String, dynamic> get details => _invocationFields.details;
 
   static Invocation parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
     return Invocation(
-      fields.requestID!,
-      fields.registrationID!,
-      args: fields.args,
-      kwargs: fields.kwargs,
-      details: fields.details,
+      InvocationFields(
+        fields.requestID!,
+        fields.registrationID!,
+        args: fields.args,
+        kwargs: fields.kwargs,
+        details: fields.details,
+      ),
     );
   }
 

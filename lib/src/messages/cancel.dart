@@ -2,8 +2,27 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
+abstract class ICancelFields {
+  int get requestID;
+
+  Map<String, dynamic> get options;
+}
+
+class CancelFields implements ICancelFields {
+  CancelFields(this._requestID, {Map<String, dynamic>? options}) : _options = options ?? {};
+
+  final int _requestID;
+  final Map<String, dynamic> _options;
+
+  @override
+  int get requestID => _requestID;
+
+  @override
+  Map<String, dynamic> get options => _options;
+}
+
 class Cancel implements Message {
-  Cancel(this.callRequestID, this.options);
+  Cancel(this._cancelFields);
 
   static const int id = 49;
 
@@ -19,18 +38,21 @@ class Cancel implements Message {
     },
   );
 
-  final int callRequestID;
-  final Map<String, dynamic> options;
+  final ICancelFields _cancelFields;
+
+  int get requestID => _cancelFields.requestID;
+
+  Map<String, dynamic> get options => _cancelFields.options;
 
   static Cancel parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Cancel(fields.requestID!, fields.options!);
+    return Cancel(CancelFields(fields.requestID!, options: fields.options));
   }
 
   @override
   List<dynamic> marshal() {
-    return [id, callRequestID, options];
+    return [id, requestID, options];
   }
 
   @override

@@ -2,8 +2,27 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
+abstract class ISubscribedFields {
+  int get requestID;
+
+  int get subscriptionID;
+}
+
+class SubscribedFields implements ISubscribedFields {
+  SubscribedFields(this._requestID, this._subscriptionID);
+
+  final int _requestID;
+  final int _subscriptionID;
+
+  @override
+  int get requestID => _requestID;
+
+  @override
+  int get subscriptionID => _subscriptionID;
+}
+
 class Subscribed implements Message {
-  Subscribed(this.requestID, this.subscriptionID);
+  Subscribed(this._subscribedFields);
 
   static const int id = 33;
 
@@ -19,13 +38,16 @@ class Subscribed implements Message {
     },
   );
 
-  final int requestID;
-  final int subscriptionID;
+  final ISubscribedFields _subscribedFields;
+
+  int get requestID => _subscribedFields.requestID;
+
+  int get subscriptionID => _subscribedFields.subscriptionID;
 
   static Subscribed parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Subscribed(fields.requestID!, fields.subscriptionID!);
+    return Subscribed(SubscribedFields(fields.requestID!, fields.subscriptionID!));
   }
 
   @override

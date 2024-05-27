@@ -27,7 +27,7 @@ void main() {
       var details = SessionDetails(1, "realm1", "authid", "authrole");
       dealer.addSession(details);
 
-      final registerMessage = Register(1, procedureName);
+      final registerMessage = Register(RegisterFields(1, procedureName));
       final messageWithRecipient = dealer.receiveMessage(1, registerMessage);
       expect(messageWithRecipient.recipient, 1);
       expect(messageWithRecipient.message, isA<Registered>());
@@ -50,13 +50,13 @@ void main() {
     });
 
     test("call a procedure and receive yield for invocation", () {
-      var callMessage = Call(1, procedureName);
+      var callMessage = Call(CallFields(1, procedureName));
       var messageWithRecipient = dealer.receiveMessage(1, callMessage);
       expect(messageWithRecipient.recipient, 1);
       expect(messageWithRecipient.message, isA<Invocation>());
 
       // call a non-existing procedure
-      var invalidCallMessage = Call(1, "invalid");
+      var invalidCallMessage = Call(CallFields(1, "invalid"));
       var errMsgWithRecipient = dealer.receiveMessage(1, invalidCallMessage);
       expect(errMsgWithRecipient.message, isA<Error>());
       var errMsg = errMsgWithRecipient.message as Error;
@@ -64,7 +64,7 @@ void main() {
 
       // process yield message correctly
       var invocation = messageWithRecipient.message as Invocation;
-      var yieldMessage = Yield(invocation.requestID);
+      var yieldMessage = Yield(YieldFields(invocation.requestID));
       var resultMsgWithRecipient = dealer.receiveMessage(1, yieldMessage);
       expect(resultMsgWithRecipient.recipient, 1);
       expect(resultMsgWithRecipient.message, isA<Result>());
@@ -74,11 +74,11 @@ void main() {
 
       // receive yield with invalid sessionID
       var msg = dealer.receiveMessage(1, callMessage).message as Invocation;
-      expect(() => dealer.receiveMessage(3, Yield(msg.requestID)), throwsException);
+      expect(() => dealer.receiveMessage(3, Yield(YieldFields(msg.requestID))), throwsException);
     });
 
     test("unregister a procedure", () {
-      var unRegister = UnRegister(1, 1);
+      var unRegister = UnRegister(UnRegisterFields(1, 1));
       var messagesWithRecipient = dealer.receiveMessage(1, unRegister);
       expect(messagesWithRecipient.recipient, 1);
       expect(messagesWithRecipient.message, isA<UnRegistered>());
@@ -91,7 +91,7 @@ void main() {
       expect(() => dealer.receiveMessage(2, unRegister), throwsException);
 
       // unregister with invalid registrationID
-      var invalidUnRegister = UnRegister(1, 2);
+      var invalidUnRegister = UnRegister(UnRegisterFields(1, 2));
       expect(() => dealer.receiveMessage(1, invalidUnRegister), throwsException);
 
       // unregister with non-existing registrationID
@@ -99,7 +99,7 @@ void main() {
     });
 
     test("receive invalid message", () {
-      final subscribe = Subscribe(1, procedureName);
+      final subscribe = Subscribe(SubscribeFields(1, procedureName));
       expect(() => dealer.receiveMessage(1, subscribe), throwsException);
     });
 
@@ -110,17 +110,17 @@ void main() {
         ..addSession(SessionDetails(3, "realm1", "authid", "authrole"))
         ..addSession(SessionDetails(4, "realm1", "authid", "authrole"));
 
-      var register = Register(1, "foo.bar");
+      var register = Register(RegisterFields(1, "foo.bar"));
       dealer.receiveMessage(calleeId, register);
 
-      var call = Call(2, "foo.bar", options: {optionReceiveProgress: true});
+      var call = Call(CallFields(2, "foo.bar", options: {optionReceiveProgress: true}));
       var messageWithRecipient = dealer.receiveMessage(callerId, call);
       expect(messageWithRecipient.recipient, calleeId);
       var invMsg = messageWithRecipient.message as Invocation;
       expect(invMsg.details[optionReceiveProgress], isTrue);
 
       for (var i = 0; i < 10; i++) {
-        var yield = Yield(invMsg.requestID, options: {optionProgress: true});
+        var yield = Yield(YieldFields(invMsg.requestID, options: {optionProgress: true}));
         var msgWithRecipient = dealer.receiveMessage(calleeId, yield);
         expect(messageWithRecipient.recipient, calleeId);
         var resultMsg = msgWithRecipient.message as Result;
@@ -128,14 +128,14 @@ void main() {
         expect(resultMsg.details[optionProgress], isTrue);
       }
 
-      var yield = Yield(invMsg.requestID);
+      var yield = Yield(YieldFields(invMsg.requestID));
       var msg = dealer.receiveMessage(calleeId, yield);
       expect(msg.recipient, callerId);
       var resultMsg = msg.message as Result;
       expect(resultMsg.requestID, equals(call.requestID));
       expect(resultMsg.details[optionProgress] ?? false, isFalse);
 
-      var nonPendingYield = Yield(resultMsg.requestID);
+      var nonPendingYield = Yield(YieldFields(resultMsg.requestID));
       expect(
         () => dealer.receiveMessage(calleeId, nonPendingYield),
         throwsA(predicate((e) => e is Exception && e.toString().contains("no pending calls for session"))),

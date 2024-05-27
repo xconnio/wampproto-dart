@@ -2,16 +2,53 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
-class Call implements Message {
-  Call(
-    this.requestID,
-    this.uri, {
+abstract class ICallFields {
+  int get requestID;
+
+  String get uri;
+
+  List<dynamic> get args;
+
+  Map<String, dynamic> get kwargs;
+
+  Map<String, dynamic> get options;
+}
+
+class CallFields implements ICallFields {
+  CallFields(
+    this._requestID,
+    this._uri, {
     List<dynamic>? args,
     Map<String, dynamic>? kwargs,
     Map<String, dynamic>? options,
-  })  : args = args ?? [],
-        kwargs = kwargs ?? {},
-        options = options ?? {};
+  })  : _args = args ?? [],
+        _kwargs = kwargs ?? {},
+        _options = options ?? {};
+
+  final int _requestID;
+  final String _uri;
+  final List<dynamic> _args;
+  final Map<String, dynamic> _kwargs;
+  final Map<String, dynamic> _options;
+
+  @override
+  int get requestID => _requestID;
+
+  @override
+  String get uri => _uri;
+
+  @override
+  List get args => _args;
+
+  @override
+  Map<String, dynamic> get kwargs => _kwargs;
+
+  @override
+  Map<String, dynamic> get options => _options;
+}
+
+class Call implements Message {
+  Call(this._callFields);
 
   static const int id = 48;
 
@@ -30,16 +67,24 @@ class Call implements Message {
     },
   );
 
-  final int requestID;
-  final String uri;
-  final List<dynamic> args;
-  final Map<String, dynamic> kwargs;
-  final Map<String, dynamic> options;
+  final ICallFields _callFields;
+
+  int get requestID => _callFields.requestID;
+
+  String get uri => _callFields.uri;
+
+  List<dynamic> get args => _callFields.args;
+
+  Map<String, dynamic> get kwargs => _callFields.kwargs;
+
+  Map<String, dynamic> get options => _callFields.options;
 
   static Call parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Call(fields.requestID!, fields.uri!, args: fields.args, kwargs: fields.kwargs, options: fields.options);
+    return Call(
+      CallFields(fields.requestID!, fields.uri!, args: fields.args, kwargs: fields.kwargs, options: fields.options),
+    );
   }
 
   @override

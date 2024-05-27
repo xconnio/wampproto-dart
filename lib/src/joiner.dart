@@ -2,7 +2,6 @@ import "package:wampproto/auth.dart";
 import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
 import "package:wampproto/src/exception.dart";
-import "package:wampproto/src/messages/hello.dart";
 import "package:wampproto/src/types.dart";
 
 final clientRoles = <String, Map<String, Map>>{

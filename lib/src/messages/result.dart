@@ -2,15 +2,46 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
-class Result implements Message {
-  Result(
-    this.requestID, {
+abstract class IResultFields {
+  int get requestID;
+
+  List<dynamic> get args;
+
+  Map<String, dynamic> get kwargs;
+
+  Map<String, dynamic> get details;
+}
+
+class ResultFields implements IResultFields {
+  ResultFields(
+    this._requestID, {
     List<dynamic>? args,
     Map<String, dynamic>? kwargs,
     Map<String, dynamic>? details,
-  })  : args = args ?? [],
-        kwargs = kwargs ?? {},
-        details = details ?? {};
+  })  : _args = args ?? [],
+        _kwargs = kwargs ?? {},
+        _details = details ?? {};
+
+  final int _requestID;
+  final List<dynamic> _args;
+  final Map<String, dynamic> _kwargs;
+  final Map<String, dynamic> _details;
+
+  @override
+  int get requestID => _requestID;
+
+  @override
+  List get args => _args;
+
+  @override
+  Map<String, dynamic> get kwargs => _kwargs;
+
+  @override
+  Map<String, dynamic> get details => _details;
+}
+
+class Result implements Message {
+  Result(this._resultFields);
 
   static const int id = 50;
 
@@ -28,15 +59,20 @@ class Result implements Message {
     },
   );
 
-  final int requestID;
-  final List<dynamic> args;
-  final Map<String, dynamic> kwargs;
-  final Map<String, dynamic> details;
+  final IResultFields _resultFields;
+
+  int get requestID => _resultFields.requestID;
+
+  List<dynamic> get args => _resultFields.args;
+
+  Map<String, dynamic> get kwargs => _resultFields.kwargs;
+
+  Map<String, dynamic> get details => _resultFields.details;
 
   static Result parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Result(fields.requestID!, args: fields.args, kwargs: fields.kwargs, details: fields.details);
+    return Result(ResultFields(fields.requestID!, args: fields.args, kwargs: fields.kwargs, details: fields.details));
   }
 
   @override

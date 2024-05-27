@@ -2,9 +2,57 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
+abstract class IWelcomeFields {
+  int get sessionID;
+
+  Map<String, dynamic> get roles;
+
+  String get authID;
+
+  String get authRole;
+
+  String get authMethod;
+
+  Map<String, dynamic> get authExtra;
+}
+
+class WelcomeFields implements IWelcomeFields {
+  WelcomeFields(
+    this._sessionID,
+    this._roles,
+    this._authid,
+    this._authRole,
+    this._authmethod, {
+    Map<String, dynamic>? authExtra,
+  }) : _authextra = authExtra ?? {};
+  final int _sessionID;
+  final Map<String, dynamic> _roles;
+  final String _authid;
+  final String _authRole;
+  final String _authmethod;
+  final Map<String, dynamic> _authextra;
+
+  @override
+  int get sessionID => _sessionID;
+
+  @override
+  Map<String, dynamic> get roles => _roles;
+
+  @override
+  String get authID => _authid;
+
+  @override
+  String get authRole => _authRole;
+
+  @override
+  String get authMethod => _authmethod;
+
+  @override
+  Map<String, dynamic> get authExtra => _authextra;
+}
+
 class Welcome implements Message {
-  Welcome(this.sessionID, this.roles, this.authID, this.authRole, this.authMethod, {Map<String, dynamic>? authExtra})
-      : authExtra = authExtra ?? {};
+  Welcome(this._welcomeFields);
 
   static const int id = 2;
   static const String text = "WELCOME";
@@ -19,12 +67,19 @@ class Welcome implements Message {
     },
   );
 
-  final int sessionID;
-  final Map<String, dynamic> roles;
-  final String authID;
-  final String authRole;
-  final String authMethod;
-  final Map<String, dynamic> authExtra;
+  final IWelcomeFields _welcomeFields;
+
+  int get sessionID => _welcomeFields.sessionID;
+
+  Map<String, dynamic> get roles => _welcomeFields.roles;
+
+  String get authID => _welcomeFields.authID;
+
+  String get authRole => _welcomeFields.authRole;
+
+  String get authMethod => _welcomeFields.authMethod;
+
+  Map<String, dynamic> get authExtra => _welcomeFields.authExtra;
 
   static Welcome parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
@@ -42,7 +97,7 @@ class Welcome implements Message {
       authExtra = validateMapOrRaise(fields.details!["authextra"], text, "authextra");
     }
 
-    return Welcome(fields.sessionID!, roles, authid, authRole, authMethod, authExtra: authExtra);
+    return Welcome(WelcomeFields(fields.sessionID!, roles, authid, authRole, authMethod, authExtra: authExtra));
   }
 
   @override

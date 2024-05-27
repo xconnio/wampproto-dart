@@ -1,8 +1,8 @@
 import "package:pinenacl/ed25519.dart";
 import "package:test/test.dart";
 
-import "package:wampproto/messages.dart";
 import "package:wampproto/src/auth/cryptosign.dart";
+import "package:wampproto/src/messages/challenge.dart";
 
 void main() {
   const privateKeyHex = "c7e8c1f8f16ec37f53ed153f8afb7f18469b051f1d24dbea2097a2a104b2e9db";
@@ -21,7 +21,8 @@ void main() {
     });
 
     test("authenticate", () {
-      final authenticate = authenticator.authenticate(Challenge("cryptosign", {"challenge": challenge}));
+      final authenticate =
+          authenticator.authenticate(Challenge(ChallengeFields("cryptosign", {"challenge": challenge})));
       expect(authenticate.signature, signature + challenge);
     });
   });

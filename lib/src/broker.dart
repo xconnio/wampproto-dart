@@ -59,7 +59,7 @@ class Broker {
 
       _subscriptionsBySession.putIfAbsent(sessionID, () => {})[subscription.id] = subscription;
 
-      Subscribed subscribed = Subscribed(message.requestID, subscription.id);
+      Subscribed subscribed = Subscribed(SubscribedFields(message.requestID, subscription.id));
       return MessageWithRecipient(subscribed, sessionID);
     } else if (message is UnSubscribe) {
       if (!_subscriptionsBySession.containsKey(sessionID)) {
@@ -82,7 +82,7 @@ class Broker {
 
       _subscriptionsBySession[sessionID]?.remove(message.subscriptionID);
 
-      UnSubscribed unSubscribed = UnSubscribed(message.requestID);
+      UnSubscribed unSubscribed = UnSubscribed(UnSubscribedFields(message.requestID));
       return MessageWithRecipient(unSubscribed, sessionID);
     } else {
       throw Exception("message type not supported");
@@ -99,14 +99,14 @@ class Broker {
 
     var subscription = _subscriptionsByTopic[message.uri];
     if (subscription != null) {
-      var event = Event(subscription.id, publicationId, args: message.args, kwargs: message.kwargs);
+      var event = Event(EventFields(subscription.id, publicationId, args: message.args, kwargs: message.kwargs));
       result.event = event;
       result.recipients!.addAll(subscription.subscribers.keys);
     }
 
     var ack = message.options["acknowledge"] ?? false;
     if (ack) {
-      var published = Published(message.requestID, publicationId);
+      var published = Published(PublishedFields(message.requestID, publicationId));
       result.ack = MessageWithRecipient(published, sessionId);
     }
 
