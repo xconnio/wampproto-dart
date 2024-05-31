@@ -11,6 +11,7 @@ abstract class IClientAuthenticator {
   Map<String, dynamic>? authExtra;
 
   String get authMethod => _method;
+
   String get authID => _authID;
 
   Authenticate authenticate(Challenge challenge);
@@ -18,11 +19,13 @@ abstract class IClientAuthenticator {
 
 abstract class IServerAuthenticator {
   List<String> methods();
+
   Response authenticate(Request request);
 }
 
 class AnonymousServerAuthenticator implements IServerAuthenticator {
   static const String anonymous = "anonymous";
+
   @override
   Response authenticate(Request request) {
     return Response(request.authID, anonymous);
@@ -39,6 +42,7 @@ class Response {
   final String _authRole;
 
   String get authID => _authID;
+
   String get authRole => _authRole;
 }
 
@@ -50,7 +54,7 @@ class WAMPCRAResponse extends Response {
   String get secret => _secret;
 }
 
-class Request {
+abstract class Request {
   Request(this._method, this._realm, this._authID, this._authExtra);
 
   final String _method;
@@ -59,9 +63,18 @@ class Request {
   final Map<String, dynamic> _authExtra;
 
   String get method => _method;
+
   String get realm => _realm;
+
   String get authID => _authID;
+
   Map<String, dynamic> get authExtra => _authExtra;
+}
+
+class AnonymousRequest extends Request {
+  AnonymousRequest(String realm, String authID, Map<String, dynamic> authExtra) : super(type, realm, authID, authExtra);
+
+  static const String type = "anonymous";
 }
 
 class CryptoSignRequest extends Request {
@@ -72,6 +85,12 @@ class CryptoSignRequest extends Request {
   final String _publicKey;
 
   String get publicKey => _publicKey;
+}
+
+class WAMPCRARequest extends Request {
+  WAMPCRARequest(String realm, String authID, Map<String, dynamic> authExtra) : super(type, realm, authID, authExtra);
+
+  static const String type = "wampcra";
 }
 
 class TicketRequest extends Request {

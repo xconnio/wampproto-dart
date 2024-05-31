@@ -4,6 +4,7 @@ import "package:pinenacl/ed25519.dart";
 import "package:wampproto/auth.dart";
 import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
+import "package:wampproto/src/auth/auth.dart";
 import "package:wampproto/src/exception.dart";
 import "package:wampproto/src/types.dart";
 
@@ -73,7 +74,7 @@ class Acceptor {
 
       switch (method) {
         case anonymous:
-          Request request = Request(method, msg.realm, msg.authID, msg.authExtra);
+          AnonymousRequest request = AnonymousRequest(msg.realm, msg.authID, msg.authExtra);
           Response response = _authenticator.authenticate(request);
           _state = stateWelcomeSent;
 
@@ -100,7 +101,7 @@ class Acceptor {
           return Challenge(ChallengeFields(method, {"challenge": challenge}));
 
         case wampcra:
-          Request request = Request(method, msg.realm, msg.authID, msg.authExtra);
+          WAMPCRARequest request = WAMPCRARequest(msg.realm, msg.authID, msg.authExtra);
           Response response = _authenticator.authenticate(request);
           if (response is! WAMPCRAResponse) {
             throw Exception("invalid response type for WAMPCRA");
