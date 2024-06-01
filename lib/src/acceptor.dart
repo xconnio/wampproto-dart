@@ -6,6 +6,7 @@ import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
 import "package:wampproto/src/exception.dart";
 import "package:wampproto/src/types.dart";
+import "package:wampproto/src/uris.dart";
 
 final routerRoles = <String, Map<String, Map>>{
   "dealer": {},
@@ -25,7 +26,7 @@ class Acceptor {
   static const int stateHelloReceived = 1;
   static const int stateChallengeSent = 2;
   static const int stateWelcomeSent = 3;
-  static const int stateErrored = 4;
+  static const int stateAbort = 4;
 
   static const String ticket = "ticket";
   static const String wampcra = "wampcra";
@@ -50,7 +51,8 @@ class Acceptor {
     final receivedMessage = _serializer.deserialize(data);
     final toSend = receiveMessage(receivedMessage);
 
-    return MapEntry(_serializer.serialize(toSend!), toSend is Welcome);
+    var isFinal = toSend is Welcome || toSend is Abort;
+    return MapEntry(_serializer.serialize(toSend!), isFinal);
   }
 
   Message? receiveMessage(Message msg) {
@@ -130,7 +132,11 @@ class Acceptor {
 
       switch (_authMethod) {
         case cryptosign:
-          verifyCryptoSignSignature(msg.signature, Base16Encoder.instance.decode(_publicKey));
+          var isVerified = verifyCryptoSignSignature(msg.signature, Base16Encoder.instance.decode(_publicKey));
+          if (!isVerified) {
+            _state = stateAbort;
+            return Abort(AbortFields({}, errAuthenticationFailed));
+          }
           _state = stateWelcomeSent;
 
           Welcome welcome = Welcome(
@@ -141,7 +147,11 @@ class Acceptor {
           return welcome;
 
         case wampcra:
-          verifyWampCRASignature(msg.signature, _challenge, Uint8List.fromList(_secret.codeUnits));
+          var isVerified = verifyWampCRASignature(msg.signature, _challenge, Uint8List.fromList(_secret.codeUnits));
+          if (!isVerified) {
+            _state = stateAbort;
+            return Abort(AbortFields({}, errAuthenticationFailed));
+          }
           _state = stateWelcomeSent;
 
           Welcome welcome = Welcome(
@@ -164,7 +174,7 @@ class Acceptor {
           return welcome;
       }
     } else if (msg is Abort) {
-      _state = stateErrored;
+      _state = stateAbort;
 
       return null;
     } else {
@@ -172,6 +182,10 @@ class Acceptor {
     }
 
     return null;
+  }
+
+  bool isAborted() {
+    return _state == stateAbort;
   }
 
   SessionDetails getSessionDetails() {
