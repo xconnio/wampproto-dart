@@ -4,7 +4,6 @@ import "package:pinenacl/ed25519.dart";
 import "package:wampproto/auth.dart";
 import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
-import "package:wampproto/src/auth/auth.dart";
 import "package:wampproto/src/exception.dart";
 import "package:wampproto/src/types.dart";
 import "package:wampproto/src/uris.dart";
@@ -27,7 +26,7 @@ class Acceptor {
   static const int stateHelloReceived = 1;
   static const int stateChallengeSent = 2;
   static const int stateWelcomeSent = 3;
-  static const int stateAbort = 4;
+  static const int stateAborted = 4;
 
   static const String ticket = "ticket";
   static const String wampcra = "wampcra";
@@ -135,7 +134,7 @@ class Acceptor {
         case cryptosign:
           var isVerified = verifyCryptoSignSignature(msg.signature, Base16Encoder.instance.decode(_publicKey));
           if (!isVerified) {
-            _state = stateAbort;
+            _state = stateAborted;
             return Abort(AbortFields({}, errAuthenticationFailed));
           }
           _state = stateWelcomeSent;
@@ -150,7 +149,7 @@ class Acceptor {
         case wampcra:
           var isVerified = verifyWampCRASignature(msg.signature, _challenge, Uint8List.fromList(_secret.codeUnits));
           if (!isVerified) {
-            _state = stateAbort;
+            _state = stateAborted;
             return Abort(AbortFields({}, errAuthenticationFailed));
           }
           _state = stateWelcomeSent;
@@ -175,7 +174,7 @@ class Acceptor {
           return welcome;
       }
     } else if (msg is Abort) {
-      _state = stateAbort;
+      _state = stateAborted;
 
       return null;
     } else {
@@ -186,7 +185,7 @@ class Acceptor {
   }
 
   bool isAborted() {
-    return _state == stateAbort;
+    return _state == stateAborted;
   }
 
   SessionDetails getSessionDetails() {
