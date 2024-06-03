@@ -60,8 +60,8 @@ class Publish implements Message {
     message: text,
     spec: {
       1: validateRequestID,
-      2: validateURI,
-      3: validateOptions,
+      2: validateOptions,
+      3: validateURI,
       4: validateArgs,
       5: validateKwargs,
     },
