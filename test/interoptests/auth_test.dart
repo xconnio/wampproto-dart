@@ -47,5 +47,16 @@ void main() {
       );
       expect(isVerified, "Signature verified successfully\n");
     });
+
+    test("VerifyCryptoSignSignature", () async {
+      var challenge = await runCommand("auth cryptosign generate-challenge");
+
+      var signature = await runCommand(
+        "auth cryptosign sign-challenge --challenge ${challenge.trim()} --private-key $testPrivateKey",
+      );
+
+      var isVerified = verifyCryptoSignSignature(signature.trim(), Base16Encoder.instance.decode(testPublicKey));
+      expect(isVerified, true);
+    });
   });
 }
