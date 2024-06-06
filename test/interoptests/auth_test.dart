@@ -1,8 +1,8 @@
 import "dart:io";
 
+import "package:pinenacl/ed25519.dart";
 import "package:test/test.dart";
 
-import "package:wampproto/auth.dart";
 import "package:wampproto/src/auth/cryptosign.dart";
 
 Future<String> runCommand(String command) async {
@@ -26,6 +26,24 @@ void main() {
 
       var isVerified = await runCommand(
         "auth cryptosign verify-signature --signature ${signature.trim()} --public-key $testPublicKey",
+      );
+      expect(isVerified, "Signature verified successfully\n");
+    });
+
+    test("SignCryptoSignChallenge", () async {
+      var challenge = await runCommand("auth cryptosign generate-challenge");
+
+      var signature = signCryptoSignChallenge(
+        challenge.trim(),
+        SigningKey(seed: Base16Encoder.instance.decode(testPrivateKey)),
+      );
+
+      if (Base16Encoder.instance.decode(signature).length == 64) {
+        signature = signature + challenge.trim();
+      }
+
+      var isVerified = await runCommand(
+        "auth cryptosign verify-signature --signature $signature --public-key $testPublicKey",
       );
       expect(isVerified, "Signature verified successfully\n");
     });
