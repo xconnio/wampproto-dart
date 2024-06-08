@@ -4,7 +4,8 @@ import "package:wampproto/src/messages/validation_spec.dart";
 final Set<String> allowedRoles = <String>{"callee", "caller", "publisher", "subscriber", "dealer", "broker"};
 
 const minID = 1;
-const maxID = 1 << 53;
+// Maximum WAMP ID value (2^53 - 1), supported by the browser
+const maxID = 9007199254740991;
 
 class Fields {
   int? requestID;
