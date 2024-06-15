@@ -88,7 +88,7 @@ void main() {
   });
 
   test("send error message correctly", () {
-    final error = Error(ErrorFields(Invocation.id, 10, errProcedureAlreadyExists));
+    final error = Error(Invocation.id, 10, errProcedureAlreadyExists);
     var toSend = session.sendMessage(error);
     expect(toSend, '[${Error.id},${Invocation.id},${error.requestID},${error.details},"${error.uri}"]');
   });
@@ -98,7 +98,7 @@ void main() {
       final call = Call(CallFields(1, "io.xconn.test"));
       session.sendMessage(call);
 
-      final callErr = Error(ErrorFields(Call.id, call.requestID, errInvalidArgument));
+      final callErr = Error(Call.id, call.requestID, errInvalidArgument);
       var received = session.receiveMessage(callErr);
       expect(received, callErr);
     });
@@ -107,7 +107,7 @@ void main() {
       final register = Register(RegisterFields(2, "io.xconn.test"));
       session.sendMessage(register);
 
-      final registerErr = Error(ErrorFields(Register.id, register.requestID, errInvalidArgument));
+      final registerErr = Error(Register.id, register.requestID, errInvalidArgument);
       var received = session.receiveMessage(registerErr);
       expect(received, registerErr);
     });
@@ -116,7 +116,7 @@ void main() {
       final unregister = UnRegister(UnRegisterFields(3, 3));
       session.sendMessage(unregister);
 
-      final unregisterErr = Error(ErrorFields(UnRegister.id, unregister.requestID, errInvalidArgument));
+      final unregisterErr = Error(UnRegister.id, unregister.requestID, errInvalidArgument);
       var received = session.receiveMessage(unregisterErr);
       expect(received, unregisterErr);
     });
@@ -125,7 +125,7 @@ void main() {
       final subscribe = Subscribe(SubscribeFields(7, "topic"));
       session.sendMessage(subscribe);
 
-      final subscribeError = Error(ErrorFields(Subscribe.id, subscribe.requestID, errInvalidURI));
+      final subscribeError = Error(Subscribe.id, subscribe.requestID, errInvalidURI);
       var received = session.receiveMessage(subscribeError);
       expect(received, subscribeError);
     });
@@ -134,7 +134,7 @@ void main() {
       final unsubscribe = UnSubscribe(UnSubscribeFields(8, 8));
       session.sendMessage(unsubscribe);
 
-      final unsubscribeError = Error(ErrorFields(UnSubscribe.id, unsubscribe.requestID, errInvalidURI));
+      final unsubscribeError = Error(UnSubscribe.id, unsubscribe.requestID, errInvalidURI);
       var received = session.receiveMessage(unsubscribeError);
       expect(received, unsubscribeError);
     });
@@ -143,7 +143,7 @@ void main() {
       final publish = Publish(PublishFields(6, "topic", options: {"acknowledge": true}));
       session.sendMessage(publish);
 
-      final publishErr = Error(ErrorFields(Publish.id, publish.requestID, errInvalidURI));
+      final publishErr = Error(Publish.id, publish.requestID, errInvalidURI);
       var received = session.receiveMessage(publishErr);
       expect(received, publishErr);
     });
@@ -155,7 +155,7 @@ void main() {
     expect(() => session.sendMessage(invalidYield), throwsArgumentError);
 
     // send error for invalid message
-    final invalidError = Error(ErrorFields(Register.id, 10, errProcedureAlreadyExists));
+    final invalidError = Error(Register.id, 10, errProcedureAlreadyExists);
     expect(() => session.sendMessage(invalidError), throwsArgumentError);
 
     // send invalid message
@@ -166,24 +166,24 @@ void main() {
     expect(() => session.receiveMessage(Register(RegisterFields(100, "io.xconn.test"))), throwsException);
 
     // receive error for invalid message
-    expect(() => session.receiveMessage(Error(ErrorFields(Registered.id, 100, errInvalidArgument))), throwsException);
+    expect(() => session.receiveMessage(Error(Registered.id, 100, errInvalidArgument)), throwsException);
 
     // receive error invalid Call id
-    expect(() => session.receiveMessage(Error(ErrorFields(Call.id, 100, errInvalidArgument))), throwsException);
+    expect(() => session.receiveMessage(Error(Call.id, 100, errInvalidArgument)), throwsException);
 
     // receive error Register id
-    expect(() => session.receiveMessage(Error(ErrorFields(Register.id, 100, errInvalidArgument))), throwsException);
+    expect(() => session.receiveMessage(Error(Register.id, 100, errInvalidArgument)), throwsException);
 
     // receive error invalid UnRegister id
-    expect(() => session.receiveMessage(Error(ErrorFields(UnRegister.id, 100, errInvalidArgument))), throwsException);
+    expect(() => session.receiveMessage(Error(UnRegister.id, 100, errInvalidArgument)), throwsException);
 
     // receive error invalid Subscribe id
-    expect(() => session.receiveMessage(Error(ErrorFields(Subscribe.id, 100, errInvalidArgument))), throwsException);
+    expect(() => session.receiveMessage(Error(Subscribe.id, 100, errInvalidArgument)), throwsException);
 
     // receive error invalid UnSubscribe id
-    expect(() => session.receiveMessage(Error(ErrorFields(UnSubscribe.id, 100, errInvalidArgument))), throwsException);
+    expect(() => session.receiveMessage(Error(UnSubscribe.id, 100, errInvalidArgument)), throwsException);
 
     // receive error invalid Publish id
-    expect(() => session.receiveMessage(Error(ErrorFields(Publish.id, 100, errInvalidArgument))), throwsException);
+    expect(() => session.receiveMessage(Error(Publish.id, 100, errInvalidArgument)), throwsException);
   });
 }

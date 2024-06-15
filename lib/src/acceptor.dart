@@ -133,7 +133,7 @@ class Acceptor {
           var isVerified = verifyCryptoSignSignature(msg.signature, Base16Encoder.instance.decode(_publicKey));
           if (!isVerified) {
             _state = stateAborted;
-            return Abort(AbortFields({}, errAuthenticationFailed));
+            return Abort({}, errAuthenticationFailed);
           }
           _state = stateWelcomeSent;
 
@@ -147,7 +147,7 @@ class Acceptor {
           var isVerified = verifyWampCRASignature(msg.signature, _challenge, Uint8List.fromList(_secret.codeUnits));
           if (!isVerified) {
             _state = stateAborted;
-            return Abort(AbortFields({}, errAuthenticationFailed));
+            return Abort({}, errAuthenticationFailed);
           }
           _state = stateWelcomeSent;
 

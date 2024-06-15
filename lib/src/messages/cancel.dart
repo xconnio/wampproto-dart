@@ -22,7 +22,11 @@ class CancelFields implements ICancelFields {
 }
 
 class Cancel implements Message {
-  Cancel(this._cancelFields);
+  Cancel(int requestID, {Map<String, dynamic>? options}) {
+    _cancelFields = CancelFields(requestID, options: options);
+  }
+
+  Cancel.withFields(this._cancelFields);
 
   static const int id = 49;
 
@@ -38,7 +42,7 @@ class Cancel implements Message {
     },
   );
 
-  final ICancelFields _cancelFields;
+  late ICancelFields _cancelFields;
 
   int get requestID => _cancelFields.requestID;
 
@@ -47,7 +51,7 @@ class Cancel implements Message {
   static Cancel parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Cancel(CancelFields(fields.requestID!, options: fields.options));
+    return Cancel(fields.requestID!, options: fields.options);
   }
 
   @override

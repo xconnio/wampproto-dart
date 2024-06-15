@@ -61,7 +61,7 @@ class Dealer {
     if (message is Call) {
       var registration = _registrationsByProcedure[message.uri];
       if (registration == null) {
-        var error = Error(ErrorFields(Register.id, message.requestID, errNoSuchProcedure));
+        var error = Error(Register.id, message.requestID, errNoSuchProcedure);
         return MessageWithRecipient(error, sessionID);
       }
 
@@ -123,7 +123,7 @@ class Dealer {
         _registrationsBySession.putIfAbsent(sessionID, () => {})[registrations.id] = registrations;
       } else {
         // TODO: implement shared registrations.
-        var error = Error(ErrorFields(Register.id, message.requestID, errProcedureAlreadyExists));
+        var error = Error(Register.id, message.requestID, errProcedureAlreadyExists);
         return MessageWithRecipient(error, sessionID);
       }
 

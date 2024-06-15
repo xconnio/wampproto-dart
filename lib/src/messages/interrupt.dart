@@ -22,7 +22,11 @@ class InterruptFields implements IInterruptFields {
 }
 
 class Interrupt implements Message {
-  Interrupt(this._interruptFields);
+  Interrupt(int requestID, {Map<String, dynamic>? options}) {
+    _interruptFields = InterruptFields(requestID, options: options);
+  }
+
+  Interrupt.withFields(this._interruptFields);
 
   static const int id = 69;
 
@@ -38,7 +42,7 @@ class Interrupt implements Message {
     },
   );
 
-  final IInterruptFields _interruptFields;
+  late IInterruptFields _interruptFields;
 
   int get requestID => _interruptFields.requestID;
 
@@ -47,7 +51,7 @@ class Interrupt implements Message {
   static Interrupt parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Interrupt(InterruptFields(fields.requestID!, options: fields.options));
+    return Interrupt(fields.requestID!, options: fields.options);
   }
 
   @override
