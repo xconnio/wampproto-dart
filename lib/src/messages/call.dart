@@ -48,7 +48,11 @@ class CallFields implements ICallFields {
 }
 
 class Call implements Message {
-  Call(this._callFields);
+  Call(int requestID, String uri, {List<dynamic>? args, Map<String, dynamic>? kwargs, Map<String, dynamic>? options}) {
+    _callFields = CallFields(requestID, uri, args: args, kwargs: kwargs, options: options);
+  }
+
+  Call.withFields(this._callFields);
 
   static const int id = 48;
 
@@ -67,7 +71,7 @@ class Call implements Message {
     },
   );
 
-  final ICallFields _callFields;
+  late ICallFields _callFields;
 
   int get requestID => _callFields.requestID;
 
@@ -82,9 +86,7 @@ class Call implements Message {
   static Call parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Call(
-      CallFields(fields.requestID!, fields.uri!, args: fields.args, kwargs: fields.kwargs, options: fields.options),
-    );
+    return Call(fields.requestID!, fields.uri!, args: fields.args, kwargs: fields.kwargs, options: fields.options);
   }
 
   @override

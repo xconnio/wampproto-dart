@@ -89,7 +89,7 @@ void main() {
     });
 
     test("receive invalid message", () {
-      var call = Call(CallFields(1, topicName));
+      var call = Call(1, topicName);
       expect(() => broker.receiveMessage(1, call), throwsException);
     });
   });

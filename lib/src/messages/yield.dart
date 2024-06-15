@@ -41,7 +41,11 @@ class YieldFields implements IYieldFields {
 }
 
 class Yield implements Message {
-  Yield(this._yieldFields);
+  Yield(int requestID, {List<dynamic>? args, Map<String, dynamic>? kwargs, Map<String, dynamic>? options}) {
+    _yieldFields = YieldFields(requestID, args: args, kwargs: kwargs, options: options);
+  }
+
+  Yield.withYield(this._yieldFields);
 
   static const int id = 70;
 
@@ -59,7 +63,7 @@ class Yield implements Message {
     },
   );
 
-  final IYieldFields _yieldFields;
+  late IYieldFields _yieldFields;
 
   int get requestID => _yieldFields.requestID;
 
@@ -72,7 +76,7 @@ class Yield implements Message {
   static Yield parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Yield(YieldFields(fields.requestID!, args: fields.args, kwargs: fields.kwargs, options: fields.options));
+    return Yield(fields.requestID!, args: fields.args, kwargs: fields.kwargs, options: fields.options);
   }
 
   @override

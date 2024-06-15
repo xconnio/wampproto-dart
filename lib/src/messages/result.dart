@@ -41,7 +41,11 @@ class ResultFields implements IResultFields {
 }
 
 class Result implements Message {
-  Result(this._resultFields);
+  Result(int requestID, {List<dynamic>? args, Map<String, dynamic>? kwargs, Map<String, dynamic>? details}) {
+    _resultFields = ResultFields(requestID, args: args, kwargs: kwargs, details: details);
+  }
+
+  Result.withFields(this._resultFields);
 
   static const int id = 50;
 
@@ -59,7 +63,7 @@ class Result implements Message {
     },
   );
 
-  final IResultFields _resultFields;
+  late IResultFields _resultFields;
 
   int get requestID => _resultFields.requestID;
 
@@ -72,7 +76,7 @@ class Result implements Message {
   static Result parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Result(ResultFields(fields.requestID!, args: fields.args, kwargs: fields.kwargs, details: fields.details));
+    return Result(fields.requestID!, args: fields.args, kwargs: fields.kwargs, details: fields.details);
   }
 
   @override

@@ -23,21 +23,21 @@ void main() {
     });
 
     test("send Call message and receive Result", () {
-      final call = Call(CallFields(10, "io.xconn.test"));
+      final call = Call(10, "io.xconn.test");
       var toSend = session.sendMessage(call);
       expect(toSend, '[${Call.id},${call.requestID},${call.options},"${call.uri}"]');
 
-      final result = Result(ResultFields(10));
+      final result = Result(10);
       var received = session.receiveMessage(result);
       expect(received, equals(result));
     });
 
     test("receive Invocation and send Yield for that invocation", () {
-      final invocation = Invocation(InvocationFields(4, 3));
+      final invocation = Invocation(4, 3);
       var toSend = session.receiveMessage(invocation);
       expect(toSend, equals(invocation));
 
-      final yield = Yield(YieldFields(4));
+      final yield = Yield(4);
       var received = session.sendMessage(yield);
       expect(received, "[70,4,{}]");
     });
@@ -95,7 +95,7 @@ void main() {
 
   group("receive error message correctly", () {
     test("send Call message and receive Error for that Call", () {
-      final call = Call(CallFields(1, "io.xconn.test"));
+      final call = Call(1, "io.xconn.test");
       session.sendMessage(call);
 
       final callErr = Error(Call.id, call.requestID, errInvalidArgument);
@@ -151,7 +151,7 @@ void main() {
 
   test("exceptions", () {
     // send Yield for unknown invocation
-    final invalidYield = Yield(YieldFields(5));
+    final invalidYield = Yield(5);
     expect(() => session.sendMessage(invalidYield), throwsArgumentError);
 
     // send error for invalid message

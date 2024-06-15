@@ -81,13 +81,11 @@ class Dealer {
       );
 
       var invocation = Invocation(
-        InvocationFields(
-          requestID,
-          registration.id,
-          args: message.args,
-          kwargs: message.kwargs,
-          details: receiveProgress ? {optionReceiveProgress: receiveProgress} : {},
-        ),
+        requestID,
+        registration.id,
+        args: message.args,
+        kwargs: message.kwargs,
+        details: receiveProgress ? {optionReceiveProgress: receiveProgress} : {},
       );
       return MessageWithRecipient(invocation, calleeID);
     } else if (message is Yield) {
@@ -108,8 +106,7 @@ class Dealer {
       } else {
         _pendingCalls.remove(message.requestID);
       }
-      var result =
-          Result(ResultFields(invocation.requestID, args: message.args, kwargs: message.kwargs, details: details));
+      var result = Result(invocation.requestID, args: message.args, kwargs: message.kwargs, details: details);
       return MessageWithRecipient(result, invocation.callerID);
     } else if (message is Register) {
       if (!_registrationsBySession.containsKey(sessionID)) {
