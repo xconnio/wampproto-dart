@@ -13,11 +13,11 @@ void main() {
 
   group("sendMessage & receiveMessage", () {
     test("send Register message and receive Registered message", () {
-      final register = Register(RegisterFields(2, "io.xconn.test"));
+      final register = Register(2, "io.xconn.test");
       var toSend = session.sendMessage(register);
       expect(toSend, '[${Register.id},${register.requestID},${register.options},"${register.uri}"]');
 
-      final registered = Registered(RegisteredFields(2, 3));
+      final registered = Registered(2, 3);
       var received = session.receiveMessage(registered);
       expect(received, equals(registered));
     });
@@ -43,11 +43,11 @@ void main() {
     });
 
     test("send UnRegister message and receive UnRegistered message", () {
-      final unregister = UnRegister(UnRegisterFields(3, 3));
+      final unregister = UnRegister(3, 3);
       var toSend = session.sendMessage(unregister);
       expect(toSend, "[${UnRegister.id},${unregister.requestID},${unregister.registrationID}]");
 
-      final unregistered = UnRegistered(UnRegisteredFields(3));
+      final unregistered = UnRegistered(3);
       var received = session.receiveMessage(unregistered);
       expect(received, equals(unregistered));
     });
@@ -104,7 +104,7 @@ void main() {
     });
 
     test("send Register message and receive Error for that Register", () {
-      final register = Register(RegisterFields(2, "io.xconn.test"));
+      final register = Register(2, "io.xconn.test");
       session.sendMessage(register);
 
       final registerErr = Error(Register.id, register.requestID, errInvalidArgument);
@@ -113,7 +113,7 @@ void main() {
     });
 
     test("send UnRegister message and receive Error for that UnRegister", () {
-      final unregister = UnRegister(UnRegisterFields(3, 3));
+      final unregister = UnRegister(3, 3);
       session.sendMessage(unregister);
 
       final unregisterErr = Error(UnRegister.id, unregister.requestID, errInvalidArgument);
@@ -159,11 +159,11 @@ void main() {
     expect(() => session.sendMessage(invalidError), throwsArgumentError);
 
     // send invalid message
-    final invalidMessage = Registered(RegisteredFields(11, 12));
+    final invalidMessage = Registered(11, 12);
     expect(() => session.sendMessage(invalidMessage), throwsException);
 
     // receive invalid message
-    expect(() => session.receiveMessage(Register(RegisterFields(100, "io.xconn.test"))), throwsException);
+    expect(() => session.receiveMessage(Register(100, "io.xconn.test")), throwsException);
 
     // receive error for invalid message
     expect(() => session.receiveMessage(Error(Registered.id, 100, errInvalidArgument)), throwsException);

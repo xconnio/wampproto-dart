@@ -127,7 +127,7 @@ class Dealer {
         return MessageWithRecipient(error, sessionID);
       }
 
-      var registered = Registered(RegisteredFields(message.requestID, registrations.id));
+      var registered = Registered(message.requestID, registrations.id);
       return MessageWithRecipient(registered, sessionID);
     } else if (message is UnRegister) {
       var registrations = _registrationsBySession[sessionID];
@@ -147,7 +147,7 @@ class Dealer {
       }
       _registrationsBySession[sessionID] = registrations;
 
-      var unRegistered = UnRegistered(UnRegisteredFields(message.requestID));
+      var unRegistered = UnRegistered(message.requestID);
       return MessageWithRecipient(unRegistered, sessionID);
     } else {
       throw Exception("message type not supported");

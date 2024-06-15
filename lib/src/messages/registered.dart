@@ -22,7 +22,11 @@ class RegisteredFields implements IRegisteredFields {
 }
 
 class Registered implements Message {
-  Registered(this._registeredFields);
+  Registered(int requestID, int registrationID) {
+    _registeredFields = RegisteredFields(requestID, registrationID);
+  }
+
+  Registered.withFields(this._registeredFields);
 
   static const int id = 65;
 
@@ -38,7 +42,7 @@ class Registered implements Message {
     },
   );
 
-  final IRegisteredFields _registeredFields;
+  late IRegisteredFields _registeredFields;
 
   int get requestID => _registeredFields.requestID;
 
@@ -47,7 +51,7 @@ class Registered implements Message {
   static Registered parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Registered(RegisteredFields(fields.requestID!, fields.registrationID!));
+    return Registered(fields.requestID!, fields.registrationID!);
   }
 
   @override

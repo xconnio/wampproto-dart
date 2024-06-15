@@ -27,7 +27,7 @@ void main() {
       var details = SessionDetails(1, "realm1", "authid", "authrole");
       dealer.addSession(details);
 
-      final registerMessage = Register(RegisterFields(1, procedureName));
+      final registerMessage = Register(1, procedureName);
       final messageWithRecipient = dealer.receiveMessage(1, registerMessage);
       expect(messageWithRecipient.recipient, 1);
       expect(messageWithRecipient.message, isA<Registered>());
@@ -78,7 +78,7 @@ void main() {
     });
 
     test("unregister a procedure", () {
-      var unRegister = UnRegister(UnRegisterFields(1, 1));
+      var unRegister = UnRegister(1, 1);
       var messagesWithRecipient = dealer.receiveMessage(1, unRegister);
       expect(messagesWithRecipient.recipient, 1);
       expect(messagesWithRecipient.message, isA<UnRegistered>());
@@ -91,7 +91,7 @@ void main() {
       expect(() => dealer.receiveMessage(2, unRegister), throwsException);
 
       // unregister with invalid registrationID
-      var invalidUnRegister = UnRegister(UnRegisterFields(1, 2));
+      var invalidUnRegister = UnRegister(1, 2);
       expect(() => dealer.receiveMessage(1, invalidUnRegister), throwsException);
 
       // unregister with non-existing registrationID
@@ -110,7 +110,7 @@ void main() {
         ..addSession(SessionDetails(3, "realm1", "authid", "authrole"))
         ..addSession(SessionDetails(4, "realm1", "authid", "authrole"));
 
-      var register = Register(RegisterFields(1, "foo.bar"));
+      var register = Register(1, "foo.bar");
       dealer.receiveMessage(calleeId, register);
 
       var call = Call(CallFields(2, "foo.bar", options: {optionReceiveProgress: true}));
