@@ -53,11 +53,11 @@ void main() {
     });
 
     test("send Publish message with acknowledge true and receive Published message", () {
-      final publish = Publish(PublishFields(6, "topic", options: {"acknowledge": true}));
+      final publish = Publish(6, "topic", options: {"acknowledge": true});
       var toSend = session.sendMessage(publish);
       expect(toSend, '[${Publish.id},${publish.requestID},${jsonEncode(publish.options)},"${publish.uri}"]');
 
-      final published = Published(PublishedFields(6, 6));
+      final published = Published(6, 6);
       var received = session.receiveMessage(published);
       expect(received, equals(published));
     });
@@ -71,7 +71,7 @@ void main() {
       var received = session.receiveMessage(subscribed);
       expect(received, equals(subscribed));
 
-      final event = Event(EventFields(8, 6));
+      final event = Event(8, 6);
       var receivedEvent = session.receiveMessage(event);
       expect(receivedEvent, equals(event));
     });
@@ -140,7 +140,7 @@ void main() {
     });
 
     test("send Publish message and receive Error for that Publish", () {
-      final publish = Publish(PublishFields(6, "topic", options: {"acknowledge": true}));
+      final publish = Publish(6, "topic", options: {"acknowledge": true});
       session.sendMessage(publish);
 
       final publishErr = Error(Publish.id, publish.requestID, errInvalidURI);

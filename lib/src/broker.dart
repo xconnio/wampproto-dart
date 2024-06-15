@@ -99,14 +99,14 @@ class Broker {
 
     var subscription = _subscriptionsByTopic[message.uri];
     if (subscription != null) {
-      var event = Event(EventFields(subscription.id, publicationId, args: message.args, kwargs: message.kwargs));
+      var event = Event(subscription.id, publicationId, args: message.args, kwargs: message.kwargs);
       result.event = event;
       result.recipients!.addAll(subscription.subscribers.keys);
     }
 
     var ack = message.options["acknowledge"] ?? false;
     if (ack) {
-      var published = Published(PublishedFields(message.requestID, publicationId));
+      var published = Published(message.requestID, publicationId);
       result.ack = MessageWithRecipient(published, sessionId);
     }
 

@@ -22,7 +22,11 @@ class PublishedFields implements IPublishedFields {
 }
 
 class Published implements Message {
-  Published(this._publishedFields);
+  Published(int requestID, int publicationID) {
+    _publishedFields = PublishedFields(requestID, publicationID);
+  }
+
+  Published.withFields(this._publishedFields);
 
   static const int id = 17;
 
@@ -38,7 +42,7 @@ class Published implements Message {
     },
   );
 
-  final IPublishedFields _publishedFields;
+  late IPublishedFields _publishedFields;
 
   int get requestID => _publishedFields.requestID;
 
@@ -47,7 +51,7 @@ class Published implements Message {
   static Published parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Published(PublishedFields(fields.requestID!, fields.publicationID!));
+    return Published(fields.requestID!, fields.publicationID!);
   }
 
   @override

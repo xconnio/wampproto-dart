@@ -64,21 +64,21 @@ void main() {
       var subscribe = Subscribe(SubscribeFields(1, topicName));
       broker.receiveMessage(1, subscribe);
 
-      var publish = Publish(PublishFields(1, topicName, args: [1, 2, 3]));
+      var publish = Publish(1, topicName, args: [1, 2, 3]);
       var messagesWithRecipient = broker.receivePublish(1, publish);
       expect(messagesWithRecipient.recipients!.length, 1);
       expect(messagesWithRecipient.event, isA<Event>());
       expect(messagesWithRecipient.ack, null);
 
       // publish message to a topic with no subscribers
-      var publishNoSubscriber = Publish(PublishFields(2, "topic1", args: [1, 2, 3]));
+      var publishNoSubscriber = Publish(2, "topic1", args: [1, 2, 3]);
       var messages = broker.receivePublish(1, publishNoSubscriber);
       expect(messages.recipients!.length, 0);
       expect(messages.event, null);
       expect(messages.ack, null);
 
       // publish with acknowledge true
-      var publishAcknowledge = Publish(PublishFields(2, topicName, args: [1, 2, 3], options: {"acknowledge": true}));
+      var publishAcknowledge = Publish(2, topicName, args: [1, 2, 3], options: {"acknowledge": true});
       var msgWithRecipient = broker.receivePublish(1, publishAcknowledge);
       expect(msgWithRecipient.recipients!.length, 1);
       expect(msgWithRecipient.event, isA<Event>());
