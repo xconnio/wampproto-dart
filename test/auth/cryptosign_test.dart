@@ -21,8 +21,7 @@ void main() {
     });
 
     test("authenticate", () {
-      final authenticate =
-          authenticator.authenticate(Challenge(ChallengeFields("cryptosign", {"challenge": challenge})));
+      final authenticate = authenticator.authenticate(Challenge("cryptosign", {"challenge": challenge}));
       expect(authenticate.signature, signature + challenge);
     });
   });

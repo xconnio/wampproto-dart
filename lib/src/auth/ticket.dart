@@ -9,6 +9,6 @@ class TicketAuthenticator extends IClientAuthenticator {
 
   @override
   Authenticate authenticate(Challenge challenge) {
-    return Authenticate(AuthenticateFields(_ticket, {}));
+    return Authenticate(_ticket, {});
   }
 }

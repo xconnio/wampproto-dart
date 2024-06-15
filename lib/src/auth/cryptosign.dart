@@ -31,7 +31,7 @@ class CryptoSignAuthenticator extends IClientAuthenticator {
     var challengeHex = challenge.extra["challenge"];
     var signed = signCryptoSignChallenge(challengeHex, getPrivateKey());
 
-    return Authenticate(AuthenticateFields(signed + challengeHex, {}));
+    return Authenticate(signed + challengeHex, {});
   }
 }
 

@@ -14,7 +14,7 @@ void main() {
   group("WAMPCRAAuthenticator", () {
     test("authenticate", () {
       final authenticator = WAMPCRAAuthenticator(key, "authID", {});
-      final challenge = Challenge(ChallengeFields("wampcra", {"challenge": craChallenge}));
+      final challenge = Challenge("wampcra", {"challenge": craChallenge});
 
       final authenticate = authenticator.authenticate(challenge);
       expect(authenticate.signature, validSignature);

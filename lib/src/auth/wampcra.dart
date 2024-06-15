@@ -15,7 +15,7 @@ class WAMPCRAAuthenticator extends IClientAuthenticator {
   @override
   Authenticate authenticate(Challenge challenge) {
     String signed = signWampCRAChallenge(challenge.extra["challenge"], utf8.encode(_secret));
-    return Authenticate(AuthenticateFields(signed, {}));
+    return Authenticate(signed, {});
   }
 }
 

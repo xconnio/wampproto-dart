@@ -23,7 +23,11 @@ class AuthenticateFields implements IAuthenticateFields {
 }
 
 class Authenticate implements Message {
-  Authenticate(this._authenticateFields);
+  Authenticate(String signature, Map<String, dynamic> extra) {
+    _authenticateFields = AuthenticateFields(signature, extra);
+  }
+
+  Authenticate.withFields(this._authenticateFields);
 
   static const int id = 5;
 
@@ -39,7 +43,7 @@ class Authenticate implements Message {
     },
   );
 
-  final IAuthenticateFields _authenticateFields;
+  late IAuthenticateFields _authenticateFields;
 
   String get signature => _authenticateFields.signature;
 
@@ -48,7 +52,7 @@ class Authenticate implements Message {
   static Authenticate parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Authenticate(AuthenticateFields(fields.signature!, fields.extra!));
+    return Authenticate(fields.signature!, fields.extra!);
   }
 
   @override
