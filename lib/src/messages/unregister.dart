@@ -22,7 +22,11 @@ class UnRegisterFields implements IUnRegisterFields {
 }
 
 class UnRegister implements Message {
-  UnRegister(this._unRegisterFields);
+  UnRegister(int requestID, int registrationID) {
+    _unRegisterFields = UnRegisterFields(requestID, registrationID);
+  }
+
+  UnRegister.withFields(this._unRegisterFields);
 
   static const int id = 66;
 
@@ -38,7 +42,7 @@ class UnRegister implements Message {
     },
   );
 
-  final IUnRegisterFields _unRegisterFields;
+  late IUnRegisterFields _unRegisterFields;
 
   int get requestID => _unRegisterFields.requestID;
 
@@ -47,7 +51,7 @@ class UnRegister implements Message {
   static UnRegister parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return UnRegister(UnRegisterFields(fields.requestID!, fields.registrationID!));
+    return UnRegister(fields.requestID!, fields.registrationID!);
   }
 
   @override

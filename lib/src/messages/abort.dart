@@ -22,7 +22,11 @@ class AbortFields implements IAbortFields {
 }
 
 class Abort implements Message {
-  Abort(this._abortFields);
+  Abort(Map<String, dynamic> details, String reason) {
+    _abortFields = AbortFields(details, reason);
+  }
+
+  Abort.withFields(this._abortFields);
 
   static const int id = 3;
 
@@ -38,7 +42,7 @@ class Abort implements Message {
     },
   );
 
-  final IAbortFields _abortFields;
+  late IAbortFields _abortFields;
 
   Map<String, dynamic> get details => _abortFields.details;
 
@@ -47,7 +51,7 @@ class Abort implements Message {
   static Abort parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Abort(AbortFields(fields.details!, fields.reason!));
+    return Abort(fields.details!, fields.reason!);
   }
 
   @override

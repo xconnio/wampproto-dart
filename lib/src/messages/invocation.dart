@@ -48,7 +48,17 @@ class InvocationFields implements IInvocationFields {
 }
 
 class Invocation implements Message {
-  Invocation(this._invocationFields);
+  Invocation(
+    int requestID,
+    int registrationID, {
+    List<dynamic>? args,
+    Map<String, dynamic>? kwargs,
+    Map<String, dynamic>? details,
+  }) {
+    _invocationFields = InvocationFields(requestID, registrationID, args: args, kwargs: kwargs, details: details);
+  }
+
+  Invocation.withFields(this._invocationFields);
 
   static const int id = 68;
 
@@ -67,7 +77,7 @@ class Invocation implements Message {
     },
   );
 
-  final IInvocationFields _invocationFields;
+  late IInvocationFields _invocationFields;
 
   int get requestID => _invocationFields.requestID;
 
@@ -83,13 +93,11 @@ class Invocation implements Message {
     var fields = validateMessage(message, id, text, _validationSpec);
 
     return Invocation(
-      InvocationFields(
-        fields.requestID!,
-        fields.registrationID!,
-        args: fields.args,
-        kwargs: fields.kwargs,
-        details: fields.details,
-      ),
+      fields.requestID!,
+      fields.registrationID!,
+      args: fields.args,
+      kwargs: fields.kwargs,
+      details: fields.details,
     );
   }
 

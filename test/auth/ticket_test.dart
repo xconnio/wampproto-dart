@@ -18,7 +18,7 @@ void main() {
     });
 
     test("authenticate", () {
-      final challenge = Challenge(ChallengeFields(authenticator.authMethod, {"challenge": "test"}));
+      final challenge = Challenge(authenticator.authMethod, {"challenge": "test"});
       final authenticate = authenticator.authenticate(challenge);
       expect(authenticate.signature, isNotNull);
       expect(authenticate.signature, ticket);

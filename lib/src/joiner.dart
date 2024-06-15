@@ -29,13 +29,11 @@ class Joiner {
 
   Object sendHello() {
     final hello = Hello(
-      HelloFields(
-        _realm,
-        clientRoles,
-        _authenticator.authID,
-        [_authenticator.authMethod],
-        authExtra: _authenticator.authExtra,
-      ),
+      _realm,
+      clientRoles,
+      _authenticator.authID,
+      [_authenticator.authMethod],
+      authExtra: _authenticator.authExtra,
     );
 
     _state = stateHelloSent;

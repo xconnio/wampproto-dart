@@ -48,7 +48,17 @@ class PublishFields implements IPublishFields {
 }
 
 class Publish implements Message {
-  Publish(this._publishFields);
+  Publish(
+    int requestID,
+    String uri, {
+    List<dynamic>? args,
+    Map<String, dynamic>? kwargs,
+    Map<String, dynamic>? options,
+  }) {
+    _publishFields = PublishFields(requestID, uri, args: args, kwargs: kwargs, options: options);
+  }
+
+  Publish.withFields(this._publishFields);
 
   static const int id = 16;
 
@@ -67,7 +77,7 @@ class Publish implements Message {
     },
   );
 
-  final IPublishFields _publishFields;
+  late IPublishFields _publishFields;
 
   int get requestID => _publishFields.requestID;
 
@@ -82,9 +92,7 @@ class Publish implements Message {
   static Publish parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Publish(
-      PublishFields(fields.requestID!, fields.uri!, args: fields.args, kwargs: fields.kwargs, options: fields.options),
-    );
+    return Publish(fields.requestID!, fields.uri!, args: fields.args, kwargs: fields.kwargs, options: fields.options);
   }
 
   @override

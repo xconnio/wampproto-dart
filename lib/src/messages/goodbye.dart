@@ -22,7 +22,11 @@ class GoodbyeFields implements IGoodbyeFields {
 }
 
 class Goodbye implements Message {
-  Goodbye(this._goodbyeFields);
+  Goodbye(Map<String, dynamic> details, String reason) {
+    _goodbyeFields = GoodbyeFields(details, reason);
+  }
+
+  Goodbye.withFields(this._goodbyeFields);
 
   static const int id = 6;
 
@@ -38,7 +42,7 @@ class Goodbye implements Message {
     },
   );
 
-  final IGoodbyeFields _goodbyeFields;
+  late IGoodbyeFields _goodbyeFields;
 
   Map<String, dynamic> get details => _goodbyeFields.details;
 
@@ -47,7 +51,7 @@ class Goodbye implements Message {
   static Goodbye parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Goodbye(GoodbyeFields(fields.details!, fields.reason!));
+    return Goodbye(fields.details!, fields.reason!);
   }
 
   @override

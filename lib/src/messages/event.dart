@@ -48,7 +48,17 @@ class EventFields implements IEventFields {
 }
 
 class Event implements Message {
-  Event(this._eventFields);
+  Event(
+    int subscriptionID,
+    int publicationID, {
+    List<dynamic>? args,
+    Map<String, dynamic>? kwargs,
+    Map<String, dynamic>? details,
+  }) {
+    _eventFields = EventFields(subscriptionID, publicationID, args: args, kwargs: kwargs, details: details);
+  }
+
+  Event.withFields(this._eventFields);
 
   static const int id = 36;
 
@@ -67,7 +77,7 @@ class Event implements Message {
     },
   );
 
-  final IEventFields _eventFields;
+  late IEventFields _eventFields;
 
   int get subscriptionID => _eventFields.subscriptionID;
 
@@ -83,13 +93,11 @@ class Event implements Message {
     var fields = validateMessage(message, id, text, _validationSpec);
 
     return Event(
-      EventFields(
-        fields.subscriptionID!,
-        fields.publicationID!,
-        args: fields.args,
-        kwargs: fields.kwargs,
-        details: fields.details,
-      ),
+      fields.subscriptionID!,
+      fields.publicationID!,
+      args: fields.args,
+      kwargs: fields.kwargs,
+      details: fields.details,
     );
   }
 

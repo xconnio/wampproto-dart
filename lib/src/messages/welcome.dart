@@ -52,7 +52,18 @@ class WelcomeFields implements IWelcomeFields {
 }
 
 class Welcome implements Message {
-  Welcome(this._welcomeFields);
+  Welcome(
+    int sessionID,
+    Map<String, dynamic> roles,
+    String authid,
+    String authRole,
+    String authMethod, {
+    Map<String, dynamic>? authExtra,
+  }) {
+    _welcomeFields = WelcomeFields(sessionID, roles, authid, authRole, authMethod, authExtra: authExtra);
+  }
+
+  Welcome.withFields(this._welcomeFields);
 
   static const int id = 2;
   static const String text = "WELCOME";
@@ -67,7 +78,7 @@ class Welcome implements Message {
     },
   );
 
-  final IWelcomeFields _welcomeFields;
+  late IWelcomeFields _welcomeFields;
 
   int get sessionID => _welcomeFields.sessionID;
 
@@ -97,7 +108,7 @@ class Welcome implements Message {
       authExtra = validateMapOrRaise(fields.details!["authextra"], text, "authextra");
     }
 
-    return Welcome(WelcomeFields(fields.sessionID!, roles, authid, authRole, authMethod, authExtra: authExtra));
+    return Welcome(fields.sessionID!, roles, authid, authRole, authMethod, authExtra: authExtra);
   }
 
   @override

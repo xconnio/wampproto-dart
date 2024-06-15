@@ -1,3 +1,4 @@
+import "package:wampproto/messages.dart";
 import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
@@ -40,7 +41,17 @@ class HelloFields implements IHelloFields {
 }
 
 class Hello implements Message {
-  Hello(this._helloFields);
+  Hello(
+    String realm,
+    Map<String, dynamic> roles,
+    String authid,
+    List<dynamic> authMethods, {
+    Map<String, dynamic>? authExtra,
+  }) {
+    _helloFields = HelloFields(realm, roles, authid, authMethods, authExtra: authExtra);
+  }
+
+  Hello.withFields(this._helloFields);
 
   static const int id = 1;
   static const String text = "HELLO";
@@ -55,7 +66,7 @@ class Hello implements Message {
     },
   );
 
-  final IHelloFields _helloFields;
+  late IHelloFields _helloFields;
 
   String get realm => _helloFields.realm;
 
@@ -87,7 +98,7 @@ class Hello implements Message {
       authExtra = validateMapOrRaise(fields.details!["authextra"], text, "authextra");
     }
 
-    return Hello(HelloFields(fields.realm!, roles, authid, authMethods, authExtra: authExtra));
+    return Hello(fields.realm!, roles, authid, authMethods, authExtra: authExtra);
   }
 
   @override

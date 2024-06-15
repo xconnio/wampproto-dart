@@ -79,9 +79,7 @@ class Acceptor {
           Response response = _authenticator.authenticate(request);
           _state = stateWelcomeSent;
 
-          Welcome welcome = Welcome(
-            WelcomeFields(_sessionID, routerRoles, response.authID, response.authRole, method, authExtra: {}),
-          );
+          Welcome welcome = Welcome(_sessionID, routerRoles, response.authID, response.authRole, method, authExtra: {});
           _sessionDetails = SessionDetails(_sessionID, msg.realm, welcome.authID, welcome.authRole);
 
           return welcome;
@@ -99,7 +97,7 @@ class Acceptor {
           String challenge = generateCryptoSignChallenge();
           _state = stateChallengeSent;
 
-          return Challenge(ChallengeFields(method, {"challenge": challenge}));
+          return Challenge(method, {"challenge": challenge});
 
         case wampcra:
           WAMPCRARequest request = WAMPCRARequest(msg.realm, msg.authID, msg.authExtra);
@@ -115,12 +113,12 @@ class Acceptor {
           _state = stateChallengeSent;
           _challenge = challenge;
 
-          return Challenge(ChallengeFields(method, {"challenge": challenge}));
+          return Challenge(method, {"challenge": challenge});
 
         case ticket:
           _state = stateChallengeSent;
 
-          return Challenge(ChallengeFields(method, {}));
+          return Challenge(method, {});
 
         default:
           throw ProtocolError("unknown auth method '$method'");
@@ -135,13 +133,12 @@ class Acceptor {
           var isVerified = verifyCryptoSignSignature(msg.signature, Base16Encoder.instance.decode(_publicKey));
           if (!isVerified) {
             _state = stateAborted;
-            return Abort(AbortFields({}, errAuthenticationFailed));
+            return Abort({}, errAuthenticationFailed);
           }
           _state = stateWelcomeSent;
 
-          Welcome welcome = Welcome(
-            WelcomeFields(_sessionID, routerRoles, _response.authID, _response.authRole, cryptosign, authExtra: {}),
-          );
+          Welcome welcome =
+              Welcome(_sessionID, routerRoles, _response.authID, _response.authRole, cryptosign, authExtra: {});
           _sessionDetails = SessionDetails(welcome.sessionID, _hello.realm, welcome.authID, welcome.authRole);
 
           return welcome;
@@ -150,13 +147,12 @@ class Acceptor {
           var isVerified = verifyWampCRASignature(msg.signature, _challenge, Uint8List.fromList(_secret.codeUnits));
           if (!isVerified) {
             _state = stateAborted;
-            return Abort(AbortFields({}, errAuthenticationFailed));
+            return Abort({}, errAuthenticationFailed);
           }
           _state = stateWelcomeSent;
 
-          Welcome welcome = Welcome(
-            WelcomeFields(_sessionID, routerRoles, _response.authID, _response.authRole, wampcra, authExtra: {}),
-          );
+          Welcome welcome =
+              Welcome(_sessionID, routerRoles, _response.authID, _response.authRole, wampcra, authExtra: {});
           _sessionDetails = SessionDetails(welcome.sessionID, _hello.realm, welcome.authID, welcome.authRole);
 
           return welcome;
@@ -166,9 +162,7 @@ class Acceptor {
           Response response = _authenticator.authenticate(request);
           _state = stateWelcomeSent;
 
-          Welcome welcome = Welcome(
-            WelcomeFields(_sessionID, routerRoles, response.authID, response.authRole, ticket, authExtra: {}),
-          );
+          Welcome welcome = Welcome(_sessionID, routerRoles, response.authID, response.authRole, ticket, authExtra: {});
           _sessionDetails = SessionDetails(welcome.sessionID, _hello.realm, welcome.authID, welcome.authRole);
 
           return welcome;

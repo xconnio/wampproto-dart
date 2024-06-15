@@ -23,7 +23,11 @@ class ChallengeFields implements IChallengeFields {
 }
 
 class Challenge implements Message {
-  Challenge(this._challengeFields);
+  Challenge(String authMethod, Map<String, dynamic> extra) {
+    _challengeFields = ChallengeFields(authMethod, extra);
+  }
+
+  Challenge.withFields(this._challengeFields);
 
   static const int id = 4;
 
@@ -39,7 +43,7 @@ class Challenge implements Message {
     },
   );
 
-  final IChallengeFields _challengeFields;
+  late IChallengeFields _challengeFields;
 
   String get authMethod => _challengeFields.authMethod;
 
@@ -48,7 +52,7 @@ class Challenge implements Message {
   static Challenge parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Challenge(ChallengeFields(fields.authmethod!, fields.extra!));
+    return Challenge(fields.authmethod!, fields.extra!);
   }
 
   @override

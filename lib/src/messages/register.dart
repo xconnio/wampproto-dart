@@ -32,7 +32,11 @@ class RegisterFields implements IRegisterFields {
 }
 
 class Register implements Message {
-  Register(this._registerFields);
+  Register(int requestID, String uri, {Map<String, dynamic>? options}) {
+    _registerFields = RegisterFields(requestID, uri, options: options);
+  }
+
+  Register.withFields(this._registerFields);
 
   static const int id = 64;
 
@@ -49,7 +53,7 @@ class Register implements Message {
     },
   );
 
-  final IRegisterFields _registerFields;
+  late IRegisterFields _registerFields;
 
   int get requestID => _registerFields.requestID;
 
@@ -60,7 +64,7 @@ class Register implements Message {
   static Register parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Register(RegisterFields(fields.requestID!, fields.uri!, options: fields.options));
+    return Register(fields.requestID!, fields.uri!, options: fields.options);
   }
 
   @override

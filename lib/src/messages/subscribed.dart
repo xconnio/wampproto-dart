@@ -22,7 +22,11 @@ class SubscribedFields implements ISubscribedFields {
 }
 
 class Subscribed implements Message {
-  Subscribed(this._subscribedFields);
+  Subscribed(int requestID, int subscriptionID) {
+    _subscribedFields = SubscribedFields(requestID, subscriptionID);
+  }
+
+  Subscribed.withFields(this._subscribedFields);
 
   static const int id = 33;
 
@@ -38,7 +42,7 @@ class Subscribed implements Message {
     },
   );
 
-  final ISubscribedFields _subscribedFields;
+  late ISubscribedFields _subscribedFields;
 
   int get requestID => _subscribedFields.requestID;
 
@@ -47,7 +51,7 @@ class Subscribed implements Message {
   static Subscribed parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return Subscribed(SubscribedFields(fields.requestID!, fields.subscriptionID!));
+    return Subscribed(fields.requestID!, fields.subscriptionID!);
   }
 
   @override

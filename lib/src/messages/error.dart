@@ -55,7 +55,18 @@ class ErrorFields implements IErrorFields {
 }
 
 class Error implements Message {
-  Error(this._errorFields);
+  Error(
+    int msgType,
+    int requestID,
+    String uri, {
+    List<dynamic>? args,
+    Map<String, dynamic>? kwargs,
+    Map<String, dynamic>? details,
+  }) {
+    _errorFields = ErrorFields(msgType, requestID, uri, args: args, kwargs: kwargs, details: details);
+  }
+
+  Error.withFields(this._errorFields);
 
   static const int id = 8;
 
@@ -75,7 +86,7 @@ class Error implements Message {
     },
   );
 
-  final IErrorFields _errorFields;
+  late IErrorFields _errorFields;
 
   int get msgType => _errorFields.msgType;
 
@@ -93,14 +104,12 @@ class Error implements Message {
     var fields = validateMessage(message, id, text, _validationSpec);
 
     return Error(
-      ErrorFields(
-        fields.messageType!,
-        fields.requestID!,
-        fields.uri!,
-        args: fields.args,
-        kwargs: fields.kwargs,
-        details: fields.details,
-      ),
+      fields.messageType!,
+      fields.requestID!,
+      fields.uri!,
+      args: fields.args,
+      kwargs: fields.kwargs,
+      details: fields.details,
     );
   }
 
