@@ -26,7 +26,7 @@ void main() {
       var details = SessionDetails(1, "realm1", "authid", "authrole");
       broker.addSession(details);
 
-      var subscribe = Subscribe(SubscribeFields(1, topicName));
+      var subscribe = Subscribe(1, topicName);
       var messagesWithRecipient = broker.receiveMessage(1, subscribe);
       expect(messagesWithRecipient!.recipient, 1);
       expect(messagesWithRecipient.message, isA<Subscribed>());
@@ -40,7 +40,7 @@ void main() {
     });
 
     test("unsubscribing from a topic", () {
-      var unSubscribe = UnSubscribe(UnSubscribeFields(1, 1));
+      var unSubscribe = UnSubscribe(1, 1);
       var messagesWithRecipient = broker.receiveMessage(1, unSubscribe);
       expect(messagesWithRecipient!.recipient, 1);
       expect(messagesWithRecipient.message, isA<UnSubscribed>());
@@ -53,7 +53,7 @@ void main() {
       expect(() => broker.receiveMessage(2, unSubscribe), throwsException);
 
       // unsubscribe with invalid subscriptionID
-      var invalidUnSubscribe = UnSubscribe(UnSubscribeFields(1, 2));
+      var invalidUnSubscribe = UnSubscribe(1, 2);
       expect(() => broker.receiveMessage(1, invalidUnSubscribe), throwsException);
 
       // unsubscribe with non-existing subscriptionID
@@ -61,7 +61,7 @@ void main() {
     });
 
     test("publishing to a topic", () {
-      var subscribe = Subscribe(SubscribeFields(1, topicName));
+      var subscribe = Subscribe(1, topicName);
       broker.receiveMessage(1, subscribe);
 
       var publish = Publish(1, topicName, args: [1, 2, 3]);

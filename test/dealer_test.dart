@@ -99,7 +99,7 @@ void main() {
     });
 
     test("receive invalid message", () {
-      final subscribe = Subscribe(SubscribeFields(1, procedureName));
+      final subscribe = Subscribe(1, procedureName);
       expect(() => dealer.receiveMessage(1, subscribe), throwsException);
     });
 

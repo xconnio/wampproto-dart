@@ -16,7 +16,11 @@ class UnSubscribedFields implements IUnSubscribedFields {
 }
 
 class UnSubscribed implements Message {
-  UnSubscribed(this._unSubscribedFields);
+  UnSubscribed(int requestID) {
+    _unSubscribedFields = UnSubscribedFields(requestID);
+  }
+
+  UnSubscribed.withFields(this._unSubscribedFields);
 
   static const int id = 35;
 
@@ -31,14 +35,14 @@ class UnSubscribed implements Message {
     },
   );
 
-  final IUnSubscribedFields _unSubscribedFields;
+  late IUnSubscribedFields _unSubscribedFields;
 
   int get requestID => _unSubscribedFields.requestID;
 
   static UnSubscribed parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return UnSubscribed(UnSubscribedFields(fields.requestID!));
+    return UnSubscribed(fields.requestID!);
   }
 
   @override

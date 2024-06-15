@@ -63,11 +63,11 @@ void main() {
     });
 
     test("send Subscribe message, receive Subscribed message and receive Event for subscription", () {
-      final subscribe = Subscribe(SubscribeFields(7, "topic"));
+      final subscribe = Subscribe(7, "topic");
       var toSend = session.sendMessage(subscribe);
       expect(toSend, '[${Subscribe.id},${subscribe.requestID},${subscribe.options},"${subscribe.topic}"]');
 
-      final subscribed = Subscribed(SubscribedFields(7, 8));
+      final subscribed = Subscribed(7, 8);
       var received = session.receiveMessage(subscribed);
       expect(received, equals(subscribed));
 
@@ -77,11 +77,11 @@ void main() {
     });
 
     test("send UnSubscribe message and receive UnSubscribed message", () {
-      final unsubscribe = UnSubscribe(UnSubscribeFields(8, 8));
+      final unsubscribe = UnSubscribe(8, 8);
       var toSend = session.sendMessage(unsubscribe);
       expect(toSend, "[${UnSubscribe.id},${unsubscribe.requestID},${unsubscribe.subscriptionID}]");
 
-      final unsubscribed = UnSubscribed(UnSubscribedFields(8));
+      final unsubscribed = UnSubscribed(8);
       var received = session.receiveMessage(unsubscribed);
       expect(received, equals(unsubscribed));
     });
@@ -122,7 +122,7 @@ void main() {
     });
 
     test("send Subscribe message and receive Error for that Subscribe", () {
-      final subscribe = Subscribe(SubscribeFields(7, "topic"));
+      final subscribe = Subscribe(7, "topic");
       session.sendMessage(subscribe);
 
       final subscribeError = Error(Subscribe.id, subscribe.requestID, errInvalidURI);
@@ -131,7 +131,7 @@ void main() {
     });
 
     test("send UnSubscribe message and receive Error for that UnSubscribe", () {
-      final unsubscribe = UnSubscribe(UnSubscribeFields(8, 8));
+      final unsubscribe = UnSubscribe(8, 8);
       session.sendMessage(unsubscribe);
 
       final unsubscribeError = Error(UnSubscribe.id, unsubscribe.requestID, errInvalidURI);
