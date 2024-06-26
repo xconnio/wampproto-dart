@@ -16,7 +16,7 @@ class CBORSerializer implements Serializer {
   Message deserialize(Object message) {
     Uint8List msgBytes = message is Uint8List ? message : throw Exception("Message is not a Uint8List");
 
-    final decoded = const ncbor.CborDecoder().convert(msgBytes).toJson(substituteValue: msgBytes);
+    final decoded = const ncbor.CborDecoder().convert(msgBytes).toObject();
     if (decoded is! List) {
       throw Exception("bad type");
     }
