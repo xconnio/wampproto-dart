@@ -1,10 +1,9 @@
-import "dart:math";
-
 import "package:pinenacl/ed25519.dart";
 import "package:wampproto/auth.dart";
 import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
 import "package:wampproto/src/exception.dart";
+import "package:wampproto/src/idgen.dart";
 import "package:wampproto/src/types.dart";
 import "package:wampproto/src/uris.dart";
 
@@ -12,10 +11,6 @@ final routerRoles = <String, Map<String, Map>>{
   "dealer": {},
   "broker": {},
 };
-
-int getSessionID() {
-  return Random().nextInt(1 << 32);
-}
 
 class Acceptor {
   Acceptor({Serializer? serializer, IServerAuthenticator? authenticator})
@@ -36,7 +31,7 @@ class Acceptor {
   final Serializer _serializer;
   final IServerAuthenticator _authenticator;
   int _state = stateNone;
-  final int _sessionID = getSessionID();
+  final int _sessionID = generateSessionID();
 
   late String _authMethod;
   late Hello _hello;
