@@ -27,7 +27,7 @@ void main() {
           equality.equals(msg1.kwargs, msg2.kwargs);
 
       test("JSONSerializer", () async {
-        var callMessage = Call(CallFields(1, testProcedure));
+        var callMessage = Call(1, testProcedure);
         var command = "message call ${callMessage.requestID} ${callMessage.uri} --serializer json";
 
         var output = await runCommand(command);
@@ -39,7 +39,7 @@ void main() {
       });
 
       test("CBORSerializer", () async {
-        var callMessage = Call(CallFields(1, testProcedure, args: ["abc"]));
+        var callMessage = Call(1, testProcedure, args: ["abc"]);
         var command = "message call ${callMessage.requestID} ${callMessage.uri} abc --serializer cbor";
 
         var output = await runCommand(command);
@@ -50,7 +50,7 @@ void main() {
       });
 
       test("MsgPackSerializer", () async {
-        var callMessage = Call(CallFields(1, testProcedure, args: ["abc"], kwargs: {"a": 1}));
+        var callMessage = Call(1, testProcedure, args: ["abc"], kwargs: {"a": 1});
         var command = "message call ${callMessage.requestID} ${callMessage.uri} abc -k a=1 --serializer msgpack";
 
         var output = await runCommand(command);
