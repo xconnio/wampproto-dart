@@ -1,16 +1,9 @@
-import "dart:io";
-
 import "package:pinenacl/ed25519.dart";
 import "package:test/test.dart";
 
 import "package:wampproto/src/auth/cryptosign.dart";
 
-Future<String> runCommand(String command) async {
-  ProcessResult result = await Process.run("wampproto", command.split(" "));
-  expect(result.exitCode, 0, reason: result.stderr);
-
-  return result.stdout;
-}
+import "helper.dart";
 
 void main() {
   group("CryptoSignAuth", () {
