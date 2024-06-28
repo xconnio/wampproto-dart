@@ -21,11 +21,11 @@ void main() {
       var challenge = generateCryptoSignChallenge();
 
       var signature = await runCommand(
-        "auth cryptosign sign-challenge --challenge $challenge --private-key $testPrivateKey",
+        "auth cryptosign sign-challenge $challenge $testPrivateKey",
       );
 
       var isVerified = await runCommand(
-        "auth cryptosign verify-signature --signature ${signature.trim()} --public-key $testPublicKey",
+        "auth cryptosign verify-signature ${signature.trim()} $testPublicKey",
       );
       expect(isVerified, "Signature verified successfully\n");
     });
@@ -43,7 +43,7 @@ void main() {
       }
 
       var isVerified = await runCommand(
-        "auth cryptosign verify-signature --signature $signature --public-key $testPublicKey",
+        "auth cryptosign verify-signature $signature $testPublicKey",
       );
       expect(isVerified, "Signature verified successfully\n");
     });
@@ -52,7 +52,7 @@ void main() {
       var challenge = await runCommand("auth cryptosign generate-challenge");
 
       var signature = await runCommand(
-        "auth cryptosign sign-challenge --challenge ${challenge.trim()} --private-key $testPrivateKey",
+        "auth cryptosign sign-challenge ${challenge.trim()} $testPrivateKey",
       );
 
       var isVerified = verifyCryptoSignSignature(signature.trim(), Base16Encoder.instance.decode(testPublicKey));
