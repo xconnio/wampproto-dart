@@ -1,5 +1,3 @@
-import "dart:convert";
-
 import "package:collection/collection.dart";
 import "package:pinenacl/api.dart";
 import "package:test/test.dart";
@@ -31,16 +29,14 @@ void main() {
         var command = "message call ${callMessage.requestID} ${callMessage.uri} --serializer json";
 
         var output = await runCommand(command);
-        var outputBytes = Base16Encoder.instance.decode(output.trim());
-        var jsonString = utf8.decode(outputBytes);
 
-        var message = jsonSerializer.deserialize(jsonString) as Call;
+        var message = jsonSerializer.deserialize(output) as Call;
         expect(isEqual(message, callMessage), true);
       });
 
       test("CBORSerializer", () async {
         var callMessage = Call(1, testProcedure, args: ["abc"]);
-        var command = "message call ${callMessage.requestID} ${callMessage.uri} abc --serializer cbor";
+        var command = "message call ${callMessage.requestID} ${callMessage.uri} abc --serializer cbor --output hex";
 
         var output = await runCommand(command);
         var outputBytes = Base16Encoder.instance.decode(output.trim());
@@ -51,7 +47,8 @@ void main() {
 
       test("MsgPackSerializer", () async {
         var callMessage = Call(1, testProcedure, args: ["abc"], kwargs: {"a": 1});
-        var command = "message call ${callMessage.requestID} ${callMessage.uri} abc -k a=1 --serializer msgpack";
+        var command =
+            "message call ${callMessage.requestID} ${callMessage.uri} abc -k a=1 --serializer msgpack --output hex";
 
         var output = await runCommand(command);
         var outputBytes = Base16Encoder.instance.decode(output.trim());
