@@ -14,10 +14,10 @@ void main() {
 
     bool isEqual(Event msg1, Event msg2) =>
         msg1.subscriptionID == msg2.subscriptionID &&
-            msg1.publicationID == msg2.publicationID &&
-            equality.equals(msg1.details, msg2.details) &&
-            equality.equals(msg1.args, msg2.args) &&
-            equality.equals(msg1.kwargs, msg2.kwargs);
+        msg1.publicationID == msg2.publicationID &&
+        equality.equals(msg1.details, msg2.details) &&
+        equality.equals(msg1.args, msg2.args) &&
+        equality.equals(msg1.kwargs, msg2.kwargs);
 
     test("JSONSerializer", () async {
       var msg = Event(1, 1);
