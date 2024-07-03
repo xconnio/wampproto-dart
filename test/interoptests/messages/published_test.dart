@@ -8,14 +8,12 @@ import "../helper.dart";
 
 void main() {
   group("Published", () {
-    const basePubCmd = "message published 1 1";
-
     bool isEqual(Published msg1, Published msg2) =>
         msg1.requestID == msg2.requestID && msg1.publicationID == msg2.publicationID;
 
     test("JSONSerializer", () async {
       var msg = Published(1, 1);
-      var command = "$basePubCmd --serializer json";
+      var command = "message published ${msg.requestID} ${msg.publicationID} --serializer json";
 
       var output = await runCommand(command);
 
@@ -26,7 +24,7 @@ void main() {
 
     test("CBORSerializer", () async {
       var msg = Published(1, 1);
-      var command = "$basePubCmd --serializer cbor --output hex";
+      var command = "message published ${msg.requestID} ${msg.publicationID} --serializer cbor --output hex";
 
       var output = await runCommand(command);
       var outputBytes = Base16Encoder.instance.decode(output.trim());
@@ -38,7 +36,7 @@ void main() {
 
     test("MsgPackSerializer", () async {
       var msg = Published(1, 1);
-      var command = "$basePubCmd --serializer msgpack --output hex";
+      var command = "message published ${msg.requestID} ${msg.publicationID} --serializer msgpack --output hex";
 
       var output = await runCommand(command);
       var outputBytes = Base16Encoder.instance.decode(output.trim());

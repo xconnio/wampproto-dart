@@ -10,7 +10,6 @@ import "../helper.dart";
 void main() {
   group("Publish", () {
     const equality = DeepCollectionEquality();
-    const basePubCommand = "message publish 1 io.xconn.topic";
 
     bool isEqual(Publish msg1, Publish msg2) =>
         msg1.requestID == msg2.requestID &&
@@ -21,7 +20,7 @@ void main() {
 
     test("JSONSerializer", () async {
       var msg = Publish(1, "io.xconn.topic");
-      var command = "$basePubCommand --serializer json";
+      var command = "message publish ${msg.requestID} ${msg.uri} --serializer json";
 
       var output = await runCommand(command);
 
@@ -32,7 +31,7 @@ void main() {
 
     test("CBORSerializer", () async {
       var msg = Publish(1, "io.xconn.topic", args: ["abc"]);
-      var command = "$basePubCommand abc --serializer cbor --output hex";
+      var command = "message publish ${msg.requestID} ${msg.uri} abc --serializer cbor --output hex";
 
       var output = await runCommand(command);
       var outputBytes = Base16Encoder.instance.decode(output.trim());
@@ -44,7 +43,7 @@ void main() {
 
     test("MsgPackSerializer", () async {
       var msg = Publish(1, "io.xconn.topic", options: {"abc": 1}, args: ["abc"], kwargs: {"a": 1});
-      var command = "$basePubCommand abc -o abc=1 -k a=1 --serializer msgpack --output hex";
+      var command = "message publish ${msg.requestID} ${msg.uri} abc -o abc=1 -k a=1 --serializer msgpack --output hex";
 
       var output = await runCommand(command);
       var outputBytes = Base16Encoder.instance.decode(output.trim());

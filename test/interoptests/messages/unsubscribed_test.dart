@@ -8,13 +8,11 @@ import "../helper.dart";
 
 void main() {
   group("Unsubscribed", () {
-    const baseSubCommand = "message unsubscribed 1";
-
     bool isEqual(UnSubscribed msg1, UnSubscribed msg2) => msg1.requestID == msg2.requestID;
 
     test("JSONSerializer", () async {
       var msg = UnSubscribed(1);
-      var command = "$baseSubCommand --serializer json";
+      var command = "message unsubscribed ${msg.requestID} --serializer json";
 
       var output = await runCommand(command);
 
@@ -25,7 +23,7 @@ void main() {
 
     test("CBORSerializer", () async {
       var msg = UnSubscribed(1);
-      var command = "$baseSubCommand --serializer cbor --output hex";
+      var command = "message unsubscribed ${msg.requestID} --serializer cbor --output hex";
 
       var output = await runCommand(command);
       var outputBytes = Base16Encoder.instance.decode(output.trim());
@@ -37,7 +35,7 @@ void main() {
 
     test("MsgPackSerializer", () async {
       var msg = UnSubscribed(1);
-      var command = "$baseSubCommand --serializer msgpack --output hex";
+      var command = "message unsubscribed ${msg.requestID} --serializer msgpack --output hex";
 
       var output = await runCommand(command);
       var outputBytes = Base16Encoder.instance.decode(output.trim());

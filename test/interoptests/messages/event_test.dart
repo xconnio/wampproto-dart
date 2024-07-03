@@ -10,7 +10,6 @@ import "../helper.dart";
 void main() {
   group("Event", () {
     const equality = DeepCollectionEquality();
-    const baseEventCommand = "message event 1 1";
 
     bool isEqual(Event msg1, Event msg2) =>
         msg1.subscriptionID == msg2.subscriptionID &&
@@ -21,7 +20,7 @@ void main() {
 
     test("JSONSerializer", () async {
       var msg = Event(1, 1);
-      var command = "$baseEventCommand --serializer json";
+      var command = "message event ${msg.subscriptionID} ${msg.publicationID} --serializer json";
 
       var output = await runCommand(command);
 
@@ -32,7 +31,7 @@ void main() {
 
     test("CBORSerializer", () async {
       var msg = Event(1, 1, args: ["abc"]);
-      var command = "$baseEventCommand abc --serializer cbor --output hex";
+      var command = "message event ${msg.subscriptionID} ${msg.publicationID} abc --serializer cbor --output hex";
 
       var output = await runCommand(command);
       var outputBytes = Base16Encoder.instance.decode(output.trim());
@@ -44,7 +43,8 @@ void main() {
 
     test("MsgPackSerializer", () async {
       var msg = Event(1, 1, details: {"abc": 1}, args: ["abc"], kwargs: {"a": 1});
-      var command = "$baseEventCommand abc -d abc=1 -k a=1 --serializer msgpack --output hex";
+      var command =
+          "message event ${msg.subscriptionID} ${msg.publicationID} abc -d abc=1 -k a=1 --serializer msgpack --output hex";
 
       var output = await runCommand(command);
       var outputBytes = Base16Encoder.instance.decode(output.trim());

@@ -11,14 +11,13 @@ void main() {
   group("Subscribe", () {
     const equality = DeepCollectionEquality();
     const topic = "io.xconn.test";
-    const baseSubCommand = "message subscribe 1 $topic";
 
     bool isEqual(Subscribe msg1, Subscribe msg2) =>
         msg1.requestID == msg2.requestID && msg1.topic == msg2.topic && equality.equals(msg1.options, msg2.options);
 
     test("JSONSerializer", () async {
       var msg = Subscribe(1, topic);
-      var command = "$baseSubCommand --serializer json";
+      var command = "message subscribe ${msg.requestID} ${msg.topic} --serializer json";
 
       var output = await runCommand(command);
 
@@ -29,7 +28,7 @@ void main() {
 
     test("CBORSerializer", () async {
       var msg = Subscribe(1, topic);
-      var command = "$baseSubCommand --serializer cbor --output hex";
+      var command = "message subscribe ${msg.requestID} ${msg.topic} --serializer cbor --output hex";
 
       var output = await runCommand(command);
       var outputBytes = Base16Encoder.instance.decode(output.trim());
@@ -41,7 +40,7 @@ void main() {
 
     test("MsgPackSerializer", () async {
       var msg = Subscribe(1, topic, options: {"a": 1});
-      var command = "$baseSubCommand -o a=1 --serializer msgpack --output hex";
+      var command = "message subscribe ${msg.requestID} ${msg.topic} -o a=1 --serializer msgpack --output hex";
 
       var output = await runCommand(command);
       var outputBytes = Base16Encoder.instance.decode(output.trim());
