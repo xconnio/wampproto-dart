@@ -22,7 +22,7 @@ void main() {
     test("JSONSerializer", () async {
       var msg = Welcome(1, {"callee": true}, "foo", "bar", "anonymous");
       var command =
-          '''message welcome ${msg.sessionID} -d authmethod=${msg.authMethod} -d authid=${msg.authID} -d authrole=${msg.authRole} -d roles={"callee":true} --serializer json''';
+          "message welcome ${msg.sessionID} --authmethod=${msg.authMethod} --authid=${msg.authID} --authrole=${msg.authRole} --roles callee=true --serializer json";
 
       var output = await runCommand(command);
 
@@ -35,7 +35,7 @@ void main() {
     test("CBORSerializer", () async {
       var msg = Welcome(1, {"callee": true}, "foo", "bar", "anonymous");
       var command =
-          '''message welcome ${msg.sessionID} -d authmethod=${msg.authMethod} -d authid=${msg.authID} -d authrole=${msg.authRole} -d roles={"callee":true} --serializer cbor --output hex''';
+          "message welcome ${msg.sessionID} --authmethod=${msg.authMethod} --authid=${msg.authID} --authrole=${msg.authRole} --roles callee=true --serializer cbor --output hex";
 
       var output = await runCommand(command);
       var outputBytes = Base16Encoder.instance.decode(output.trim());
@@ -48,7 +48,7 @@ void main() {
     test("MsgPackSerializer", () async {
       var msg = Welcome(1, {"callee": true}, "foo", "bar", "anonymous");
       var command =
-          '''message welcome ${msg.sessionID} -d authmethod=${msg.authMethod} -d authid=${msg.authID} -d authrole=${msg.authRole} -d roles={"callee":true} --serializer msgpack --output hex''';
+          "message welcome ${msg.sessionID} --authmethod=${msg.authMethod} --authid=${msg.authID} --authrole=${msg.authRole} --roles callee=true --serializer msgpack --output hex";
 
       var output = await runCommand(command);
       var outputBytes = Base16Encoder.instance.decode(output.trim());
