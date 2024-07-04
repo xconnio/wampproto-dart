@@ -62,6 +62,8 @@ class WAMPSession {
       var data = _serializer.serialize(msg);
       _invocationRequests.remove(msg.requestID);
       return data;
+    } else if (msg is Goodbye) {
+      return _serializer.serialize(msg);
     }
     throw ProtocolError("unknown message ${msg.runtimeType}");
   }
@@ -195,6 +197,8 @@ class WAMPSession {
           throw ProtocolError("unknown error message type ${msg.runtimeType}");
       }
 
+      return msg;
+    } else if (msg is Goodbye) {
       return msg;
     }
 
