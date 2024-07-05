@@ -61,7 +61,7 @@ class Broker {
 
       Subscribed subscribed = Subscribed(message.requestID, subscription.id);
       return MessageWithRecipient(subscribed, sessionID);
-    } else if (message is UnSubscribe) {
+    } else if (message is Unsubscribe) {
       if (!_subscriptionsBySession.containsKey(sessionID)) {
         throw Exception("cannot unsubscribe, session $sessionID doesn't exist");
       }
@@ -82,8 +82,8 @@ class Broker {
 
       _subscriptionsBySession[sessionID]?.remove(message.subscriptionID);
 
-      UnSubscribed unSubscribed = UnSubscribed(message.requestID);
-      return MessageWithRecipient(unSubscribed, sessionID);
+      Unsubscribed unsubscribed = Unsubscribed(message.requestID);
+      return MessageWithRecipient(unsubscribed, sessionID);
     } else {
       throw Exception("message type not supported");
     }

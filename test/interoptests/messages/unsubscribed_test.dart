@@ -8,40 +8,40 @@ import "../helper.dart";
 
 void main() {
   group("Unsubscribed", () {
-    bool isEqual(UnSubscribed msg1, UnSubscribed msg2) => msg1.requestID == msg2.requestID;
+    bool isEqual(Unsubscribed msg1, Unsubscribed msg2) => msg1.requestID == msg2.requestID;
 
     test("JSONSerializer", () async {
-      var msg = UnSubscribed(1);
+      var msg = Unsubscribed(1);
       var command = "message unsubscribed ${msg.requestID} --serializer json";
 
       var output = await runCommand(command);
 
       var jsonSerializer = JSONSerializer();
-      var message = jsonSerializer.deserialize(output) as UnSubscribed;
+      var message = jsonSerializer.deserialize(output) as Unsubscribed;
       expect(isEqual(message, msg), true);
     });
 
     test("CBORSerializer", () async {
-      var msg = UnSubscribed(1);
+      var msg = Unsubscribed(1);
       var command = "message unsubscribed ${msg.requestID} --serializer cbor --output hex";
 
       var output = await runCommand(command);
       var outputBytes = Base16Encoder.instance.decode(output.trim());
 
       var cborSerializer = CBORSerializer();
-      var message = cborSerializer.deserialize(outputBytes) as UnSubscribed;
+      var message = cborSerializer.deserialize(outputBytes) as Unsubscribed;
       expect(isEqual(message, msg), true);
     });
 
     test("MsgPackSerializer", () async {
-      var msg = UnSubscribed(1);
+      var msg = Unsubscribed(1);
       var command = "message unsubscribed ${msg.requestID} --serializer msgpack --output hex";
 
       var output = await runCommand(command);
       var outputBytes = Base16Encoder.instance.decode(output.trim());
 
       var msgPackSerializer = MsgPackSerializer();
-      var message = msgPackSerializer.deserialize(outputBytes) as UnSubscribed;
+      var message = msgPackSerializer.deserialize(outputBytes) as Unsubscribed;
       expect(isEqual(message, msg), true);
     });
   });

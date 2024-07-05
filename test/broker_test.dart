@@ -40,24 +40,24 @@ void main() {
     });
 
     test("unsubscribing from a topic", () {
-      var unSubscribe = UnSubscribe(1, 1);
-      var messagesWithRecipient = broker.receiveMessage(1, unSubscribe);
+      var unsubscribe = Unsubscribe(1, 1);
+      var messagesWithRecipient = broker.receiveMessage(1, unsubscribe);
       expect(messagesWithRecipient!.recipient, 1);
-      expect(messagesWithRecipient.message, isA<UnSubscribed>());
+      expect(messagesWithRecipient.message, isA<Unsubscribed>());
 
       // check subscription by topic
       var hasSubscription = broker.hasSubscription(topicName);
       expect(hasSubscription, isFalse);
 
       // unsubscribe with invalid sessionID
-      expect(() => broker.receiveMessage(2, unSubscribe), throwsException);
+      expect(() => broker.receiveMessage(2, unsubscribe), throwsException);
 
       // unsubscribe with invalid subscriptionID
-      var invalidUnSubscribe = UnSubscribe(1, 2);
-      expect(() => broker.receiveMessage(1, invalidUnSubscribe), throwsException);
+      var invalidUnsubscribe = Unsubscribe(1, 2);
+      expect(() => broker.receiveMessage(1, invalidUnsubscribe), throwsException);
 
       // unsubscribe with non-existing subscriptionID
-      expect(() => broker.receiveMessage(1, unSubscribe), throwsException);
+      expect(() => broker.receiveMessage(1, unsubscribe), throwsException);
     });
 
     test("publishing to a topic", () {

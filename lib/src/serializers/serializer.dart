@@ -72,13 +72,13 @@ Message toMessage(List<dynamic> message) {
       {
         return Subscribed.parse(message);
       }
-    case UnSubscribe.id:
+    case Unsubscribe.id:
       {
-        return UnSubscribe.parse(message);
+        return Unsubscribe.parse(message);
       }
-    case UnSubscribed.id:
+    case Unsubscribed.id:
       {
-        return UnSubscribed.parse(message);
+        return Unsubscribed.parse(message);
       }
     case Publish.id:
       {

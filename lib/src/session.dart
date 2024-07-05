@@ -50,7 +50,7 @@ class WAMPSession {
       _subscribeRequests[msg.requestID] = msg.requestID;
 
       return _serializer.serialize(msg);
-    } else if (msg is UnSubscribe) {
+    } else if (msg is Unsubscribe) {
       _unsubscribeRequests[msg.requestID] = msg.subscriptionID;
 
       return _serializer.serialize(msg);
@@ -125,7 +125,7 @@ class WAMPSession {
       _subscriptions[msg.subscriptionID] = msg.subscriptionID;
 
       return msg;
-    } else if (msg is UnSubscribed) {
+    } else if (msg is Unsubscribed) {
       if (!_unsubscribeRequests.containsKey(msg.requestID)) {
         throw ProtocolError("received UNSUBSCRIBED for invalid request ID ${msg.requestID}");
       }
@@ -177,7 +177,7 @@ class WAMPSession {
           _subscribeRequests.remove(msg.requestID);
           break;
 
-        case UnSubscribe.id:
+        case Unsubscribe.id:
           if (!_unsubscribeRequests.containsKey(msg.requestID)) {
             throw ProtocolError("received ERROR for invalid unsubscribe request");
           }
