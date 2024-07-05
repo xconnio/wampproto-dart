@@ -29,7 +29,7 @@ class WAMPSession {
       _registerRequests[msg.requestID] = msg.requestID;
 
       return _serializer.serialize(msg);
-    } else if (msg is UnRegister) {
+    } else if (msg is Unregister) {
       _unregisterRequests[msg.requestID] = msg.registrationID;
 
       return _serializer.serialize(msg);
@@ -90,7 +90,7 @@ class WAMPSession {
       _registrations[msg.registrationID] = msg.registrationID;
 
       return msg;
-    } else if (msg is UnRegistered) {
+    } else if (msg is Unregistered) {
       if (!_unregisterRequests.containsKey(msg.requestID)) {
         throw ProtocolError("received UNREGISTERED for invalid request ID ${msg.requestID}");
       }
@@ -161,7 +161,7 @@ class WAMPSession {
           _registerRequests.remove(msg.requestID);
           break;
 
-        case UnRegister.id:
+        case Unregister.id:
           if (!_unregisterRequests.containsKey(msg.requestID)) {
             throw ProtocolError("received ERROR for invalid unregister request");
           }

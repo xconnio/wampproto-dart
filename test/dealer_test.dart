@@ -78,24 +78,24 @@ void main() {
     });
 
     test("unregister a procedure", () {
-      var unRegister = UnRegister(1, 1);
-      var messagesWithRecipient = dealer.receiveMessage(1, unRegister);
+      var unregister = Unregister(1, 1);
+      var messagesWithRecipient = dealer.receiveMessage(1, unregister);
       expect(messagesWithRecipient.recipient, 1);
-      expect(messagesWithRecipient.message, isA<UnRegistered>());
+      expect(messagesWithRecipient.message, isA<Unregistered>());
 
       // check registration by procedure
       var hasRegistration = dealer.hasRegistration(procedureName);
       expect(hasRegistration, isFalse);
 
       // unregister with invalid sessionID
-      expect(() => dealer.receiveMessage(2, unRegister), throwsException);
+      expect(() => dealer.receiveMessage(2, unregister), throwsException);
 
       // unregister with invalid registrationID
-      var invalidUnRegister = UnRegister(1, 2);
-      expect(() => dealer.receiveMessage(1, invalidUnRegister), throwsException);
+      var invalidUnregister = Unregister(1, 2);
+      expect(() => dealer.receiveMessage(1, invalidUnregister), throwsException);
 
       // unregister with non-existing registrationID
-      expect(() => dealer.receiveMessage(1, unRegister), throwsException);
+      expect(() => dealer.receiveMessage(1, unregister), throwsException);
     });
 
     test("receive invalid message", () {

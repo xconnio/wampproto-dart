@@ -56,13 +56,13 @@ Message toMessage(List<dynamic> message) {
       {
         return Registered.parse(message);
       }
-    case UnRegister.id:
+    case Unregister.id:
       {
-        return UnRegister.parse(message);
+        return Unregister.parse(message);
       }
-    case UnRegistered.id:
+    case Unregistered.id:
       {
-        return UnRegistered.parse(message);
+        return Unregistered.parse(message);
       }
     case Subscribe.id:
       {

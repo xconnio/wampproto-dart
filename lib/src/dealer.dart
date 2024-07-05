@@ -126,7 +126,7 @@ class Dealer {
 
       var registered = Registered(message.requestID, registrations.id);
       return MessageWithRecipient(registered, sessionID);
-    } else if (message is UnRegister) {
+    } else if (message is Unregister) {
       var registrations = _registrationsBySession[sessionID];
       if (registrations == null) {
         throw Exception("cannot unregister, session $sessionID doesn't exist");
@@ -144,8 +144,8 @@ class Dealer {
       }
       _registrationsBySession[sessionID] = registrations;
 
-      var unRegistered = UnRegistered(message.requestID);
-      return MessageWithRecipient(unRegistered, sessionID);
+      var unregistered = Unregistered(message.requestID);
+      return MessageWithRecipient(unregistered, sessionID);
     } else {
       throw Exception("message type not supported");
     }

@@ -42,12 +42,12 @@ void main() {
       expect(received, "[70,4,{}]");
     });
 
-    test("send UnRegister message and receive UnRegistered message", () {
-      final unregister = UnRegister(3, 3);
+    test("send Unregister message and receive Unregistered message", () {
+      final unregister = Unregister(3, 3);
       var toSend = session.sendMessage(unregister);
-      expect(toSend, "[${UnRegister.id},${unregister.requestID},${unregister.registrationID}]");
+      expect(toSend, "[${Unregister.id},${unregister.requestID},${unregister.registrationID}]");
 
-      final unregistered = UnRegistered(3);
+      final unregistered = Unregistered(3);
       var received = session.receiveMessage(unregistered);
       expect(received, equals(unregistered));
     });
@@ -112,11 +112,11 @@ void main() {
       expect(received, registerErr);
     });
 
-    test("send UnRegister message and receive Error for that UnRegister", () {
-      final unregister = UnRegister(3, 3);
+    test("send Unregister message and receive Error for that Unregister", () {
+      final unregister = Unregister(3, 3);
       session.sendMessage(unregister);
 
-      final unregisterErr = Error(UnRegister.id, unregister.requestID, errInvalidArgument);
+      final unregisterErr = Error(Unregister.id, unregister.requestID, errInvalidArgument);
       var received = session.receiveMessage(unregisterErr);
       expect(received, unregisterErr);
     });
@@ -174,8 +174,8 @@ void main() {
     // receive error Register id
     expect(() => session.receiveMessage(Error(Register.id, 100, errInvalidArgument)), throwsException);
 
-    // receive error invalid UnRegister id
-    expect(() => session.receiveMessage(Error(UnRegister.id, 100, errInvalidArgument)), throwsException);
+    // receive error invalid Unregister id
+    expect(() => session.receiveMessage(Error(Unregister.id, 100, errInvalidArgument)), throwsException);
 
     // receive error invalid Subscribe id
     expect(() => session.receiveMessage(Error(Subscribe.id, 100, errInvalidArgument)), throwsException);

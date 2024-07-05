@@ -2,14 +2,14 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
-abstract class IUnRegisterFields {
+abstract class IUnregisterFields {
   int get requestID;
 
   int get registrationID;
 }
 
-class UnRegisterFields implements IUnRegisterFields {
-  UnRegisterFields(this._requestID, this._registrationID);
+class UnregisterFields implements IUnregisterFields {
+  UnregisterFields(this._requestID, this._registrationID);
 
   final int _requestID;
   final int _registrationID;
@@ -21,12 +21,12 @@ class UnRegisterFields implements IUnRegisterFields {
   int get registrationID => _registrationID;
 }
 
-class UnRegister implements Message {
-  UnRegister(int requestID, int registrationID) {
-    _unRegisterFields = UnRegisterFields(requestID, registrationID);
+class Unregister implements Message {
+  Unregister(int requestID, int registrationID) {
+    _unregisterFields = UnregisterFields(requestID, registrationID);
   }
 
-  UnRegister.withFields(this._unRegisterFields);
+  Unregister.withFields(this._unregisterFields);
 
   static const int id = 66;
 
@@ -42,16 +42,16 @@ class UnRegister implements Message {
     },
   );
 
-  late IUnRegisterFields _unRegisterFields;
+  late IUnregisterFields _unregisterFields;
 
-  int get requestID => _unRegisterFields.requestID;
+  int get requestID => _unregisterFields.requestID;
 
-  int get registrationID => _unRegisterFields.registrationID;
+  int get registrationID => _unregisterFields.registrationID;
 
-  static UnRegister parse(final List<dynamic> message) {
+  static Unregister parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return UnRegister(fields.requestID!, fields.registrationID!);
+    return Unregister(fields.requestID!, fields.registrationID!);
   }
 
   @override
