@@ -2,12 +2,12 @@ import "package:wampproto/src/messages/message.dart";
 import "package:wampproto/src/messages/util.dart";
 import "package:wampproto/src/messages/validation_spec.dart";
 
-abstract class IUnSubscribedFields {
+abstract class IUnsubscribedFields {
   int get requestID;
 }
 
-class UnSubscribedFields implements IUnSubscribedFields {
-  UnSubscribedFields(this._requestID);
+class UnsubscribedFields implements IUnsubscribedFields {
+  UnsubscribedFields(this._requestID);
 
   final int _requestID;
 
@@ -15,12 +15,12 @@ class UnSubscribedFields implements IUnSubscribedFields {
   int get requestID => _requestID;
 }
 
-class UnSubscribed implements Message {
-  UnSubscribed(int requestID) {
-    _unSubscribedFields = UnSubscribedFields(requestID);
+class Unsubscribed implements Message {
+  Unsubscribed(int requestID) {
+    _unsubscribedFields = UnsubscribedFields(requestID);
   }
 
-  UnSubscribed.withFields(this._unSubscribedFields);
+  Unsubscribed.withFields(this._unsubscribedFields);
 
   static const int id = 35;
 
@@ -35,14 +35,14 @@ class UnSubscribed implements Message {
     },
   );
 
-  late IUnSubscribedFields _unSubscribedFields;
+  late IUnsubscribedFields _unsubscribedFields;
 
-  int get requestID => _unSubscribedFields.requestID;
+  int get requestID => _unsubscribedFields.requestID;
 
-  static UnSubscribed parse(final List<dynamic> message) {
+  static Unsubscribed parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
-    return UnSubscribed(fields.requestID!);
+    return Unsubscribed(fields.requestID!);
   }
 
   @override

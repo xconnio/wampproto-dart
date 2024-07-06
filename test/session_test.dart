@@ -42,12 +42,12 @@ void main() {
       expect(received, "[70,4,{}]");
     });
 
-    test("send UnRegister message and receive UnRegistered message", () {
-      final unregister = UnRegister(3, 3);
+    test("send Unregister message and receive Unregistered message", () {
+      final unregister = Unregister(3, 3);
       var toSend = session.sendMessage(unregister);
-      expect(toSend, "[${UnRegister.id},${unregister.requestID},${unregister.registrationID}]");
+      expect(toSend, "[${Unregister.id},${unregister.requestID},${unregister.registrationID}]");
 
-      final unregistered = UnRegistered(3);
+      final unregistered = Unregistered(3);
       var received = session.receiveMessage(unregistered);
       expect(received, equals(unregistered));
     });
@@ -76,12 +76,12 @@ void main() {
       expect(receivedEvent, equals(event));
     });
 
-    test("send UnSubscribe message and receive UnSubscribed message", () {
-      final unsubscribe = UnSubscribe(8, 8);
+    test("send Unsubscribe message and receive Unsubscribed message", () {
+      final unsubscribe = Unsubscribe(8, 8);
       var toSend = session.sendMessage(unsubscribe);
-      expect(toSend, "[${UnSubscribe.id},${unsubscribe.requestID},${unsubscribe.subscriptionID}]");
+      expect(toSend, "[${Unsubscribe.id},${unsubscribe.requestID},${unsubscribe.subscriptionID}]");
 
-      final unsubscribed = UnSubscribed(8);
+      final unsubscribed = Unsubscribed(8);
       var received = session.receiveMessage(unsubscribed);
       expect(received, equals(unsubscribed));
     });
@@ -112,11 +112,11 @@ void main() {
       expect(received, registerErr);
     });
 
-    test("send UnRegister message and receive Error for that UnRegister", () {
-      final unregister = UnRegister(3, 3);
+    test("send Unregister message and receive Error for that Unregister", () {
+      final unregister = Unregister(3, 3);
       session.sendMessage(unregister);
 
-      final unregisterErr = Error(UnRegister.id, unregister.requestID, errInvalidArgument);
+      final unregisterErr = Error(Unregister.id, unregister.requestID, errInvalidArgument);
       var received = session.receiveMessage(unregisterErr);
       expect(received, unregisterErr);
     });
@@ -130,11 +130,11 @@ void main() {
       expect(received, subscribeError);
     });
 
-    test("send UnSubscribe message and receive Error for that UnSubscribe", () {
-      final unsubscribe = UnSubscribe(8, 8);
+    test("send Unsubscribe message and receive Error for that Unsubscribe", () {
+      final unsubscribe = Unsubscribe(8, 8);
       session.sendMessage(unsubscribe);
 
-      final unsubscribeError = Error(UnSubscribe.id, unsubscribe.requestID, errInvalidURI);
+      final unsubscribeError = Error(Unsubscribe.id, unsubscribe.requestID, errInvalidURI);
       var received = session.receiveMessage(unsubscribeError);
       expect(received, unsubscribeError);
     });
@@ -174,14 +174,14 @@ void main() {
     // receive error Register id
     expect(() => session.receiveMessage(Error(Register.id, 100, errInvalidArgument)), throwsException);
 
-    // receive error invalid UnRegister id
-    expect(() => session.receiveMessage(Error(UnRegister.id, 100, errInvalidArgument)), throwsException);
+    // receive error invalid Unregister id
+    expect(() => session.receiveMessage(Error(Unregister.id, 100, errInvalidArgument)), throwsException);
 
     // receive error invalid Subscribe id
     expect(() => session.receiveMessage(Error(Subscribe.id, 100, errInvalidArgument)), throwsException);
 
-    // receive error invalid UnSubscribe id
-    expect(() => session.receiveMessage(Error(UnSubscribe.id, 100, errInvalidArgument)), throwsException);
+    // receive error invalid Unsubscribe id
+    expect(() => session.receiveMessage(Error(Unsubscribe.id, 100, errInvalidArgument)), throwsException);
 
     // receive error invalid Publish id
     expect(() => session.receiveMessage(Error(Publish.id, 100, errInvalidArgument)), throwsException);

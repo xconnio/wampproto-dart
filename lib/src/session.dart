@@ -29,7 +29,7 @@ class WAMPSession {
       _registerRequests[msg.requestID] = msg.requestID;
 
       return _serializer.serialize(msg);
-    } else if (msg is UnRegister) {
+    } else if (msg is Unregister) {
       _unregisterRequests[msg.requestID] = msg.registrationID;
 
       return _serializer.serialize(msg);
@@ -50,7 +50,7 @@ class WAMPSession {
       _subscribeRequests[msg.requestID] = msg.requestID;
 
       return _serializer.serialize(msg);
-    } else if (msg is UnSubscribe) {
+    } else if (msg is Unsubscribe) {
       _unsubscribeRequests[msg.requestID] = msg.subscriptionID;
 
       return _serializer.serialize(msg);
@@ -90,7 +90,7 @@ class WAMPSession {
       _registrations[msg.registrationID] = msg.registrationID;
 
       return msg;
-    } else if (msg is UnRegistered) {
+    } else if (msg is Unregistered) {
       if (!_unregisterRequests.containsKey(msg.requestID)) {
         throw ProtocolError("received UNREGISTERED for invalid request ID ${msg.requestID}");
       }
@@ -125,7 +125,7 @@ class WAMPSession {
       _subscriptions[msg.subscriptionID] = msg.subscriptionID;
 
       return msg;
-    } else if (msg is UnSubscribed) {
+    } else if (msg is Unsubscribed) {
       if (!_unsubscribeRequests.containsKey(msg.requestID)) {
         throw ProtocolError("received UNSUBSCRIBED for invalid request ID ${msg.requestID}");
       }
@@ -161,7 +161,7 @@ class WAMPSession {
           _registerRequests.remove(msg.requestID);
           break;
 
-        case UnRegister.id:
+        case Unregister.id:
           if (!_unregisterRequests.containsKey(msg.requestID)) {
             throw ProtocolError("received ERROR for invalid unregister request");
           }
@@ -177,7 +177,7 @@ class WAMPSession {
           _subscribeRequests.remove(msg.requestID);
           break;
 
-        case UnSubscribe.id:
+        case Unsubscribe.id:
           if (!_unsubscribeRequests.containsKey(msg.requestID)) {
             throw ProtocolError("received ERROR for invalid unsubscribe request");
           }

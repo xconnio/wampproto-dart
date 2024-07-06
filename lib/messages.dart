@@ -17,9 +17,9 @@ export "src/messages/registered.dart" show IRegisteredFields, Registered, Regist
 export "src/messages/result.dart" show IResultFields, Result, ResultFields;
 export "src/messages/subscribe.dart" show ISubscribeFields, Subscribe, SubscribeFields;
 export "src/messages/subscribed.dart" show ISubscribedFields, Subscribed, SubscribedFields;
-export "src/messages/unregister.dart" show IUnRegisterFields, UnRegister, UnRegisterFields;
-export "src/messages/unregistered.dart" show IUnRegisteredFields, UnRegistered, UnRegisteredFields;
-export "src/messages/unsubscribe.dart" show IUnSubscribeFields, UnSubscribe, UnSubscribeFields;
-export "src/messages/unsubscribed.dart" show IUnSubscribedFields, UnSubscribed, UnSubscribedFields;
+export "src/messages/unregister.dart" show IUnregisterFields, Unregister, UnregisterFields;
+export "src/messages/unregistered.dart" show IUnregisteredFields, Unregistered, UnregisteredFields;
+export "src/messages/unsubscribe.dart" show IUnsubscribeFields, Unsubscribe, UnsubscribeFields;
+export "src/messages/unsubscribed.dart" show IUnsubscribedFields, Unsubscribed, UnsubscribedFields;
 export "src/messages/welcome.dart" show IWelcomeFields, Welcome, WelcomeFields;
 export "src/messages/yield.dart" show IYieldFields, Yield, YieldFields;
