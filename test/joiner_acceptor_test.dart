@@ -155,7 +155,7 @@ void main() {
     });
   });
 
-  test("TicketAuth", () => testAuth(authenticator, TicketAuthenticator("", "test")));
+  test("TicketAuth", () => testAuth(authenticator, TicketAuthenticator("", {}, "test")));
 
   test("CRAAuth", () => testAuth(authenticator, WAMPCRAAuthenticator("password", "test", {"challenge": "test"})));
 
