@@ -154,6 +154,18 @@ void main() {
       });
     });
   });
+
+  test("TicketAuth", () => testAuth(authenticator, TicketAuthenticator("", "test")));
+
+  test("CRAAuth", () => testAuth(authenticator, WAMPCRAAuthenticator("password", "test", {"challenge": "test"})));
+
+  test(
+    "CryptoSignAuth",
+    () => testAuth(
+      authenticator,
+      CryptoSignAuthenticator("authID", {}, "6d9b906ad60d1f4dd796dbadcc2e2252310565ccdc6fe10b289df5684faf2a46"),
+    ),
+  );
 }
 
 void testAnonymousAuth(Serializer serializer) {
