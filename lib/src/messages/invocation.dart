@@ -7,9 +7,9 @@ abstract class IInvocationFields {
 
   int get registrationID;
 
-  List<dynamic> get args;
+  List<dynamic>? get args;
 
-  Map<String, dynamic> get kwargs;
+  Map<String, dynamic>? get kwargs;
 
   Map<String, dynamic> get details;
 }
@@ -21,14 +21,14 @@ class InvocationFields implements IInvocationFields {
     List<dynamic>? args,
     Map<String, dynamic>? kwargs,
     Map<String, dynamic>? details,
-  })  : _args = args ?? [],
-        _kwargs = kwargs ?? {},
+  })  : _args = args,
+        _kwargs = kwargs,
         _details = details ?? {};
 
   final int _requestID;
   final int _registrationID;
-  final List<dynamic> _args;
-  final Map<String, dynamic> _kwargs;
+  final List<dynamic>? _args;
+  final Map<String, dynamic>? _kwargs;
   final Map<String, dynamic> _details;
 
   @override
@@ -38,10 +38,10 @@ class InvocationFields implements IInvocationFields {
   int get registrationID => _registrationID;
 
   @override
-  List get args => _args;
+  List? get args => _args;
 
   @override
-  Map<String, dynamic> get kwargs => _kwargs;
+  Map<String, dynamic>? get kwargs => _kwargs;
 
   @override
   Map<String, dynamic> get details => _details;
@@ -83,9 +83,9 @@ class Invocation implements Message {
 
   int get registrationID => _invocationFields.registrationID;
 
-  List<dynamic> get args => _invocationFields.args;
+  List<dynamic>? get args => _invocationFields.args;
 
-  Map<String, dynamic> get kwargs => _invocationFields.kwargs;
+  Map<String, dynamic>? get kwargs => _invocationFields.kwargs;
 
   Map<String, dynamic> get details => _invocationFields.details;
 
@@ -104,12 +104,12 @@ class Invocation implements Message {
   @override
   List<dynamic> marshal() {
     List<dynamic> message = [id, requestID, registrationID, details];
-    if (args.isNotEmpty) {
+    if (args != null) {
       message.add(args);
     }
 
-    if (kwargs.isNotEmpty) {
-      if (args.isEmpty) {
+    if (kwargs != null) {
+      if (args == null) {
         message.add([]);
       }
       message.add(kwargs);

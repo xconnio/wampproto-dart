@@ -7,9 +7,9 @@ abstract class IAbortFields {
 
   String get reason;
 
-  List<dynamic> get args;
+  List<dynamic>? get args;
 
-  Map<String, dynamic> get kwargs;
+  Map<String, dynamic>? get kwargs;
 }
 
 class AbortFields implements IAbortFields {
@@ -18,14 +18,14 @@ class AbortFields implements IAbortFields {
     this._reason, {
     List<dynamic>? args,
     Map<String, dynamic>? kwargs,
-  })  : _args = args ?? [],
-        _kwargs = kwargs ?? {};
+  })  : _args = args,
+        _kwargs = kwargs;
 
   final Map<String, dynamic> _details;
   final String _reason;
 
-  final List<dynamic> _args;
-  final Map<String, dynamic> _kwargs;
+  final List<dynamic>? _args;
+  final Map<String, dynamic>? _kwargs;
 
   @override
   Map<String, dynamic> get details => _details;
@@ -34,10 +34,10 @@ class AbortFields implements IAbortFields {
   String get reason => _reason;
 
   @override
-  List get args => _args;
+  List? get args => _args;
 
   @override
-  Map<String, dynamic> get kwargs => _kwargs;
+  Map<String, dynamic>? get kwargs => _kwargs;
 }
 
 class Abort implements Message {
@@ -69,6 +69,10 @@ class Abort implements Message {
 
   String get reason => _abortFields.reason;
 
+  List<dynamic>? get args => _abortFields.args;
+
+  Map<String, dynamic>? get kwargs => _abortFields.kwargs;
+
   static Abort parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
@@ -77,7 +81,20 @@ class Abort implements Message {
 
   @override
   List<dynamic> marshal() {
-    return [id, details, reason];
+    List<dynamic> message = [id, details, reason];
+
+    if (args != null) {
+      message.add(args);
+    }
+
+    if (kwargs != null) {
+      if (args == null) {
+        message.add([]);
+      }
+      message.add(kwargs);
+    }
+
+    return message;
   }
 
   @override

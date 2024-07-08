@@ -7,9 +7,9 @@ abstract class IPublishFields {
 
   String get uri;
 
-  List<dynamic> get args;
+  List<dynamic>? get args;
 
-  Map<String, dynamic> get kwargs;
+  Map<String, dynamic>? get kwargs;
 
   Map<String, dynamic> get options;
 }
@@ -21,14 +21,14 @@ class PublishFields implements IPublishFields {
     List<dynamic>? args,
     Map<String, dynamic>? kwargs,
     Map<String, dynamic>? options,
-  })  : _args = args ?? [],
-        _kwargs = kwargs ?? {},
+  })  : _args = args,
+        _kwargs = kwargs,
         _options = options ?? {};
 
   final int _requestID;
   final String _uri;
-  final List<dynamic> _args;
-  final Map<String, dynamic> _kwargs;
+  final List<dynamic>? _args;
+  final Map<String, dynamic>? _kwargs;
   final Map<String, dynamic> _options;
 
   @override
@@ -38,10 +38,10 @@ class PublishFields implements IPublishFields {
   String get uri => _uri;
 
   @override
-  List get args => _args;
+  List? get args => _args;
 
   @override
-  Map<String, dynamic> get kwargs => _kwargs;
+  Map<String, dynamic>? get kwargs => _kwargs;
 
   @override
   Map<String, dynamic> get options => _options;
@@ -83,9 +83,9 @@ class Publish implements Message {
 
   String get uri => _publishFields.uri;
 
-  List<dynamic> get args => _publishFields.args;
+  List<dynamic>? get args => _publishFields.args;
 
-  Map<String, dynamic> get kwargs => _publishFields.kwargs;
+  Map<String, dynamic>? get kwargs => _publishFields.kwargs;
 
   Map<String, dynamic> get options => _publishFields.options;
 
@@ -98,12 +98,12 @@ class Publish implements Message {
   @override
   List<dynamic> marshal() {
     List<dynamic> message = [id, requestID, options, uri];
-    if (args.isNotEmpty) {
+    if (args != null) {
       message.add(args);
     }
 
-    if (kwargs.isNotEmpty) {
-      if (args.isEmpty) {
+    if (kwargs != null) {
+      if (args == null) {
         message.add([]);
       }
       message.add(kwargs);
