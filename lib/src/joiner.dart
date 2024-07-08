@@ -12,7 +12,7 @@ final clientRoles = <String, Map<String, Map>>{
 };
 
 class Joiner {
-  Joiner(this._realm, Serializer? serializer, IClientAuthenticator? authenticator)
+  Joiner(this._realm, {Serializer? serializer, IClientAuthenticator? authenticator})
       : _serializer = serializer ?? JSONSerializer(),
         _authenticator = authenticator ?? AnonymousAuthenticator("");
 

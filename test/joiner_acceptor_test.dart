@@ -36,7 +36,7 @@ void main() {
   var authenticator = Authenticator();
   test("AnonymousAuth", () {
     var serializer = JSONSerializer();
-    var joiner = Joiner(realm, serializer, AnonymousAuthenticator(""));
+    var joiner = Joiner(realm, serializer: serializer, authenticator: AnonymousAuthenticator(""));
     var acceptor = Acceptor(serializer: serializer, authenticator: authenticator);
 
     var hello = joiner.sendHello();
@@ -68,7 +68,7 @@ void main() {
 
 void testAuth(Authenticator authenticator, IClientAuthenticator clientAuthenticator) {
   var serializer = JSONSerializer();
-  var joiner = Joiner(realm, serializer, clientAuthenticator);
+  var joiner = Joiner(realm, serializer: serializer, authenticator: clientAuthenticator);
   var acceptor = Acceptor(serializer: serializer, authenticator: authenticator);
 
   var hello = joiner.sendHello();
