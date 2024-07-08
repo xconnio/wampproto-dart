@@ -69,6 +69,10 @@ class Abort implements Message {
 
   String get reason => _abortFields.reason;
 
+  List<dynamic>? get args => _abortFields.args;
+
+  Map<String, dynamic>? get kwargs => _abortFields.kwargs;
+
   static Abort parse(final List<dynamic> message) {
     var fields = validateMessage(message, id, text, _validationSpec);
 
@@ -77,7 +81,20 @@ class Abort implements Message {
 
   @override
   List<dynamic> marshal() {
-    return [id, details, reason];
+    List<dynamic> message = [id, details, reason];
+
+    if (args != null) {
+      message.add(args);
+    }
+
+    if (kwargs != null) {
+      if (args == null) {
+        message.add([]);
+      }
+      message.add(kwargs);
+    }
+
+    return message;
   }
 
   @override
