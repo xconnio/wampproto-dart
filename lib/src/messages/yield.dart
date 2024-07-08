@@ -5,9 +5,9 @@ import "package:wampproto/src/messages/validation_spec.dart";
 abstract class IYieldFields {
   int get requestID;
 
-  List<dynamic> get args;
+  List<dynamic>? get args;
 
-  Map<String, dynamic> get kwargs;
+  Map<String, dynamic>? get kwargs;
 
   Map<String, dynamic> get options;
 }
@@ -18,23 +18,23 @@ class YieldFields implements IYieldFields {
     List<dynamic>? args,
     Map<String, dynamic>? kwargs,
     Map<String, dynamic>? options,
-  })  : _args = args ?? [],
-        _kwargs = kwargs ?? {},
+  })  : _args = args,
+        _kwargs = kwargs,
         _options = options ?? {};
 
   final int _requestID;
-  final List<dynamic> _args;
-  final Map<String, dynamic> _kwargs;
+  final List<dynamic>? _args;
+  final Map<String, dynamic>? _kwargs;
   final Map<String, dynamic> _options;
 
   @override
   int get requestID => _requestID;
 
   @override
-  List get args => _args;
+  List? get args => _args;
 
   @override
-  Map<String, dynamic> get kwargs => _kwargs;
+  Map<String, dynamic>? get kwargs => _kwargs;
 
   @override
   Map<String, dynamic> get options => _options;
@@ -67,9 +67,9 @@ class Yield implements Message {
 
   int get requestID => _yieldFields.requestID;
 
-  List<dynamic> get args => _yieldFields.args;
+  List<dynamic>? get args => _yieldFields.args;
 
-  Map<String, dynamic> get kwargs => _yieldFields.kwargs;
+  Map<String, dynamic>? get kwargs => _yieldFields.kwargs;
 
   Map<String, dynamic> get options => _yieldFields.options;
 
@@ -82,12 +82,12 @@ class Yield implements Message {
   @override
   List<dynamic> marshal() {
     List<dynamic> message = [id, requestID, options];
-    if (args.isNotEmpty) {
+    if (args != null) {
       message.add(args);
     }
 
-    if (kwargs.isNotEmpty) {
-      if (args.isEmpty) {
+    if (kwargs != null) {
+      if (args == null) {
         message.add([]);
       }
       message.add(kwargs);

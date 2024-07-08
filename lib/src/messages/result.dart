@@ -5,9 +5,9 @@ import "package:wampproto/src/messages/validation_spec.dart";
 abstract class IResultFields {
   int get requestID;
 
-  List<dynamic> get args;
+  List<dynamic>? get args;
 
-  Map<String, dynamic> get kwargs;
+  Map<String, dynamic>? get kwargs;
 
   Map<String, dynamic> get details;
 }
@@ -18,23 +18,23 @@ class ResultFields implements IResultFields {
     List<dynamic>? args,
     Map<String, dynamic>? kwargs,
     Map<String, dynamic>? details,
-  })  : _args = args ?? [],
-        _kwargs = kwargs ?? {},
+  })  : _args = args,
+        _kwargs = kwargs,
         _details = details ?? {};
 
   final int _requestID;
-  final List<dynamic> _args;
-  final Map<String, dynamic> _kwargs;
+  final List<dynamic>? _args;
+  final Map<String, dynamic>? _kwargs;
   final Map<String, dynamic> _details;
 
   @override
   int get requestID => _requestID;
 
   @override
-  List get args => _args;
+  List? get args => _args;
 
   @override
-  Map<String, dynamic> get kwargs => _kwargs;
+  Map<String, dynamic>? get kwargs => _kwargs;
 
   @override
   Map<String, dynamic> get details => _details;
@@ -67,9 +67,9 @@ class Result implements Message {
 
   int get requestID => _resultFields.requestID;
 
-  List<dynamic> get args => _resultFields.args;
+  List<dynamic>? get args => _resultFields.args;
 
-  Map<String, dynamic> get kwargs => _resultFields.kwargs;
+  Map<String, dynamic>? get kwargs => _resultFields.kwargs;
 
   Map<String, dynamic> get details => _resultFields.details;
 
@@ -82,12 +82,12 @@ class Result implements Message {
   @override
   List<dynamic> marshal() {
     List<dynamic> message = [id, requestID, details];
-    if (args.isNotEmpty) {
+    if (args != null) {
       message.add(args);
     }
 
-    if (kwargs.isNotEmpty) {
-      if (args.isEmpty) {
+    if (kwargs != null) {
+      if (args == null) {
         message.add([]);
       }
       message.add(kwargs);

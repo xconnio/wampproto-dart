@@ -7,9 +7,9 @@ abstract class IEventFields {
 
   int get publicationID;
 
-  List<dynamic> get args;
+  List<dynamic>? get args;
 
-  Map<String, dynamic> get kwargs;
+  Map<String, dynamic>? get kwargs;
 
   Map<String, dynamic> get details;
 }
@@ -21,14 +21,14 @@ class EventFields implements IEventFields {
     List<dynamic>? args,
     Map<String, dynamic>? kwargs,
     Map<String, dynamic>? details,
-  })  : _args = args ?? [],
-        _kwargs = kwargs ?? {},
+  })  : _args = args,
+        _kwargs = kwargs,
         _details = details ?? {};
 
   final int _subscriptionID;
   final int _publicationID;
-  final List<dynamic> _args;
-  final Map<String, dynamic> _kwargs;
+  final List<dynamic>? _args;
+  final Map<String, dynamic>? _kwargs;
   final Map<String, dynamic> _details;
 
   @override
@@ -38,10 +38,10 @@ class EventFields implements IEventFields {
   int get publicationID => _publicationID;
 
   @override
-  List get args => _args;
+  List? get args => _args;
 
   @override
-  Map<String, dynamic> get kwargs => _kwargs;
+  Map<String, dynamic>? get kwargs => _kwargs;
 
   @override
   Map<String, dynamic> get details => _details;
@@ -83,9 +83,9 @@ class Event implements Message {
 
   int get publicationID => _eventFields.publicationID;
 
-  List<dynamic> get args => _eventFields.args;
+  List<dynamic>? get args => _eventFields.args;
 
-  Map<String, dynamic> get kwargs => _eventFields.kwargs;
+  Map<String, dynamic>? get kwargs => _eventFields.kwargs;
 
   Map<String, dynamic> get details => _eventFields.details;
 
@@ -104,12 +104,12 @@ class Event implements Message {
   @override
   List<dynamic> marshal() {
     List<dynamic> message = [id, subscriptionID, publicationID, details];
-    if (args.isNotEmpty) {
+    if (args != null) {
       message.add(args);
     }
 
-    if (kwargs.isNotEmpty) {
-      if (args.isEmpty) {
+    if (kwargs != null) {
+      if (args == null) {
         message.add([]);
       }
       message.add(kwargs);

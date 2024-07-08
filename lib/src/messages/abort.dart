@@ -7,9 +7,9 @@ abstract class IAbortFields {
 
   String get reason;
 
-  List<dynamic> get args;
+  List<dynamic>? get args;
 
-  Map<String, dynamic> get kwargs;
+  Map<String, dynamic>? get kwargs;
 }
 
 class AbortFields implements IAbortFields {
@@ -18,14 +18,14 @@ class AbortFields implements IAbortFields {
     this._reason, {
     List<dynamic>? args,
     Map<String, dynamic>? kwargs,
-  })  : _args = args ?? [],
-        _kwargs = kwargs ?? {};
+  })  : _args = args,
+        _kwargs = kwargs;
 
   final Map<String, dynamic> _details;
   final String _reason;
 
-  final List<dynamic> _args;
-  final Map<String, dynamic> _kwargs;
+  final List<dynamic>? _args;
+  final Map<String, dynamic>? _kwargs;
 
   @override
   Map<String, dynamic> get details => _details;
@@ -34,10 +34,10 @@ class AbortFields implements IAbortFields {
   String get reason => _reason;
 
   @override
-  List get args => _args;
+  List? get args => _args;
 
   @override
-  Map<String, dynamic> get kwargs => _kwargs;
+  Map<String, dynamic>? get kwargs => _kwargs;
 }
 
 class Abort implements Message {
