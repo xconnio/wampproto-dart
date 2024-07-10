@@ -52,71 +52,134 @@ class Authenticator extends IServerAuthenticator {
 
 void main() {
   group("Authentication Tests", () {
-    test("AnonymousAuth", () {
-      // Setup for anonymous authentication test
-      var anonymousAuthenticator = AnonymousAuthenticator(authID);
-      final serializer = JSONSerializer();
-      final joiner = Joiner(realm, serializer: serializer, authenticator: anonymousAuthenticator);
-      final acceptor = Acceptor(serializer: serializer, authenticator: authenticator);
+    group("AnonymousAuth", () {
+      test("JSONSerializer", () {
+        final serializer = JSONSerializer();
+        testAnonymousAuth(serializer);
+      });
 
-      final hello = joiner.sendHello();
+      test("CBORSerializer", () {
+        final serializer = CBORSerializer();
+        testAnonymousAuth(serializer);
+      });
 
-      // Process and verify the HELLO message
-      final welcomeMap = acceptor.receive(hello);
-      final welcome = serializer.deserialize(welcomeMap.key);
-
-      expect(welcome, isA<Welcome>());
-      expect(welcomeMap.value, true);
-
-      // Ensure no additional messages are received
-      final payload = joiner.receive(welcomeMap.key);
-      expect(payload, null);
-
-      // Verify session details are available
-      final sessionDetails = joiner.getSessionDetails();
-      expect(sessionDetails, isNotNull);
+      test("MsgPackSerializer", () {
+        final serializer = JSONSerializer();
+        testAnonymousAuth(serializer);
+      });
     });
 
-    test("TicketAuth", () {
-      var ticketAuthenticator = TicketAuthenticator(ticket, authID);
-      testAuth(ticketAuthenticator);
+    group("TicketAuth", () {
+      test("JSONSerializer", () {
+        var ticketAuthenticator = TicketAuthenticator(ticket, authID);
+        final serializer = JSONSerializer();
+        testAuth(ticketAuthenticator, serializer);
+      });
+
+      test("CBORSerializer", () {
+        var ticketAuthenticator = TicketAuthenticator(ticket, authID);
+        final serializer = CBORSerializer();
+        testAuth(ticketAuthenticator, serializer);
+      });
+
+      test("MsgPackSerializer", () {
+        var ticketAuthenticator = TicketAuthenticator(ticket, authID);
+        final serializer = MsgPackSerializer();
+        testAuth(ticketAuthenticator, serializer);
+      });
+
+      test("InvalidTicket", () {
+        var ticketAuthenticator = TicketAuthenticator("invalid", authID);
+        final serializer = JSONSerializer();
+        expect(() => testAuth(ticketAuthenticator, serializer), throwsException);
+      });
     });
 
-    test("TicketAuthInvalidTicket", () {
-      var ticketAuthenticator = TicketAuthenticator("invalid", authID);
-      expect(() => testAuth(ticketAuthenticator), throwsException);
+    group("CRAAuth", () {
+      test("JSONSerializer", () {
+        var craAuthenticator = WAMPCRAAuthenticator(secret, authID, {"challenge": "test"});
+        final serializer = JSONSerializer();
+        testAuth(craAuthenticator, serializer);
+      });
+
+      test("CBORSerializer", () {
+        var craAuthenticator = WAMPCRAAuthenticator(secret, authID, {"challenge": "test"});
+        final serializer = CBORSerializer();
+        testAuth(craAuthenticator, serializer);
+      });
+
+      test("MsgPackSerializer", () {
+        var craAuthenticator = WAMPCRAAuthenticator(secret, authID, {"challenge": "test"});
+        final serializer = MsgPackSerializer();
+        testAuth(craAuthenticator, serializer);
+      });
+
+      test("InvalidSecret", () {
+        var craAuthenticator = WAMPCRAAuthenticator("invalid", authID, {"challenge": "test"});
+        final serializer = JSONSerializer();
+        expect(() => testAuth(craAuthenticator, serializer), throwsException);
+      });
+
+      test("InvalidAuthID", () {
+        var craAuthenticator = WAMPCRAAuthenticator(secret, "invalid", {"challenge": "test"});
+        final serializer = JSONSerializer();
+        expect(() => testAuth(craAuthenticator, serializer), throwsException);
+      });
     });
 
-    test("CRAAuth", () {
-      var craAuthenticator = WAMPCRAAuthenticator(secret, authID, {"challenge": "test"});
-      testAuth(craAuthenticator);
-    });
+    group("CryptoSignAuth", () {
+      test("JSONSerializer", () {
+        var cryptoSignAuthenticator = CryptoSignAuthenticator(authID, privateKey);
+        final serializer = JSONSerializer();
+        testAuth(cryptoSignAuthenticator, serializer);
+      });
 
-    test("CRAAuthInvalidSecret", () {
-      var craAuthenticator = WAMPCRAAuthenticator("invalid", authID, {"challenge": "test"});
-      expect(() => testAuth(craAuthenticator), throwsException);
-    });
+      test("CBORSerializer", () {
+        var cryptoSignAuthenticator = CryptoSignAuthenticator(authID, privateKey);
+        final serializer = CBORSerializer();
+        testAuth(cryptoSignAuthenticator, serializer);
+      });
 
-    test("CRAAuthInvalidAuthID", () {
-      var craAuthenticator = WAMPCRAAuthenticator(secret, "invalid", {"challenge": "test"});
-      expect(() => testAuth(craAuthenticator), throwsException);
-    });
+      test("MsgPackSerializer", () {
+        var cryptoSignAuthenticator = CryptoSignAuthenticator(authID, privateKey);
+        final serializer = MsgPackSerializer();
+        testAuth(cryptoSignAuthenticator, serializer);
+      });
 
-    test("CryptoSignAuth", () {
-      var cryptoSignAuthenticator = CryptoSignAuthenticator(authID, privateKey);
-      testAuth(cryptoSignAuthenticator);
-    });
-
-    test("CryptoSignAuthInvalidKey", () {
-      var cryptoSignAuthenticator =
-          CryptoSignAuthenticator(authID, "2e9bef98114241d2226996cf09faf87dad892643a7c5fde186783470bce21df3");
-      expect(() => testAuth(cryptoSignAuthenticator), throwsException);
+      test("InvalidKey", () {
+        var cryptoSignAuthenticator =
+            CryptoSignAuthenticator(authID, "2e9bef98114241d2226996cf09faf87dad892643a7c5fde186783470bce21df3");
+        final serializer = JSONSerializer();
+        expect(() => testAuth(cryptoSignAuthenticator, serializer), throwsException);
+      });
     });
   });
 }
 
-void testAuth(IClientAuthenticator clientAuthenticator) {
-  final serializer = JSONSerializer();
+void testAnonymousAuth(Serializer serializer) {
+  var anonymousAuthenticator = AnonymousAuthenticator(authID);
+  final joiner = Joiner(realm, serializer: serializer, authenticator: anonymousAuthenticator);
+  final acceptor = Acceptor(serializer: serializer, authenticator: authenticator);
+
+  final hello = joiner.sendHello();
+
+  // Process and verify the HELLO message
+  final welcomeMap = acceptor.receive(hello);
+  final welcome = serializer.deserialize(welcomeMap.key);
+
+  expect(welcome, isA<Welcome>());
+  expect(welcomeMap.value, true);
+
+  // Ensure no additional messages are received
+  final payload = joiner.receive(welcomeMap.key);
+  expect(payload, null);
+
+  // Verify session details are available
+  final sessionDetails = joiner.getSessionDetails();
+  expect(sessionDetails, isNotNull);
+}
+
+void testAuth(IClientAuthenticator clientAuthenticator, Serializer serializer) {
   final joiner = Joiner(realm, serializer: serializer, authenticator: clientAuthenticator);
   final acceptor = Acceptor(serializer: serializer, authenticator: authenticator);
 
