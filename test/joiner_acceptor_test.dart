@@ -71,25 +71,25 @@ void main() {
 
     group("TicketAuth", () {
       test("JSONSerializer", () {
-        var ticketAuthenticator = TicketAuthenticator(ticket, authID);
+        var ticketAuthenticator = TicketAuthenticator(authID, {}, ticket);
         final serializer = JSONSerializer();
         testAuth(ticketAuthenticator, serializer);
       });
 
       test("CBORSerializer", () {
-        var ticketAuthenticator = TicketAuthenticator(ticket, authID);
+        var ticketAuthenticator = TicketAuthenticator(authID, {}, ticket);
         final serializer = CBORSerializer();
         testAuth(ticketAuthenticator, serializer);
       });
 
       test("MsgPackSerializer", () {
-        var ticketAuthenticator = TicketAuthenticator(ticket, authID);
+        var ticketAuthenticator = TicketAuthenticator(authID, {}, ticket);
         final serializer = MsgPackSerializer();
         testAuth(ticketAuthenticator, serializer);
       });
 
       test("InvalidTicket", () {
-        var ticketAuthenticator = TicketAuthenticator("invalid", authID);
+        var ticketAuthenticator = TicketAuthenticator(authID, {}, "invalid");
         final serializer = JSONSerializer();
         expect(() => testAuth(ticketAuthenticator, serializer), throwsException);
       });
@@ -97,31 +97,31 @@ void main() {
 
     group("CRAAuth", () {
       test("JSONSerializer", () {
-        var craAuthenticator = WAMPCRAAuthenticator(secret, authID, {"challenge": "test"});
+        var craAuthenticator = WAMPCRAAuthenticator(authID, {"challenge": "test"}, secret);
         final serializer = JSONSerializer();
         testAuth(craAuthenticator, serializer);
       });
 
       test("CBORSerializer", () {
-        var craAuthenticator = WAMPCRAAuthenticator(secret, authID, {"challenge": "test"});
+        var craAuthenticator = WAMPCRAAuthenticator(authID, {"challenge": "test"}, secret);
         final serializer = CBORSerializer();
         testAuth(craAuthenticator, serializer);
       });
 
       test("MsgPackSerializer", () {
-        var craAuthenticator = WAMPCRAAuthenticator(secret, authID, {"challenge": "test"});
+        var craAuthenticator = WAMPCRAAuthenticator(authID, {"challenge": "test"}, secret);
         final serializer = MsgPackSerializer();
         testAuth(craAuthenticator, serializer);
       });
 
       test("InvalidSecret", () {
-        var craAuthenticator = WAMPCRAAuthenticator("invalid", authID, {"challenge": "test"});
+        var craAuthenticator = WAMPCRAAuthenticator(authID, {"challenge": "test"}, "invalid");
         final serializer = JSONSerializer();
         expect(() => testAuth(craAuthenticator, serializer), throwsException);
       });
 
       test("InvalidAuthID", () {
-        var craAuthenticator = WAMPCRAAuthenticator(secret, "invalid", {"challenge": "test"});
+        var craAuthenticator = WAMPCRAAuthenticator("invalid", {"challenge": "test"}, secret);
         final serializer = JSONSerializer();
         expect(() => testAuth(craAuthenticator, serializer), throwsException);
       });
@@ -129,43 +129,31 @@ void main() {
 
     group("CryptoSignAuth", () {
       test("JSONSerializer", () {
-        var cryptoSignAuthenticator = CryptoSignAuthenticator(authID, privateKey);
+        var cryptoSignAuthenticator = CryptoSignAuthenticator(authID, {}, privateKey);
         final serializer = JSONSerializer();
         testAuth(cryptoSignAuthenticator, serializer);
       });
 
       test("CBORSerializer", () {
-        var cryptoSignAuthenticator = CryptoSignAuthenticator(authID, privateKey);
+        var cryptoSignAuthenticator = CryptoSignAuthenticator(authID, {}, privateKey);
         final serializer = CBORSerializer();
         testAuth(cryptoSignAuthenticator, serializer);
       });
 
       test("MsgPackSerializer", () {
-        var cryptoSignAuthenticator = CryptoSignAuthenticator(authID, privateKey);
+        var cryptoSignAuthenticator = CryptoSignAuthenticator(authID, {}, privateKey);
         final serializer = MsgPackSerializer();
         testAuth(cryptoSignAuthenticator, serializer);
       });
 
       test("InvalidKey", () {
         var cryptoSignAuthenticator =
-            CryptoSignAuthenticator(authID, "2e9bef98114241d2226996cf09faf87dad892643a7c5fde186783470bce21df3");
+            CryptoSignAuthenticator(authID, {}, "2e9bef98114241d2226996cf09faf87dad892643a7c5fde186783470bce21df3");
         final serializer = JSONSerializer();
         expect(() => testAuth(cryptoSignAuthenticator, serializer), throwsException);
       });
     });
   });
-
-  test("TicketAuth", () => testAuth(authenticator, TicketAuthenticator("", {}, "test")));
-
-  test("CRAAuth", () => testAuth(authenticator, WAMPCRAAuthenticator("test", {"challenge": "test"}, "password")));
-
-  test(
-    "CryptoSignAuth",
-    () => testAuth(
-      authenticator,
-      CryptoSignAuthenticator("authID", {}, "6d9b906ad60d1f4dd796dbadcc2e2252310565ccdc6fe10b289df5684faf2a46"),
-    ),
-  );
 }
 
 void testAnonymousAuth(Serializer serializer) {
