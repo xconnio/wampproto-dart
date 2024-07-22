@@ -71,7 +71,15 @@ class Acceptor {
       switch (method) {
         case anonymous:
           AnonymousRequest request = AnonymousRequest(msg.realm, msg.authID, msg.authExtra);
-          Response response = _authenticator.authenticate(request);
+          Response response;
+          try {
+            response = _authenticator.authenticate(request);
+          } on Exception catch (e) {
+            return Abort({}, errAuthenticationFailed, args: [e.toString()]);
+          } on Error catch (e) {
+            return Abort({}, errAuthenticationFailed, args: [e.toString()]);
+          }
+
           _state = stateWelcomeSent;
 
           Welcome welcome = Welcome(_sessionID, routerRoles, response.authID, response.authRole, method, authExtra: {});
@@ -86,7 +94,14 @@ class Acceptor {
 
           String publicKey = msg.authExtra["pubkey"];
           CryptoSignRequest request = CryptoSignRequest(msg.realm, msg.authID, msg.authExtra, publicKey);
-          _response = _authenticator.authenticate(request);
+          try {
+            _response = _authenticator.authenticate(request);
+          } on Exception catch (e) {
+            return Abort({}, errAuthenticationFailed, args: [e.toString()]);
+          } on Error catch (e) {
+            return Abort({}, errAuthenticationFailed, args: [e.toString()]);
+          }
+
           _publicKey = publicKey;
 
           String challenge = generateCryptoSignChallenge();
@@ -96,7 +111,15 @@ class Acceptor {
 
         case wampcra:
           WAMPCRARequest request = WAMPCRARequest(msg.realm, msg.authID, msg.authExtra);
-          Response response = _authenticator.authenticate(request);
+          Response response;
+          try {
+            response = _authenticator.authenticate(request);
+          } on Exception catch (e) {
+            return Abort({}, errAuthenticationFailed, args: [e.toString()]);
+          } on Error catch (e) {
+            return Abort({}, errAuthenticationFailed, args: [e.toString()]);
+          }
+
           if (response is! WAMPCRAResponse) {
             throw Exception("invalid response type for WAMPCRA");
           }
@@ -154,7 +177,15 @@ class Acceptor {
 
         case ticket:
           TicketRequest request = TicketRequest(_hello.realm, _hello.authID, _hello.authExtra, msg.signature);
-          Response response = _authenticator.authenticate(request);
+          Response response;
+          try {
+            response = _authenticator.authenticate(request);
+          } on Exception catch (e) {
+            return Abort({}, errAuthenticationFailed, args: [e.toString()]);
+          } on Error catch (e) {
+            return Abort({}, errAuthenticationFailed, args: [e.toString()]);
+          }
+
           _state = stateWelcomeSent;
 
           Welcome welcome = Welcome(_sessionID, routerRoles, response.authID, response.authRole, ticket, authExtra: {});
