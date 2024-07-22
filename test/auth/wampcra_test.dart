@@ -13,7 +13,7 @@ void main() {
 
   group("WAMPCRAAuthenticator", () {
     test("authenticate", () {
-      final authenticator = WAMPCRAAuthenticator(key, "authID", {});
+      final authenticator = WAMPCRAAuthenticator("authID", {}, key);
       final challenge = Challenge("wampcra", {"challenge": craChallenge});
 
       final authenticate = authenticator.authenticate(challenge);

@@ -7,7 +7,7 @@ import "package:wampproto/src/auth/auth.dart";
 const hex = Base16Encoder.instance;
 
 class CryptoSignAuthenticator extends IClientAuthenticator {
-  CryptoSignAuthenticator(String authID, this._privateKeyHex, [Map<String, dynamic>? authExtra]) : super(type, authID) {
+  CryptoSignAuthenticator(String authID, Map<String, dynamic>? authExtra, this._privateKeyHex) : super(type, authID) {
     authExtra ??= {};
     if (!authExtra.containsKey("pubkey")) {
       final pubKey = hex.encode(getPrivateKey().verifyKey);

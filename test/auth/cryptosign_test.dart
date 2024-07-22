@@ -13,7 +13,7 @@ void main() {
       "a9338b92021c39271e910a8ea072fe950c";
 
   group("CryptoSignAuthenticator", () {
-    CryptoSignAuthenticator authenticator = CryptoSignAuthenticator("authID", privateKeyHex);
+    CryptoSignAuthenticator authenticator = CryptoSignAuthenticator("authID", {}, privateKeyHex);
 
     test("constructor", () {
       expect(authenticator.authID, "authID");
