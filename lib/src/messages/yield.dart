@@ -74,7 +74,7 @@ class Yield implements Message {
   Map<String, dynamic> get options => _yieldFields.options;
 
   static Yield parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Yield(fields.requestID!, args: fields.args, kwargs: fields.kwargs, options: fields.options);
   }

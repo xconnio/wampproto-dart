@@ -49,7 +49,7 @@ class Cancel implements Message {
   Map<String, dynamic> get options => _cancelFields.options;
 
   static Cancel parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Cancel(fields.requestID!, options: fields.options);
   }

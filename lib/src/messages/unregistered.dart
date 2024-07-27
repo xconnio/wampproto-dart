@@ -40,7 +40,7 @@ class Unregistered implements Message {
   int get requestID => _unregisteredFields.requestID;
 
   static Unregistered parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Unregistered(fields.requestID!);
   }

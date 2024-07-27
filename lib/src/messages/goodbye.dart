@@ -49,7 +49,7 @@ class Goodbye implements Message {
   String get reason => _goodbyeFields.reason;
 
   static Goodbye parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Goodbye(fields.details!, fields.reason!);
   }

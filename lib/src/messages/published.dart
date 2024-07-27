@@ -49,7 +49,7 @@ class Published implements Message {
   int get publicationID => _publishedFields.publicationID;
 
   static Published parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Published(fields.requestID!, fields.publicationID!);
   }

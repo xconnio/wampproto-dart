@@ -49,7 +49,7 @@ class Registered implements Message {
   int get registrationID => _registeredFields.registrationID;
 
   static Registered parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Registered(fields.requestID!, fields.registrationID!);
   }

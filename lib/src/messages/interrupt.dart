@@ -49,7 +49,7 @@ class Interrupt implements Message {
   Map<String, dynamic> get options => _interruptFields.options;
 
   static Interrupt parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Interrupt(fields.requestID!, options: fields.options);
   }

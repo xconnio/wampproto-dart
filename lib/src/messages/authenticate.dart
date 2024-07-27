@@ -50,7 +50,7 @@ class Authenticate implements Message {
   Map<String, dynamic> get extra => _authenticateFields.extra;
 
   static Authenticate parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Authenticate(fields.signature!, fields.extra!);
   }

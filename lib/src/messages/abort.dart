@@ -74,7 +74,7 @@ class Abort implements Message {
   Map<String, dynamic>? get kwargs => _abortFields.kwargs;
 
   static Abort parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Abort(fields.details!, fields.reason!, args: fields.args, kwargs: fields.kwargs);
   }

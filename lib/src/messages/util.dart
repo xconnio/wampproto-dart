@@ -349,8 +349,8 @@ String? validateRealm(List<dynamic> msg, int index, Fields fields, String messag
   return null;
 }
 
-Fields validateMessage(List<dynamic> msg, int type, String name, ValidationSpec valSpec) {
-  sanityCheck(msg, valSpec.minLength, valSpec.maxLength, type, name);
+Fields validateMessage(List<dynamic> msg, int type, ValidationSpec valSpec) {
+  sanityCheck(msg, valSpec.minLength, valSpec.maxLength, type, valSpec.message);
 
   List<String> errors = [];
   Fields f = Fields();

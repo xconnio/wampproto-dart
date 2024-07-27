@@ -84,7 +84,7 @@ class Call implements Message {
   Map<String, dynamic> get options => _callFields.options;
 
   static Call parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Call(fields.requestID!, fields.uri!, args: fields.args, kwargs: fields.kwargs, options: fields.options);
   }

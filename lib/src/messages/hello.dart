@@ -79,7 +79,7 @@ class Hello implements Message {
   Map<String, dynamic> get authExtra => _helloFields.authExtra;
 
   static Hello parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     Map<String, dynamic> roles = validateRolesOrRaise(fields.details!["roles"], text);
 
