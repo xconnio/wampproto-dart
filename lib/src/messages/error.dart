@@ -101,7 +101,7 @@ class Error implements Message {
   Map<String, dynamic> get details => _errorFields.details;
 
   static Error parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Error(
       fields.messageType!,

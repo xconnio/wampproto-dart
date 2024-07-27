@@ -62,7 +62,7 @@ class Subscribe implements Message {
   Map<String, dynamic> get options => _subscribeFields.options;
 
   static Subscribe parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Subscribe(fields.requestID!, fields.topic!, options: fields.options);
   }

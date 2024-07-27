@@ -49,7 +49,7 @@ class Unsubscribe implements Message {
   int get subscriptionID => _unsubscribeFields.subscriptionID;
 
   static Unsubscribe parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Unsubscribe(fields.requestID!, fields.subscriptionID!);
   }

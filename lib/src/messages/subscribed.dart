@@ -49,7 +49,7 @@ class Subscribed implements Message {
   int get subscriptionID => _subscribedFields.subscriptionID;
 
   static Subscribed parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Subscribed(fields.requestID!, fields.subscriptionID!);
   }

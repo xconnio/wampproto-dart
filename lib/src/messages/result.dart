@@ -74,7 +74,7 @@ class Result implements Message {
   Map<String, dynamic> get details => _resultFields.details;
 
   static Result parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Result(fields.requestID!, args: fields.args, kwargs: fields.kwargs, details: fields.details);
   }

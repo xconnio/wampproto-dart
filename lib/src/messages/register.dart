@@ -62,7 +62,7 @@ class Register implements Message {
   Map<String, dynamic> get options => _registerFields.options;
 
   static Register parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Register(fields.requestID!, fields.uri!, options: fields.options);
   }

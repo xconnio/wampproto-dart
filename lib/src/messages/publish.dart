@@ -90,7 +90,7 @@ class Publish implements Message {
   Map<String, dynamic> get options => _publishFields.options;
 
   static Publish parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Publish(fields.requestID!, fields.uri!, args: fields.args, kwargs: fields.kwargs, options: fields.options);
   }

@@ -40,7 +40,7 @@ class Unsubscribed implements Message {
   int get requestID => _unsubscribedFields.requestID;
 
   static Unsubscribed parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Unsubscribed(fields.requestID!);
   }

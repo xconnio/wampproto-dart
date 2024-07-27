@@ -49,7 +49,7 @@ class Unregister implements Message {
   int get registrationID => _unregisterFields.registrationID;
 
   static Unregister parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Unregister(fields.requestID!, fields.registrationID!);
   }

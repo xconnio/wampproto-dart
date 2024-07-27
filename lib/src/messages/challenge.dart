@@ -50,7 +50,7 @@ class Challenge implements Message {
   Map<String, dynamic> get extra => _challengeFields.extra;
 
   static Challenge parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Challenge(fields.authmethod!, fields.extra!);
   }

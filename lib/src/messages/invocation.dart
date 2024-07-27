@@ -90,7 +90,7 @@ class Invocation implements Message {
   Map<String, dynamic> get details => _invocationFields.details;
 
   static Invocation parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Invocation(
       fields.requestID!,

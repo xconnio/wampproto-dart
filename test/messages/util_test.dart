@@ -328,7 +328,7 @@ void main() {
         },
       );
 
-      expect(() => validateMessage([1, "uri"], 1, "TestMessage", spec), returnsNormally);
+      expect(() => validateMessage([1, "uri"], 1, spec), returnsNormally);
 
       // invalid message
       var specInvalid = ValidationSpec(
@@ -341,7 +341,7 @@ void main() {
         },
       );
 
-      expect(() => validateMessage([1, 123], 1, "TestMessage", specInvalid), throwsException);
+      expect(() => validateMessage([1, 123], 1, specInvalid), throwsException);
     });
   });
 }

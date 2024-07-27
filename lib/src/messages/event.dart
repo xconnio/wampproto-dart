@@ -90,7 +90,7 @@ class Event implements Message {
   Map<String, dynamic> get details => _eventFields.details;
 
   static Event parse(final List<dynamic> message) {
-    var fields = validateMessage(message, id, text, _validationSpec);
+    var fields = validateMessage(message, id, _validationSpec);
 
     return Event(
       fields.subscriptionID!,
