@@ -146,6 +146,22 @@ class Dealer {
 
       var unregistered = Unregistered(message.requestID);
       return MessageWithRecipient(unregistered, sessionID);
+    } else if (message is Error) {
+      if (message.msgType != Invocation.id) {
+        throw Exception("dealer: only expected to receive error in response to invocation");
+      }
+
+      var pending = _pendingCalls[message.requestID];
+      if (pending == null) {
+        throw Exception("dealer: no pending invocation for ${message.requestID}");
+      }
+
+      _pendingCalls.remove(message.requestID);
+
+      var errMessage = Error(Call.id, pending.requestID, message.uri,
+          args: message.args, kwargs: message.kwargs, details: message.details);
+
+      return MessageWithRecipient(errMessage, pending.callerID);
     } else {
       throw Exception("message type not supported");
     }
