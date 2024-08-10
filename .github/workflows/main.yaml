@@ -28,8 +28,8 @@ jobs:
       - name: Check lint
         run: make lint
 
-      - name: build wampproto-cli
-        run: make build-wampproto
+      - name: Install wampproto-cli
+        run: make install-wampproto
 
       - name: Run tests
         run: make tests
