@@ -16,6 +16,5 @@ format:
 tests:
 	dart test
 
-build-wampproto:
-	git clone https://github.com/xconnio/wampproto-cli.git
-	cd wampproto-cli/ && make build && sudo cp ./wampproto /usr/local/bin/
+install-wampproto:
+	sudo snap install wampproto --edge
