@@ -12,6 +12,7 @@ dependencies:
   cbor: ^6.2.0
   collection: ^1.18.0
   crypto: ^3.0.3
+  meta: ^1.15.0
   msgpack_dart:
     git: https://github.com/xconnio/msgpack_dart
   pinenacl: ^0.6.0
