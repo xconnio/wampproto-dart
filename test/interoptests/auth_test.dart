@@ -2,6 +2,7 @@ import "package:pinenacl/ed25519.dart";
 import "package:test/test.dart";
 
 import "package:wampproto/auth.dart";
+import "package:wampproto/messages.dart";
 import "package:wampproto/src/auth/cryptosign.dart";
 import "package:wampproto/src/auth/wampcra.dart";
 
@@ -59,6 +60,19 @@ void main() {
     const testSecret = "private";
     var testSecretBytes = Uint8List.fromList(testSecret.codeUnits);
 
+    const String authID = "foo";
+    const String salt = "salt";
+    const int keyLength = 32;
+    const int iterations = 1000;
+    const String craChallenge =
+        '''{"nonce":"cdcb3b12d56e12825be99f38f55ba43f","authprovider":"provider","authid":"foo","authrole":"anonymous","authmethod":"wampcra","session":1,"timestamp":"2024-05-07T09:25:13.307Z"}''';
+    final Map<String, dynamic> authExtra = {
+      "challenge": craChallenge,
+      "salt": salt,
+      "iterations": iterations,
+      "keylen": keyLength,
+    };
+
     test("GenerateCRAChallenge", () async {
       var challenge = generateWampCRAChallenge(1, "anonymous", "anonymous", "static");
 
@@ -87,6 +101,30 @@ void main() {
       var signature = await runCommand(signChallengeCommand);
 
       var isVerified = verifyWampCRASignature(signature.trim(), challenge.trim(), testSecretBytes);
+      expect(isVerified, true);
+    });
+
+    test("SignCRAChallengeWithSalt", () async {
+      final challenge = Challenge(WAMPCRAAuthenticator.type, authExtra);
+      final authenticator = WAMPCRAAuthenticator(authID, authExtra, testSecret);
+
+      final authenticate = authenticator.authenticate(challenge);
+      final saltSecret = await runCommand("auth cra derive-key $salt $testSecret -i $iterations -l $keyLength");
+
+      await runCommand("auth cra verify-signature $craChallenge ${authenticate.signature} ${saltSecret.trim()}");
+    });
+
+    test("VerifyCRASignatureWithSalt", () async {
+      final challenge = await runCommand("auth cra generate-challenge 1 $authID anonymous provider");
+      final saltSecret = await runCommand("auth cra derive-key $salt $testSecret -i $iterations -l $keyLength");
+
+      final signature = await runCommand("auth cra sign-challenge ${challenge.trim()} ${saltSecret.trim()}");
+
+      final isVerified = verifyWampCRASignature(
+        signature.trim(),
+        challenge.trim(),
+        Uint8List.fromList(saltSecret.trim().codeUnits),
+      );
       expect(isVerified, true);
     });
   });
