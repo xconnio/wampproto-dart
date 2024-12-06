@@ -2,6 +2,7 @@ name: wampproto
 description: Sans-IO WAMP protocol implementation
 version: 0.1.0
 repository: https://github.com/xconnio/wampproto-dart
+publish_to: none
 
 environment:
   sdk: ">=2.17.0 <4.0.0"
@@ -11,7 +12,8 @@ dependencies:
   cbor: ^6.2.0
   collection: ^1.18.0
   crypto: ^3.0.3
-  msgpack_dart: ^1.0.1
+  msgpack_dart:
+    git: https://github.com/xconnio/msgpack_dart
   pinenacl: ^0.6.0
   pointycastle: ^3.9.1
 
