@@ -68,7 +68,7 @@ class Joiner {
       _state = stateAuthenticateSent;
       return authenticate;
     } else if (msg is Abort) {
-      throw Exception("received abort");
+      throw ApplicationError(msg.reason, args: msg.args, kwargs: msg.kwargs);
     } else {
       throw ProtocolError("received ${msg.runtimeType} message and session is not established yet");
     }
