@@ -6,7 +6,12 @@ import "package:wampproto/src/types.dart";
 
 final clientRoles = <String, Map<String, Map>>{
   "caller": {"features": {}},
-  "callee": {"features": {}},
+  "callee": {
+    "features": {
+      "progressive_call_results": true,
+      "call_canceling": true,
+    },
+  },
   "publisher": {"features": {}},
   "subscriber": {"features": {}},
 };
