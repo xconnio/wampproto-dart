@@ -1,5 +1,6 @@
 import "package:wampproto/messages.dart";
 import "package:wampproto/serializers.dart";
+import "package:wampproto/src/dealer.dart";
 import "package:wampproto/src/exception.dart";
 
 class WAMPSession {
@@ -37,7 +38,10 @@ class WAMPSession {
       if (!_invocationRequests.containsKey(msg.requestID)) {
         throw ArgumentError("cannot yield for unknown invocation request");
       }
-      _invocationRequests.remove(msg.requestID);
+      bool progress = msg.options[optionProgress] ?? false;
+      if (!progress) {
+        _invocationRequests.remove(msg.requestID);
+      }
 
       return _serializer.serialize(msg);
     } else if (msg is Publish) {
@@ -78,8 +82,10 @@ class WAMPSession {
       if (!_callRequests.containsKey(msg.requestID)) {
         throw ProtocolError("received RESULT for invalid request ID ${msg.requestID}");
       }
-      _callRequests.remove(msg.requestID);
-
+      bool progress = msg.details["progress"] ?? false;
+      if (!progress) {
+        _callRequests.remove(msg.requestID);
+      }
       return msg;
     } else if (msg is Registered) {
       if (!_registerRequests.containsKey(msg.requestID)) {
