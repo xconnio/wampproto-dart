@@ -206,6 +206,8 @@ class WAMPSession {
       return msg;
     } else if (msg is Goodbye) {
       return msg;
+    } else if (msg is Abort) {
+      return msg;
     }
 
     throw ProtocolError("unknown message ${msg.runtimeType}");
