@@ -8,7 +8,7 @@ void main() {
     const ticket = "test";
     const authID = "authID";
     final authExtra = {"extra": "data"};
-    final authenticator = TicketAuthenticator(authID, authExtra, ticket);
+    final authenticator = TicketAuthenticator(authID, ticket, authExtra);
 
     test("constructor", () {
       expect(authenticator, isNotNull);
