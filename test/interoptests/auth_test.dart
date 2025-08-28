@@ -106,7 +106,7 @@ void main() {
 
     test("SignCRAChallengeWithSalt", () async {
       final challenge = Challenge(WAMPCRAAuthenticator.type, authExtra);
-      final authenticator = WAMPCRAAuthenticator(authID, authExtra, testSecret);
+      final authenticator = WAMPCRAAuthenticator(authID, testSecret, authExtra);
 
       final authenticate = authenticator.authenticate(challenge);
       final saltSecret = await runCommand("auth cra derive-key $salt $testSecret -i $iterations -l $keyLength");
