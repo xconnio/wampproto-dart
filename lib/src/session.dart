@@ -9,25 +9,25 @@ class WAMPSession {
   final Serializer _serializer;
 
   // data structures for RPC
-  final Map<int, int> _callRequests = {};
-  final Map<int, int> _registerRequests = {};
-  final Map<int, int> _registrations = {};
-  final Map<int, int> _invocationRequests = {};
+  final Set<int> _callRequests = {};
+  final Set<int> _registerRequests = {};
+  final Set<int> _registrations = {};
+  final Set<int> _invocationRequests = {};
   final Map<int, int> _unregisterRequests = {};
 
   // data structures for PubSub
-  final Map<int, int> _publishRequests = {};
-  final Map<int, int> _subscribeRequests = {};
-  final Map<int, int> _subscriptions = {};
+  final Set<int> _publishRequests = {};
+  final Set<int> _subscribeRequests = {};
+  final Set<int> _subscriptions = {};
   final Map<int, int> _unsubscribeRequests = {};
 
   Object sendMessage(Message msg) {
     if (msg is Call) {
-      _callRequests[msg.requestID] = msg.requestID;
+      _callRequests.add(msg.requestID);
 
       return _serializer.serialize(msg);
     } else if (msg is Register) {
-      _registerRequests[msg.requestID] = msg.requestID;
+      _registerRequests.add(msg.requestID);
 
       return _serializer.serialize(msg);
     } else if (msg is Unregister) {
@@ -35,7 +35,7 @@ class WAMPSession {
 
       return _serializer.serialize(msg);
     } else if (msg is Yield) {
-      if (!_invocationRequests.containsKey(msg.requestID)) {
+      if (!_invocationRequests.contains(msg.requestID)) {
         throw ArgumentError("cannot yield for unknown invocation request");
       }
       bool progress = msg.options[optionProgress] ?? false;
@@ -46,12 +46,12 @@ class WAMPSession {
       return _serializer.serialize(msg);
     } else if (msg is Publish) {
       if (msg.options.containsKey("acknowledge") && msg.options["acknowledge"]) {
-        _publishRequests[msg.requestID] = msg.requestID;
+        _publishRequests.add(msg.requestID);
       }
 
       return _serializer.serialize(msg);
     } else if (msg is Subscribe) {
-      _subscribeRequests[msg.requestID] = msg.requestID;
+      _subscribeRequests.add(msg.requestID);
 
       return _serializer.serialize(msg);
     } else if (msg is Unsubscribe) {
@@ -79,7 +79,7 @@ class WAMPSession {
 
   Message receiveMessage(Message msg) {
     if (msg is Result) {
-      if (!_callRequests.containsKey(msg.requestID)) {
+      if (!_callRequests.contains(msg.requestID)) {
         throw ProtocolError("received RESULT for invalid request ID ${msg.requestID}");
       }
       bool progress = msg.details["progress"] ?? false;
@@ -88,12 +88,12 @@ class WAMPSession {
       }
       return msg;
     } else if (msg is Registered) {
-      if (!_registerRequests.containsKey(msg.requestID)) {
+      if (!_registerRequests.contains(msg.requestID)) {
         throw ProtocolError("received REGISTERED for invalid request ID ${msg.requestID}");
       }
       _registerRequests.remove(msg.requestID);
 
-      _registrations[msg.registrationID] = msg.registrationID;
+      _registrations.add(msg.registrationID);
 
       return msg;
     } else if (msg is Unregistered) {
@@ -102,33 +102,33 @@ class WAMPSession {
       }
       final registrationID = _unregisterRequests.remove(msg.requestID);
 
-      if (!_registrations.containsKey(registrationID)) {
+      if (!_registrations.contains(registrationID)) {
         throw ProtocolError("received UNREGISTERED for invalid registration ID $registrationID");
       }
       _registrations.remove(registrationID);
 
       return msg;
     } else if (msg is Invocation) {
-      if (!_registrations.containsKey(msg.registrationID)) {
+      if (!_registrations.contains(msg.registrationID)) {
         throw ProtocolError("received INVOCATION for invalid registration ID ${msg.registrationID}");
       }
-      _invocationRequests[msg.requestID] = msg.requestID;
+      _invocationRequests.add(msg.requestID);
 
       return msg;
     } else if (msg is Published) {
-      if (!_publishRequests.containsKey(msg.requestID)) {
+      if (!_publishRequests.contains(msg.requestID)) {
         throw ProtocolError("received PUBLISHED for invalid request ID ${msg.requestID}");
       }
       _publishRequests.remove(msg.requestID);
 
       return msg;
     } else if (msg is Subscribed) {
-      if (!_subscribeRequests.containsKey(msg.requestID)) {
+      if (!_subscribeRequests.contains(msg.requestID)) {
         throw ProtocolError("received SUBSCRIBED for invalid request ID ${msg.requestID}");
       }
       _subscribeRequests.remove(msg.requestID);
 
-      _subscriptions[msg.subscriptionID] = msg.subscriptionID;
+      _subscriptions.add(msg.subscriptionID);
 
       return msg;
     } else if (msg is Unsubscribed) {
@@ -137,14 +137,14 @@ class WAMPSession {
       }
       final subscriptionID = _unsubscribeRequests.remove(msg.requestID);
 
-      if (!_subscriptions.containsKey(subscriptionID)) {
+      if (!_subscriptions.contains(subscriptionID)) {
         throw ProtocolError("received UNSUBSCRIBED for invalid subscription ID $subscriptionID");
       }
       _subscriptions.remove(subscriptionID);
 
       return msg;
     } else if (msg is Event) {
-      if (!_subscriptions.containsKey(msg.subscriptionID)) {
+      if (!_subscriptions.contains(msg.subscriptionID)) {
         throw ProtocolError("received EVENT for invalid subscription ID ${msg.subscriptionID}");
       }
 
@@ -152,7 +152,7 @@ class WAMPSession {
     } else if (msg is Error) {
       switch (msg.msgType) {
         case Call.id:
-          if (!_callRequests.containsKey(msg.requestID)) {
+          if (!_callRequests.contains(msg.requestID)) {
             throw ProtocolError("received ERROR for invalid call request");
           }
 
@@ -160,7 +160,7 @@ class WAMPSession {
           break;
 
         case Register.id:
-          if (!_registerRequests.containsKey(msg.requestID)) {
+          if (!_registerRequests.contains(msg.requestID)) {
             throw ProtocolError("received ERROR for invalid register request");
           }
 
@@ -176,7 +176,7 @@ class WAMPSession {
           break;
 
         case Subscribe.id:
-          if (!_subscribeRequests.containsKey(msg.requestID)) {
+          if (!_subscribeRequests.contains(msg.requestID)) {
             throw ProtocolError("received ERROR for invalid subscribe request");
           }
 
@@ -192,7 +192,7 @@ class WAMPSession {
           break;
 
         case Publish.id:
-          if (!_publishRequests.containsKey(msg.requestID)) {
+          if (!_publishRequests.contains(msg.requestID)) {
             throw ProtocolError("received ERROR for invalid publish request");
           }
 
